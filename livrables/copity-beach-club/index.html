@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Archivo:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{font-family:'Archivo',system-ui,-apple-system,sans-serif;background:#F5F0E8;color:#13293F;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    ::selection{background:#F8D08A;color:#13293F}
+    input,textarea,select,button{font-family:inherit}
+    a{color:inherit}
+    ::-webkit-scrollbar{width:11px;height:11px}
+    ::-webkit-scrollbar-thumb{background:#cdbfa6;border-radius:9px;border:3px solid #F5F0E8}
+    @keyframes copFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes copFadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes copMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    @keyframes copSpin{to{transform:rotate(360deg)}}
+    @keyframes copPulse{0%,100%{opacity:1}50%{opacity:.5}}
+    @keyframes copWave{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+  </style>
+</helmet>
+<div>{{ app }}</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  C = {
+    cream:'#F5F0E8', creamDeep:'#ECE3D2', card:'#FFFFFF',
+    navy:'#1B3A5C', navyDeep:'#13293F', navyInk:'#0C1C2E',
+    red:'#E0382B', redDeep:'#B8261B', redSoft:'#FBE3E0',
+    sea:'#19A7B8', seaDeep:'#127E8C', seaSoft:'#DDF1F3',
+    sand:'#E6D3AE', gold:'#E0A22B',
+    ink:'#13293F', muted:'#6E7B86', line:'#E4DCCB', white:'#fff'
+  };
+  IMG = {
+    bar:'assets/copity-bar.png',
+    boards:'assets/copity-surfboards.png',
+    food:'assets/copity-food.png'
+  };
+  KEYS = { menu:'copity_menu', events:'copity_events', res:'copity_res', staff:'copity_staff', shifts:'copity_shifts', lang:'copity_lang', adminUser:'copity_admin', staffSess:'copity_staffsess', news:'copity_news', vip:'copity_vip', route:'copity_route' };
+
+  state = {
+    route: 'home', adminSection:'dashboard', navOpen:false,
+    lang: 'en', toast:null,
+    menu:[], events:[], reservations:[], staff:[], shifts:[],
+    adminUser:null, staffSess:null,
+    // ui/forms
+    menuTab:'starters', eventFilter:'all',
+    resForm:{name:'',date:'',time:'',guests:'2',phone:'',requests:''}, resDone:false,
+    privForm:{name:'',email:'',phone:'',date:'',type:'',msg:''}, privDone:false,
+    newsEmail:'', vipForm:{name:'',email:'',phone:''}, vipDone:false,
+    loginForm:{user:'',pass:''}, loginErr:'',
+    staffLogin:{name:'',pin:''}, staffErr:'',
+    editItem:null, editEvent:null, editStaff:null, editShift:null
+  };
+
+  // ---------- storage ----------
+  load(k, fb){ try{ const v = localStorage.getItem(this.KEYS[k]); return v==null? fb : JSON.parse(v); }catch(e){ return fb; } }
+  save(k, v){ try{ localStorage.setItem(this.KEYS[k], JSON.stringify(v)); }catch(e){} }
+  uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+  componentDidMount(){
+    const menu = this.load('menu', null) || this.seedMenu();
+    const events = this.load('events', null) || this.seedEvents();
+    const staff = this.load('staff', null) || this.seedStaff();
+    const shifts = this.load('shifts', null) || this.seedShifts(staff);
+    this.save('menu',menu); this.save('events',events); this.save('staff',staff); this.save('shifts',shifts);
+    this.setState({
+      menu, events, staff, shifts,
+      reservations: this.load('res', []),
+      lang: this.load('lang','en'),
+      adminUser: this.load('adminUser', null),
+      staffSess: this.load('staffSess', null),
+      route: this.load('route','home')
+    });
+  }
+
+  persist(patch){ this.setState(patch); Object.keys(patch).forEach(k=>{ const map={menu:'menu',events:'events',reservations:'res',staff:'staff',shifts:'shifts'}; if(map[k]) this.save(map[k], patch[k]); }); }
+
+  // ---------- helpers ----------
+  t(es,en,fr){ const l=this.state.lang; if(l==='es')return es; if(l==='fr')return (fr!=null?fr:en); return en; }
+  setLang(l){ this.setState({lang:l}); this.save('lang',l); }
+  go(route, section){ const p={route, navOpen:false}; if(section) p.adminSection=section; this.setState(p); this.save('route',route); try{window.scrollTo(0,0);}catch(e){} const sc=document.querySelector('#cop-scroll'); if(sc) sc.scrollTop=0; }
+  toast(msg){ this.setState({toast:msg}); clearTimeout(this._tt); this._tt=setTimeout(()=>this.setState({toast:null}), 2600); }
+  money(it){ if(!it.price) return ''; if(it.priceRaw) return it.price; return it.price+' €'; }
+  fmtDate(d){ try{ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString(this.state.lang==='es'?'es-ES':'en-GB',{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return d; } }
+
+  // ---------- seed data ----------
+  ALLERGENS(){ return { gluten:['Gluten','Gluten'], crust:['Crustáceos','Crustaceans'], egg:['Huevo','Eggs'], fish:['Pescado','Fish'], peanut:['Cacahuete','Peanuts'], soya:['Soja','Soya'], milk:['Lácteos','Milk'], nuts:['F. secos','Nuts'], celery:['Apio','Celery'], mustard:['Mostaza','Mustard'], sesame:['Sésamo','Sesame'], sulphite:['Sulfitos','Sulphites'], lupin:['Altramuz','Lupins'], mollusc:['Moluscos','Shellfish'] }; }
+  CATS(){ return [
+    {id:'starters', es:'Pica Pica On The Beach', en:'Starters'},
+    {id:'bread', es:'Entre Panes', en:'Between Bread'},
+    {id:'protein', es:'Pura Proteína', en:'Clean Protein'},
+    {id:'kids', es:'Para los Peques', en:'For The Kids'},
+    {id:'desserts', es:'Postres', en:'Desserts'},
+    {id:'cocktails', es:'Cócteles', en:'Cocktails'},
+    {id:'mocktails', es:'Cócteles Sin Alcohol', en:'0% Cocktails'},
+    {id:'spritz', es:'Spritz', en:'Spritz'},
+    {id:'softs', es:'Bebidas Sin Alcohol', en:'Non-Alcoholic'},
+    {id:'wine', es:'Bodega', en:'Winery'},
+    {id:'beer', es:'Cerveza', en:'Beers'},
+    {id:'spirits', es:'Bebidas', en:'Spirits'}
+  ]; }
+  mi(cat,es,en,descEs,descEn,price,allergens,opts){ return Object.assign({id:this.uid(),cat,es,en,descEs,descEn,price,allergens:allergens||[],available:true,special:false}, opts||{}); }
+  seedMenu(){ const m=[];
+    const s=(...a)=>m.push(this.mi('starters',...a));
+    s('Chanchullo de Boquerón','Anchovies & Chips','Boquerones en vinagre con patatas chips y aceitunas','Anchovies in vinegar with potato chips and olives','9.50',['fish','sulphite']);
+    s('Nachos Copity','Copity Nachos','Totopos con salsa cheddar, guacamole, crema agria y pico de gallo','Tortilla chips, cheddar sauce, guacamole, sour cream, pico de gallo','11.50',['gluten','milk']);
+    s('Ensaladilla Rusa','Russian Salad','Patata, mayonesa y atún','Cold potato salad with mayonnaise','7.50',['egg','fish']);
+    s('Ricas Marineras','Marineras','Rosquilleta con ensaladilla y anchoa','Bread stick with potato salad and anchovies','5.50',['gluten','fish','egg']);
+    s('Calamar a la Plancha','Grilled Squid','Calamar con patatas baby','Grilled squid with baby potatoes','19.50',['mollusc']);
+    s('Zamburiñas','Scallops','Zamburiñas a la plancha','Grilled scallops','4.50',['mollusc']);
+    s('Ensalada César','Caesar Salad','Rúcula, pollo, picatostes, parmesano, salsa césar','Arugula, chicken, croutons, parmesan, Caesar sauce','13.50',['gluten','milk','egg','fish']);
+    s('Ensalada Tropical','Tropical Salad','Rúcula, wakame, salmón, mango, aguacate, vinagreta de miel y mostaza','Arugula, wakame, salmon, mango, avocado, honey mustard vinaigrette','13.50',['fish','soya','mustard']);
+    s('Tacos Crunchy Tex-Mex','Crunchy Tex-Mex Tacos','3 tacos crujientes de pollo con especias, queso y pico de gallo','3 crispy chicken tacos with spice, cheese, pico de gallo','10.50',['gluten','milk']);
+    const b=(...a)=>m.push(this.mi('bread',...a));
+    b('Brioche Trufado Beach','Truffle Brioche','Pavo, queso fundido y mantequilla de trufa','Turkey, melted cheese, truffle butter','9.50',['gluten','milk']);
+    b('Copity Beach Club','Copity Beach Club','Pollo, rúcula, guacamole, havarti, tomate, salsa cheddar','Chicken, arugula, guacamole, havarti, tomato, cheddar sauce','10.00',['gluten','milk']);
+    b('Brioche de Salmón','Salmon Brioche','Queso de cabra, tomate, rúcula, salsa miel y mostaza','Goat cheese, tomato, arugula, honey mustard sauce','10.00',['gluten','milk','fish','mustard']);
+    b('Mc Copity Burger','Mc Copity Burger','Burger de ternera dorada, doble cheddar, bacon, salsa BH','Golden beef burger, double cheddar, bacon, BH sauce','13.50',['gluten','milk','egg']);
+    b('Vegan Burger','Vegan Burger','Rúcula, tomate, cebolla, pepinillos, salsa miel y mostaza','Arugula, tomato, onion, pickles, honey mustard sauce','13.50',['gluten','mustard','soya']);
+    b('Hot Dog Beach','Hot Dog Beach','Queso, pico de gallo, ketchup, mayo y cebolla crujiente','Cheese, pico de gallo, ketchup, mayo, crispy onion','9.00',['gluten','milk','egg','mustard']);
+    const p=(...a)=>m.push(this.mi('protein',...a));
+    p('Abanico Ibérico','Iberian Pork','La parte más tierna de la costilla, con guarnición','Tender pork ribs, with garnish','16.50',[]);
+    p('Pechuga de Pollo','Chicken Breast','Pechuga de pollo con guarnición','Chicken breast with garnish','15.00',[]);
+    const k=(...a)=>m.push(this.mi('kids',...a));
+    k('Sándwich Mixto con Chips','Ham & Cheese + Chips','Sándwich de jamón y queso con patatas','Ham and cheese sandwich with chips','7.50',['gluten','milk']);
+    k('Perrito Caliente','Hot Dog','Perrito con ketchup, mostaza y mayo','Hot dog: ketchup, mustard, mayo','7.50',['gluten','egg','mustard']);
+    k('Fruta Fresca','Fresh Fruit','Fruta fresca del día','Fresh fruit of the day','5.50',[]);
+    k('Helados Frigo','Frigo Ice Cream','Consulta nuestra carta','Ask for our menu','',[],{priceRaw:true,price:'—'});
+    const d=(...a)=>m.push(this.mi('desserts',...a));
+    d('Fruta Fresca','Fresh Fruit','Fruta fresca del día','Fresh fruit of the day','5.50',[]);
+    d('Helados Frigo','Frigo Ice Cream','Consulta la carta','Check menu','',[],{priceRaw:true,price:'—'});
+    const c=(...a)=>m.push(this.mi('cocktails',...a));
+    c('Mojito Copity','Copity Mojito','Azúcar moreno, lima, menta, ron, soda o Sprite','Brown sugar, lime, mint, rum, soda or Sprite','9.50',['sulphite']);
+    c('Mojito Sabores','Flavoured Mojito','Mojito de sabores','Flavoured mojito','10.50',['sulphite']);
+    c('Daiquiri','Daiquiri','Ron, Cointreau, zumo de limón','Rum, Cointreau, lemon juice','9.50',['sulphite']);
+    c('Piña Colada','Piña Colada','Zumo de piña, mangaroca, Malibu','Pineapple juice, mangaroca, Malibu','9.50',['milk','sulphite']);
+    c('Caipiriña','Caipirinha','Azúcar moreno, lima, cachaça','Brown sugar, lime, cachaça','9.50',['sulphite']);
+    c('Caipiroska','Caipiroska','Azúcar moreno, lima, vodka','Brown sugar, lime, vodka','9.50',['sulphite']);
+    c('Sex on the Beach','Sex on the Beach','Zumo naranja/melocotón, granadina, vodka, licor de melón','Orange/peach juice, grenadine, vodka, melon liqueur','9.50',['sulphite']);
+    c('Tequila Sunrise','Tequila Sunrise','Tequila, zumo de naranja, granadina','Tequila, orange juice, grenadine','9.50',['sulphite']);
+    c('Pornstar Martini','Pornstar Martini','Vodka, Passoa, vainilla, maracuyá','Vodka, Passoa, vanilla, passion fruit','9.50',['sulphite']);
+    const mo=(...a)=>m.push(this.mi('mocktails',...a));
+    mo('San Francisco','San Francisco','Naranja, piña, melocotón, granadina','Orange, pineapple, peach juice, grenadine','8.50',[]);
+    mo('Mojito Sin Alcohol','Virgin Mojito','Azúcar moreno, lima, menta, Sprite','Brown sugar, lime, mint, Sprite','8.50',[]);
+    const sp=(...a)=>m.push(this.mi('spritz',...a));
+    sp('Aperol Spritz','Aperol Spritz','','','9.00',['sulphite']);
+    sp('Campari Spritz','Campari Spritz','','','9.00',['sulphite']);
+    sp('Hugo Spritz','Hugo Spritz','','','10.00',['sulphite']);
+    const so=(...a)=>m.push(this.mi('softs',...a));
+    so('Limón Granizado','Lemon Granita','Grande / Pequeño','Large / Small','5.00 / 3.50',[],{priceRaw:true,price:'5.00 € · 3.50 €'});
+    so('Refrescos','Soft Drinks','','','3.00',[]);
+    so('Zumos','Juices','Piña, melocotón, naranja','Pineapple, peach, orange','3.50',[]);
+    so('Red Bull','Red Bull','Original, Sugar free, Colours','Original, Sugar free, Colours','4.00',[]);
+    so('Agua','Water','','','2.50',[]);
+    const w=(...a)=>m.push(this.mi('wine',...a));
+    w('Septimo Sentido','Septimo Sentido','Tinto Tempranillo · copa / botella','Tempranillo red · glass / bottle','',['sulphite'],{priceRaw:true,price:'4 € · 23.50 €'});
+    w('Bienbevido Pulpo','Bienbevido Pulpo','Albariño · copa / botella','Albariño · glass / bottle','',['sulphite'],{priceRaw:true,price:'4 € · 23.50 €'});
+    w('Bardos Verdejo','Bardos Verdejo','Rueda · copa / botella','Rueda · glass / bottle','',['sulphite'],{priceRaw:true,price:'5 € · 29 €'});
+    w('Mateus Rosé','Mateus Rosé','Copa / botella','Glass / bottle','',['sulphite'],{priceRaw:true,price:'3.50 € · 20 €'});
+    w('Vermouth Yzaguirre','Yzaguirre Vermouth','Bianco / Rosso','Bianco / Rosso','5.00',['sulphite']);
+    w('Tinto de Verano','Summer Red','La Casera','La Casera','5.00',['sulphite']);
+    w('Sangría','Sangria','','','7.00',['sulphite']);
+    w('Moët Ice','Moët Ice','Botella','Bottle','',['sulphite'],{priceRaw:true,price:'120 €'});
+    w('Francesc Ricart','Francesc Ricart','Cava · copa / botella','Cava · glass / bottle','',['sulphite'],{priceRaw:true,price:'6 € · 30 €'});
+    const be=(...a)=>m.push(this.mi('beer',...a));
+    be('Cerveza Pinta','Beer Pint','','','5.00',['gluten']);
+    be('Cerveza Caña','Beer Cane','','','3.50',['gluten']);
+    const sj=(...a)=>m.push(this.mi('spirits',...a));
+    sj('Ginebras','Gins','Bombay Sapphire · Larios 12 · Larios Rosé','Bombay Sapphire · Larios 12 · Larios Rosé','8.50',['sulphite']);
+    sj('Ron','Rum','Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva','Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva','',['sulphite'],{priceRaw:true,price:'8.50 € · 12 €'});
+    sj('Whiskys','Whiskies','DYC 8 · Toki','DYC 8 · Toki','',[],{priceRaw:true,price:'8.50 € · 12 €'});
+    sj('Vodka','Vodka','Eristoff · Moskovskaya · Grey Goose','Eristoff · Moskovskaya · Grey Goose','',[],{priceRaw:true,price:'8.50 € · 12 €'});
+    sj('Tequilas','Tequilas','Jose Cuervo · Sauza Reposado · Patrón Blanco','Jose Cuervo · Sauza Reposado · Patrón Blanco','',[],{priceRaw:true,price:'8.50 € · 12 €'});
+    sj('Licores','Liqueurs','Jägermeister · Crema de orujo · Licor de hierbas · Malibu','Jägermeister · Orujo cream · Herb liqueur · Malibu','',['milk','sulphite'],{priceRaw:true,price:'5 € · 8.50 €'});
+    return m;
+  }
+  seedEvents(){ return [
+    {id:this.uid(), titleEs:'Sunset Sessions · DJ Marea', titleEn:'Sunset Sessions · DJ Marea', date:'2026-06-20', time:'19:00', descEs:'House melódico frente al mar mientras cae el sol.', descEn:'Melodic house facing the sea as the sun goes down.', image:'', published:true},
+    {id:this.uid(), titleEs:'Noche de Flamenco Fusión', titleEn:'Flamenco Fusion Night', date:'2026-06-27', time:'21:00', descEs:'Guitarra, cajón y voz en directo bajo las estrellas.', descEn:'Live guitar, cajón and vocals under the stars.', image:'', published:true},
+    {id:this.uid(), titleEs:'Full Moon Beach Party', titleEn:'Full Moon Beach Party', date:'2026-07-04', time:'22:00', descEs:'La fiesta más grande del verano sobre la arena.', descEn:'The biggest party of the summer on the sand.', image:'', published:true},
+    {id:this.uid(), titleEs:'Domingo de Paella', titleEn:'Paella Sunday', date:'2026-07-12', time:'14:00', descEs:'Paella valenciana, sangría y sobremesa larga.', descEn:'Valencian paella, sangria and a long lunch.', image:'', published:true},
+    {id:this.uid(), titleEs:'White Party 2026', titleEn:'White Party 2026', date:'2026-05-30', time:'21:00', descEs:'Todo de blanco. Una noche inolvidable.', descEn:'All in white. An unforgettable night.', image:'', published:true},
+    {id:this.uid(), titleEs:'Opening Night', titleEn:'Opening Night', date:'2026-06-06', time:'20:00', descEs:'Arrancó la temporada por todo lo alto.', descEn:'The season kicked off in style.', image:'', published:true}
+  ]; }
+  seedStaff(){ return [
+    {id:'st1', name:'Lucía Romero', role:'Bar', phone:'612 100 201', pin:'1234'},
+    {id:'st2', name:'Marco Díaz', role:'Server', phone:'612 100 202', pin:'2345'},
+    {id:'st3', name:'Elena Costa', role:'Server', phone:'612 100 203', pin:'3456'},
+    {id:'st4', name:'Javier Ruiz', role:'Vendor', phone:'612 100 204', pin:'4567'}
+  ]; }
+  seedShifts(staff){ const d=['2026-06-15','2026-06-16','2026-06-17','2026-06-18','2026-06-19','2026-06-20','2026-06-21'];
+    const mk=(staffId,date,start,end,position,changed)=>({id:this.uid(),staffId,date,start,end,position,changed:!!changed});
+    return [
+      mk('st1','2026-06-15','12:00','20:00','Bar'), mk('st2','2026-06-15','12:00','18:00','Terrace'),
+      mk('st3','2026-06-16','16:00','24:00','Terrace'), mk('st1','2026-06-16','16:00','24:00','Bar'),
+      mk('st4','2026-06-17','11:00','17:00','Beach Service'), mk('st2','2026-06-17','17:00','24:00','Terrace',true),
+      mk('st3','2026-06-18','12:00','20:00','Terrace'), mk('st1','2026-06-19','16:00','24:00','Bar'),
+      mk('st2','2026-06-20','12:00','20:00','Terrace'), mk('st4','2026-06-20','18:00','02:00','Beach Service',true),
+      mk('st3','2026-06-21','12:00','20:00','Terrace'), mk('st1','2026-06-21','12:00','20:00','Bar')
+    ];
+  }
+
+  // ---------- shared UI ----------
+  get h(){ return React.createElement; }
+  wrap(kids, max){ const h=this.h; return h('div',{style:{maxWidth:(max||1200)+'px',margin:'0 auto',padding:'0 24px',width:'100%'}}, kids); }
+  btn(label, onClick, variant, extra){ const h=this.h, C=this.C;
+    const base={display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'8px',cursor:'pointer',border:'none',borderRadius:'999px',fontFamily:'Archivo',fontWeight:800,fontSize:'14px',letterSpacing:'.04em',textTransform:'uppercase',padding:'13px 26px',transition:'transform .15s ease, box-shadow .2s ease, background .2s ease',textDecoration:'none'};
+    const v={
+      red:{background:C.red,color:'#fff',boxShadow:'0 10px 24px rgba(224,56,43,.32)'},
+      navy:{background:C.navy,color:'#fff'},
+      sea:{background:C.sea,color:'#fff',boxShadow:'0 10px 24px rgba(25,167,184,.3)'},
+      ghost:{background:'transparent',color:C.navy,border:'2px solid '+C.navy},
+      ghostLight:{background:'rgba(255,255,255,.12)',color:'#fff',border:'2px solid rgba(255,255,255,.7)'},
+      gold:{background:C.gold,color:C.navyDeep}
+    }[variant||'red'];
+    return h('button',{onClick,style:Object.assign({},base,v,extra||{}),onMouseEnter:e=>{e.currentTarget.style.transform='translateY(-2px)';},onMouseLeave:e=>{e.currentTarget.style.transform='translateY(0)';}}, label);
+  }
+  eyebrow(txt, color){ const h=this.h, C=this.C; return h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'13px',letterSpacing:'.28em',textTransform:'uppercase',color:color||C.red}}, txt); }
+  wordmark(size, light){ const h=this.h, C=this.C; return h('span',{style:{fontFamily:'Anton',fontSize:(size||26)+'px',letterSpacing:'.02em',color:light?'#fff':C.red,lineHeight:1,display:'inline-block'}}, 'COPITÝ'); }
+
+  renderToast(){ if(!this.state.toast) return null; const h=this.h, C=this.C;
+    return h('div',{style:{position:'fixed',bottom:'26px',left:'50%',transform:'translateX(-50%)',zIndex:200,background:C.navyDeep,color:'#fff',padding:'15px 26px',borderRadius:'999px',fontWeight:700,fontSize:'14px',boxShadow:'0 16px 40px rgba(12,28,46,.4)',animation:'copFadeUp .3s ease',display:'flex',alignItems:'center',gap:'10px'}},
+      h('span',{style:{width:'9px',height:'9px',borderRadius:'50%',background:C.sea,display:'inline-block'}}),
+      this.state.toast);
+  }
+
+  renderApp(){ const h=this.h, C=this.C; const r=this.state.route;
+    if(r==='menu-qr') return h('div',{}, this.renderQR(), this.renderToast());
+    const isPortal = (r==='admin'||r==='staff');
+    return h('div',{style:{minHeight:'100vh',background:C.cream,display:'flex',flexDirection:'column'}},
+      isPortal? null : this.renderNav(),
+      h('main',{id:'cop-scroll',style:{flex:1}}, this.renderScreen()),
+      isPortal? null : this.renderFooter(),
+      this.renderLightbox(),
+      this.renderToast()
+    );
+  }
+  renderScreen(){ const r=this.state.route;
+    switch(r){
+      case 'home': return this.renderHome();
+      case 'menu': return this.renderMenu();
+      case 'events': return this.renderEvents();
+      case 'reservations': return this.renderReservations();
+      case 'vip': return this.renderVip();
+      case 'admin': return this.renderAdmin();
+      case 'staff': return this.renderStaff();
+      default: return this.renderHome();
+    }
+  }
+
+  // ---------- NAV ----------
+  navLinks(){ return [
+    ['home', this.t('Inicio','Home','Accueil')],
+    ['menu', this.t('Carta','Menu','Carte')],
+    ['events', this.t('Eventos','Events','Événements')],
+    ['reservations', this.t('Reservas','Reservations','Réservations')],
+    ['vip', this.t('VIP','VIP','VIP')]
+  ]; }
+  renderNav(){ const h=this.h, C=this.C; const r=this.state.route;
+    const link=(id,label)=>h('button',{key:id,onClick:()=>this.go(id),style:{background:'none',border:'none',cursor:'pointer',fontFamily:'Archivo',fontWeight:700,fontSize:'15px',color:r===id?C.red:C.navy,padding:'6px 0',position:'relative',letterSpacing:'.01em'}},
+      label, r===id?h('span',{style:{position:'absolute',left:0,right:0,bottom:'-3px',height:'3px',background:C.red,borderRadius:'3px'}}):null);
+    const langPill=h('div',{style:{display:'inline-flex',border:'2px solid '+C.line,borderRadius:'999px',overflow:'hidden',background:'#fff'}},
+      ['fr','en','es'].map(l=>h('button',{key:l,onClick:()=>this.setLang(l),style:{border:'none',cursor:'pointer',padding:'6px 10px',fontFamily:'Archivo',fontWeight:800,fontSize:'12px',letterSpacing:'.06em',background:this.state.lang===l?C.navy:'transparent',color:this.state.lang===l?'#fff':C.muted}}, l.toUpperCase())));
+    return h('header',{style:{position:'sticky',top:0,zIndex:120,background:'rgba(245,240,232,.88)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',borderBottom:'1px solid '+C.line}},
+      h('div',{style:{maxWidth:'1280px',margin:'0 auto',padding:'0 24px',height:'70px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'18px'}},
+        h('button',{onClick:()=>this.go('home'),style:{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'baseline',gap:'11px',padding:0}},
+          h('span',{style:{fontFamily:'Anton',fontSize:'27px',color:C.red,letterSpacing:'.01em'}},'COPITÝ'),
+          h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.34em',color:C.navy,textTransform:'uppercase'}},'Beach Club')
+        ),
+        h('nav',{className:'cop-navlinks',style:{display:'flex',alignItems:'center',gap:'30px'}}, this.navLinks().map(([id,l])=>link(id,l))),
+        h('div',{style:{display:'flex',alignItems:'center',gap:'12px'}},
+          langPill,
+          h('div',{className:'cop-navcta'}, this.btn(this.t('Reservar','Book'),()=>this.go('reservations'),'red',{padding:'10px 20px',fontSize:'13px'})),
+          h('button',{className:'cop-burger',onClick:()=>this.setState({navOpen:!this.state.navOpen}),style:{display:'none',background:C.navy,border:'none',borderRadius:'10px',width:'42px',height:'42px',cursor:'pointer',flexDirection:'column',gap:'4px',alignItems:'center',justifyContent:'center'}},
+            [0,1,2].map(i=>h('span',{key:i,style:{width:'18px',height:'2px',background:'#fff',display:'block'}})))
+        )
+      ),
+      this.state.navOpen? h('div',{style:{borderTop:'1px solid '+C.line,background:C.cream,padding:'12px 24px 18px'}},
+        h('div',{style:{display:'flex',flexDirection:'column',gap:'4px'}},
+          this.navLinks().map(([id,l])=>h('button',{key:id,onClick:()=>this.go(id),style:{textAlign:'left',background:'none',border:'none',padding:'12px 4px',fontFamily:'Archivo',fontWeight:700,fontSize:'17px',color:r===id?C.red:C.navy,borderBottom:'1px solid '+C.line,cursor:'pointer'}}, l)),
+          h('div',{style:{marginTop:'10px'}}, this.btn(this.t('Reservar mesa','Book a table'),()=>this.go('reservations'),'red'))
+        )
+      ):null,
+      h('style',{},'@media(max-width:880px){.cop-navlinks{display:none!important}.cop-navcta{display:none!important}.cop-burger{display:flex!important}}')
+    );
+  }
+
+  // ---------- FOOTER ----------
+  renderFooter(){ const h=this.h, C=this.C;
+    const colTitle=t=>h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'12px',letterSpacing:'.22em',textTransform:'uppercase',color:C.gold,marginBottom:'16px'}}, t);
+    const ln=(txt,on)=>h('button',{key:txt,onClick:on,style:{display:'block',background:'none',border:'none',color:'rgba(255,255,255,.82)',padding:'5px 0',cursor:on?'pointer':'default',fontFamily:'Archivo',fontSize:'15px',textAlign:'left'}}, txt);
+    return h('footer',{style:{background:C.navyDeep,color:'#fff',paddingTop:'64px'}},
+      h('div',{style:{maxWidth:'1200px',margin:'0 auto',padding:'0 24px',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:'40px'}},
+        h('div',{},
+          h('div',{style:{fontFamily:'Anton',fontSize:'34px',color:C.red,lineHeight:1}},'COPITÝ'),
+          h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.34em',marginTop:'4px',color:'rgba(255,255,255,.7)'}},'BEACH CLUB'),
+          h('p',{style:{marginTop:'18px',color:'rgba(255,255,255,.72)',fontSize:'15px',lineHeight:1.7,maxWidth:'240px'}}, this.t('Verano sin fin en Playa San Juan. Comida fresca, cócteles y atardeceres frente al Mediterráneo.','Endless summer on Playa San Juan. Fresh food, cocktails and sunsets facing the Mediterranean.'))
+        ),
+        h('div',{}, colTitle(this.t('Visítanos','Visit Us')),
+          h('div',{style:{color:'rgba(255,255,255,.82)',fontSize:'15px',lineHeight:1.9}},'Avda. Niza 32',h('br'),'Playa San Juan',h('br'),'03540 Alicante, España')
+        ),
+        h('div',{}, colTitle(this.t('Contacto','Contact')),
+          ln('610 367 640', ()=>{window.location.href='tel:+34610367640';}),
+          ln('@copitybeachclub', ()=>{window.open('https://instagram.com/copitybeachclub','_blank');}),
+          ln('WhatsApp', ()=>{window.open('https://wa.me/34610367640','_blank');})
+        ),
+        h('div',{}, colTitle(this.t('Explora','Explore')),
+          this.navLinks().map(([id,l])=>ln(l,()=>this.go(id))),
+          ln(this.t('Carta QR','Menu QR'), ()=>this.go('menu-qr'))
+        ),
+        h('div',{}, colTitle(this.t('Equipo','Team')),
+          ln(this.t('Acceso Staff','Staff Portal'), ()=>this.go('staff')),
+          ln(this.t('Panel Admin','Admin Panel'), ()=>this.go('admin'))
+        )
+      ),
+      h('div',{style:{maxWidth:'1200px',margin:'40px auto 0',padding:'22px 24px',borderTop:'1px solid rgba(255,255,255,.12)',display:'flex',flexWrap:'wrap',gap:'12px',justifyContent:'space-between',alignItems:'center'}},
+        h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'13px'}},'© 2026 Copity Beach Club'),
+        h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'12px',maxWidth:'620px',textAlign:'right',lineHeight:1.6}}, this.t('Información de alérgenos disponible en carta. Consulta a nuestro equipo sobre cualquier alergia o intolerancia.','Allergen information available on the menu. Please ask our team about any allergy or intolerance.'))
+      ),
+      h('div',{style:{height:'10px',background:'linear-gradient(90deg,'+C.red+' 0 33%,'+C.gold+' 33% 66%,'+C.sea+' 66% 100%)',marginTop:'24px'}})
+    );
+  }
+
+  // ---------- HOME ----------
+  renderHome(){ const h=this.h, C=this.C;
+    const stat=(n,l)=>h('div',{key:l,style:{textAlign:'center'}},
+      h('div',{style:{fontFamily:'Anton',fontSize:'40px',color:C.gold,lineHeight:1}}, n),
+      h('div',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',letterSpacing:'.16em',textTransform:'uppercase',color:'rgba(255,255,255,.7)',marginTop:'6px'}}, l));
+    // hero
+    const hero=h('section',{style:{position:'relative',minHeight:'88vh',display:'flex',alignItems:'flex-end',overflow:'hidden'}},
+      h('img',{src:this.IMG.bar,alt:'Copity Beach Club',style:{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}),
+      h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(12,28,46,.45) 0%,rgba(12,28,46,.15) 40%,rgba(12,28,46,.82) 100%)'}}),
+      h('div',{style:{position:'relative',width:'100%',maxWidth:'1280px',margin:'0 auto',padding:'0 24px 64px'}},
+        h('div',{style:{animation:'copFadeUp .8s ease both'}},
+          this.eyebrow('Copity Beach Club · Playa San Juan · Alicante', C.gold),
+          h('h1',{style:{fontFamily:'Anton',fontSize:'clamp(56px,11vw,160px)',color:'#fff',margin:'14px 0 0',lineHeight:.92,letterSpacing:'.01em',textShadow:'0 6px 30px rgba(0,0,0,.3)'}},
+            'ENDLESS', h('br'), h('span',{style:{color:C.red}},'SUMMER')),
+          h('p',{style:{color:'rgba(255,255,255,.92)',fontSize:'clamp(16px,2vw,21px)',maxWidth:'520px',margin:'22px 0 30px',lineHeight:1.6,fontWeight:500}}, this.t('Comida fresca, cócteles a pie de playa y los mejores atardeceres del Mediterráneo.','Fresh food, cocktails by the shore and the finest Mediterranean sunsets.','Cuisine fraîche, cocktails les pieds dans le sable et les plus beaux couchers de soleil de la Méditerranée.')),
+          h('div',{style:{display:'flex',gap:'14px',flexWrap:'wrap'}},
+            this.btn(this.t('Reservar mesa','Book a table','Réserver une table'),()=>this.go('reservations'),'red'),
+            this.btn(this.t('Ver la carta','View the menu','Voir la carte'),()=>this.go('menu'),'ghostLight')
+          ),
+          h('div',{style:{display:'flex',gap:'48px',marginTop:'46px',flexWrap:'wrap'}}, stat('12—02h', this.t('Cada día','Every day','Tous les jours')), stat('100m', this.t('De arena','Of sand','De sable')), stat('∞', this.t('Verano','Summer','Été')))
+        )
+      )
+    );
+    // quick cards
+    const card=(img,kicker,title,desc,cta,route,accent)=>h('button',{key:title,onClick:()=>this.go(route),style:{textAlign:'left',cursor:'pointer',border:'none',padding:0,background:C.card,borderRadius:'22px',overflow:'hidden',boxShadow:'0 18px 40px rgba(19,41,63,.1)',display:'flex',flexDirection:'column',transition:'transform .25s ease, box-shadow .25s ease'},onMouseEnter:e=>{e.currentTarget.style.transform='translateY(-8px)';e.currentTarget.style.boxShadow='0 28px 60px rgba(19,41,63,.18)';},onMouseLeave:e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 18px 40px rgba(19,41,63,.1)';}},
+      h('div',{style:{height:'190px',position:'relative',overflow:'hidden'}}, h('img',{src:img,alt:title,style:{width:'100%',height:'100%',objectFit:'cover'}}), h('div',{style:{position:'absolute',top:'14px',left:'14px',background:accent,color:'#fff',fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.16em',textTransform:'uppercase',padding:'6px 12px',borderRadius:'999px'}}, kicker)),
+      h('div',{style:{padding:'24px'}},
+        h('h3',{style:{fontFamily:'Anton',fontSize:'26px',color:C.navy,margin:'0 0 8px'}}, title),
+        h('p',{style:{color:C.muted,fontSize:'15px',lineHeight:1.6,margin:'0 0 16px'}}, desc),
+        h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'13px',letterSpacing:'.06em',textTransform:'uppercase',color:accent}}, cta+' →')
+      )
+    );
+    const quick=h('section',{style:{padding:'90px 0'}}, this.wrap(h('div',{},
+      h('div',{style:{textAlign:'center',marginBottom:'46px'}}, this.eyebrow(this.t('Bienvenido a Copity','Welcome to Copity','Bienvenue à Copity')), h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(34px,5vw,52px)',color:C.navy,margin:'10px 0 0'}}, this.t('Tu día perfecto de playa','Your perfect beach day','Votre journée plage parfaite'))),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'26px'}},
+        card(this.IMG.food, this.t('La carta','The menu','La carte'), this.t('Ver la carta','View Menu','Voir la carte'), this.t('Pica pica, burgers, ensaladas frescas y mucho más a pie de playa.','Beach bites, burgers, fresh salads and much more by the shore.','Tapas, burgers, salades fraîches et bien plus, les pieds dans le sable.'), this.t('Explorar','Explore','Explorer'),'menu',C.red),
+        card(this.IMG.bar, this.t('Reserva','Book','Réserver'), this.t('Reservar mesa','Book a Table','Réserver une table'), this.t('Asegura tu mesa frente al mar para comer, cenar o copas al atardecer.','Secure your seafront table for lunch, dinner or sunset drinks.','Réservez votre table face à la mer pour déjeuner, dîner ou prendre un verre.'), this.t('Reservar','Reserve','Réserver'),'reservations',C.sea),
+        card(this.IMG.boards, this.t('Agenda','Agenda','Agenda'), this.t('Próximos eventos','Upcoming Events','Événements à venir'), this.t('DJs al atardecer, fiestas de luna llena y domingos de paella.','Sunset DJs, full-moon parties and paella Sundays.','DJs au coucher du soleil, soirées pleine lune et dimanches paella.'), this.t('Ver agenda','See events','Voir l\u2019agenda'),'events',C.gold)
+      )
+    )));
+    // marquee
+    const words=['ENDLESS SUMMER','COPITÝ BEACH CLUB','PLAYA SAN JUAN','SUNSET COCKTAILS','FRESH FOOD'];
+    const strip=h('div',{style:{background:C.red,padding:'18px 0',overflow:'hidden',whiteSpace:'nowrap'}},
+      h('div',{style:{display:'inline-flex',gap:'40px',animation:'copMarquee 28s linear infinite'}},
+        [0,1].map(k=>h('span',{key:k,style:{display:'inline-flex',gap:'40px'}}, words.concat(words).map((w,i)=>h('span',{key:i,style:{fontFamily:'Anton',fontSize:'24px',color:'#fff',letterSpacing:'.04em',display:'inline-flex',alignItems:'center',gap:'40px'}}, w, h('span',{style:{color:C.gold}},'✦')))))));
+    // gallery — pictures & videos
+    const gallery=this.renderGallery();
+    // newsletter
+    const news=h('section',{style:{padding:'0 0 90px'}}, this.wrap(
+      h('div',{style:{background:'linear-gradient(135deg,'+C.navy+' 0%,'+C.navyDeep+' 100%)',borderRadius:'28px',padding:'56px 40px',position:'relative',overflow:'hidden'}},
+        h('div',{style:{position:'absolute',right:'-40px',top:'-40px',width:'200px',height:'200px',borderRadius:'50%',background:'rgba(25,167,184,.18)'}}),
+        h('div',{style:{position:'absolute',right:'90px',bottom:'-60px',width:'160px',height:'160px',borderRadius:'50%',background:'rgba(224,56,43,.18)'}}),
+        h('div',{style:{position:'relative',maxWidth:'560px'}},
+          this.eyebrow(this.t('Newsletter','Newsletter','Newsletter'), C.gold),
+          h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(28px,4vw,42px)',color:'#fff',margin:'10px 0 12px'}}, this.t('No te pierdas ni un atardecer','Never miss a sunset','Ne manquez aucun coucher de soleil')),
+          h('p',{style:{color:'rgba(255,255,255,.78)',fontSize:'16px',margin:'0 0 22px',lineHeight:1.6}}, this.t('Eventos, ofertas y novedades directos a tu correo.','Events, offers and news straight to your inbox.','Événements, offres et nouveautés directement dans votre boîte mail.')),
+          h('div',{style:{display:'flex',gap:'10px',flexWrap:'wrap'}},
+            h('input',{value:this.state.newsEmail,onChange:e=>this.setState({newsEmail:e.target.value}),placeholder:this.t('Tu email','Your email','Votre email'),style:{flex:'1 1 240px',border:'none',borderRadius:'999px',padding:'15px 22px',fontSize:'15px',outline:'none'}}),
+            this.btn(this.t('Suscribirme','Subscribe','S\u2019abonner'),()=>{ if(!this.state.newsEmail.includes('@')){this.toast(this.t('Introduce un email válido','Enter a valid email','Entrez un email valide'));return;} const n=this.load('news',[]); n.push({email:this.state.newsEmail,at:Date.now()}); this.save('news',n); this.setState({newsEmail:''}); this.toast(this.t('¡Suscrito! Nos vemos en la playa','Subscribed! See you on the beach','Inscrit ! On se voit à la plage')); },'red')
+          )
+        )
+      )
+    ));
+    return h('div',{}, hero, strip, quick, gallery, news);
+  }
+  galleryItems(){ const I=this.IMG; return [
+    {src:I.food, type:'video', cls:'big', dur:'1:24'},
+    {src:I.bar, type:'photo', cls:''},
+    {src:I.boards, type:'photo', cls:'tall'},
+    {src:I.bar, type:'video', cls:'wide', dur:'0:38'},
+    {src:I.food, type:'photo', cls:''},
+    {src:I.boards, type:'video', cls:'', dur:'0:52'},
+    {src:I.bar, type:'photo', cls:'wide'},
+    {src:I.food, type:'photo', cls:''},
+    {src:I.boards, type:'photo', cls:''}
+  ]; }
+  renderGallery(){ const h=this.h, C=this.C;
+    const items=this.galleryItems();
+    const tile=(m,i)=>h('button',{key:i,className:'cop-gtile '+m.cls,onClick:()=>this.setState({lightbox:Object.assign({i},m)}),style:{position:'relative',padding:0,border:'none',cursor:'pointer',borderRadius:'16px',overflow:'hidden',background:C.navyDeep}},
+      h('img',{src:m.src,alt:'',loading:'lazy',style:{width:'100%',height:'100%',objectFit:'cover',display:'block',transition:'transform .5s ease'},onMouseEnter:e=>e.currentTarget.style.transform='scale(1.06)',onMouseLeave:e=>e.currentTarget.style.transform='scale(1)'}),
+      m.type==='video'? h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(12,28,46,.05),rgba(12,28,46,.35))',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none'}},
+        h('div',{style:{width:'56px',height:'56px',borderRadius:'50%',background:'rgba(255,255,255,.92)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 8px 24px rgba(0,0,0,.3)'}},
+          h('div',{style:{width:0,height:0,borderTop:'10px solid transparent',borderBottom:'10px solid transparent',borderLeft:'16px solid '+C.red,marginLeft:'4px'}}))
+      ):null,
+      m.type==='video'? h('span',{style:{position:'absolute',bottom:'10px',right:'10px',background:'rgba(12,28,46,.8)',color:'#fff',fontFamily:'Archivo',fontWeight:700,fontSize:'11px',padding:'3px 8px',borderRadius:'999px',pointerEvents:'none'}}, m.dur):null,
+      h('span',{style:{position:'absolute',top:'10px',left:'10px',background:m.type==='video'?C.red:'rgba(255,255,255,.92)',color:m.type==='video'?'#fff':C.navy,fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.1em',textTransform:'uppercase',padding:'4px 9px',borderRadius:'999px',pointerEvents:'none'}}, m.type==='video'?this.t('Vídeo','Video','Vidéo'):this.t('Foto','Photo','Photo'))
+    );
+    return h('section',{style:{padding:'30px 0 90px'}}, this.wrap(h('div',{},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:'14px',marginBottom:'28px'}},
+        h('div',{}, this.eyebrow(this.t('La esencia','The vibe','L\u2019ambiance')), h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(32px,5vw,52px)',color:C.navy,margin:'8px 0 0'}}, this.t('El ambiente Copity','The Copity vibe','L\u2019ambiance Copity'))),
+        h('div',{style:{display:'flex',alignItems:'center',gap:'8px',color:C.muted,fontWeight:600,fontSize:'14px'}}, this.t('Fotos y vídeos de la temporada','Photos & videos from the season','Photos et vidéos de la saison'))
+      ),
+      h('div',{className:'cop-gallery'}, items.map(tile)),
+      h('style',{},'.cop-gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:175px;grid-auto-flow:dense;gap:12px}.cop-gtile{grid-column:span 1;grid-row:span 1}.cop-gtile.big{grid-column:span 2;grid-row:span 2}.cop-gtile.wide{grid-column:span 2}.cop-gtile.tall{grid-row:span 2}@media(max-width:880px){.cop-gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}.cop-gtile.big{grid-column:span 2;grid-row:span 2}.cop-gtile.wide{grid-column:span 2}.cop-gtile.tall{grid-row:span 1}}')
+    )));
+  }
+  renderLightbox(){ const lb=this.state.lightbox; if(!lb) return null; const h=this.h, C=this.C;
+    return h('div',{onClick:()=>this.setState({lightbox:null}),style:{position:'fixed',inset:0,zIndex:320,background:'rgba(8,18,30,.92)',display:'flex',alignItems:'center',justifyContent:'center',padding:'28px',cursor:'zoom-out',animation:'copFadeUp .25s ease'}},
+      h('button',{onClick:()=>this.setState({lightbox:null}),style:{position:'absolute',top:'20px',right:'24px',width:'44px',height:'44px',borderRadius:'50%',border:'none',background:'rgba(255,255,255,.14)',color:'#fff',fontSize:'24px',cursor:'pointer'}}, '×'),
+      h('div',{onClick:e=>e.stopPropagation(),style:{position:'relative',maxWidth:'1000px',width:'100%',maxHeight:'86vh',borderRadius:'18px',overflow:'hidden',boxShadow:'0 30px 90px rgba(0,0,0,.6)',cursor:'default'}},
+        h('img',{src:lb.src,alt:'',style:{width:'100%',maxHeight:'86vh',objectFit:'contain',display:'block',background:'#000'}}),
+        lb.type==='video'? h('div',{style:{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(12,28,46,.32)'}},
+          h('div',{style:{width:'84px',height:'84px',borderRadius:'50%',background:'rgba(255,255,255,.95)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 12px 36px rgba(0,0,0,.4)'}},
+            h('div',{style:{width:0,height:0,borderTop:'15px solid transparent',borderBottom:'15px solid transparent',borderLeft:'24px solid '+C.red,marginLeft:'6px'}}))
+        ):null,
+        h('div',{style:{position:'absolute',left:'16px',bottom:'14px',background:lb.type==='video'?C.red:'rgba(255,255,255,.92)',color:lb.type==='video'?'#fff':C.navy,fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',padding:'5px 11px',borderRadius:'999px'}}, lb.type==='video'?(this.t('Vídeo','Video','Vidéo')+(lb.dur?' · '+lb.dur:'')):this.t('Foto','Photo','Photo'))
+      )
+    );
+  }
+
+  // ---------- stubs (built next) ----------
+  pageHead(kicker,title,sub,img){ const h=this.h,C=this.C;
+    return h('section',{style:{position:'relative',background:C.navyDeep,overflow:'hidden'}},
+      img? h('img',{src:img,alt:'',style:{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:.32}}):null,
+      h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(12,28,46,.6),rgba(12,28,46,.85))'}}),
+      h('div',{style:{position:'relative',maxWidth:'1200px',margin:'0 auto',padding:'76px 24px 60px',textAlign:'center'}},
+        this.eyebrow(kicker, C.gold),
+        h('h1',{style:{fontFamily:'Anton',fontSize:'clamp(40px,7vw,82px)',color:'#fff',margin:'12px 0 0',lineHeight:1}}, title),
+        sub? h('p',{style:{color:'rgba(255,255,255,.8)',fontSize:'18px',maxWidth:'560px',margin:'18px auto 0',lineHeight:1.6}}, sub):null
+      )
+    );
+  }
+  allergenBadge(a){ const h=this.h,C=this.C; const map=this.ALLERGENS(); const nm=map[a]?map[a][this.state.lang==='es'?0:1]:a;
+    return h('span',{key:a,title:nm,style:{display:'inline-flex',alignItems:'center',fontFamily:'Archivo',fontWeight:700,fontSize:'10px',letterSpacing:'.04em',textTransform:'uppercase',color:C.seaDeep,background:C.seaSoft,border:'1px solid '+C.sea,borderRadius:'999px',padding:'2px 8px'}}, nm);
+  }
+  renderMenu(){ const h=this.h,C=this.C;
+    const cats=this.CATS();
+    const visible=this.state.menu.filter(it=>it.available);
+    const specials=visible.filter(it=>it.special);
+    const tab=this.state.menuTab;
+    const tabItems=visible.filter(it=>it.cat===tab);
+    const catLabel=c=>this.state.lang==='es'?c.es:c.en;
+    const tabBar=h('div',{style:{position:'sticky',top:'70px',zIndex:80,background:'rgba(245,240,232,.94)',backdropFilter:'blur(10px)',borderBottom:'1px solid '+C.line}},
+      h('div',{style:{maxWidth:'1200px',margin:'0 auto',padding:'12px 16px',display:'flex',gap:'8px',overflowX:'auto'}},
+        cats.map(c=>{ const on=c.id===tab; return h('button',{key:c.id,onClick:()=>this.setState({menuTab:c.id}),style:{whiteSpace:'nowrap',cursor:'pointer',border:'2px solid '+(on?C.red:'transparent'),background:on?C.red:'#fff',color:on?'#fff':C.navy,fontFamily:'Archivo',fontWeight:800,fontSize:'13px',letterSpacing:'.03em',padding:'9px 16px',borderRadius:'999px',boxShadow:on?'0 8px 18px rgba(224,56,43,.28)':'0 1px 3px rgba(19,41,63,.08)'}}, catLabel(c)); })
+      )
+    );
+    const row=it=>h('div',{key:it.id,style:{display:'flex',gap:'16px',padding:'20px 0',borderBottom:'1px solid '+C.line,alignItems:'flex-start'}},
+      h('div',{style:{flex:1}},
+        h('div',{style:{display:'flex',alignItems:'baseline',gap:'10px',flexWrap:'wrap'}},
+          h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'19px',color:C.navy}}, this.state.lang==='es'?it.es:it.en),
+          it.special? h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.1em',textTransform:'uppercase',color:'#fff',background:C.gold,padding:'2px 8px',borderRadius:'999px'}}, this.t('Especial','Special')):null,
+          this.state.lang==='es' && it.en!==it.es? h('span',{style:{fontFamily:'Archivo',fontWeight:600,fontSize:'13px',color:C.muted,fontStyle:'italic'}}, it.en):null
+        ),
+        (this.state.lang==='es'?it.descEs:it.descEn)? h('p',{style:{margin:'6px 0 0',color:C.muted,fontSize:'14.5px',lineHeight:1.55,maxWidth:'560px'}}, this.state.lang==='es'?it.descEs:it.descEn):null,
+        it.allergens && it.allergens.length? h('div',{style:{display:'flex',gap:'5px',flexWrap:'wrap',marginTop:'9px'}}, it.allergens.map(a=>this.allergenBadge(a))):null
+      ),
+      h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.red,whiteSpace:'nowrap',paddingTop:'2px'}}, this.money(it))
+    );
+    const specialsBlock=specials.length? h('section',{style:{padding:'46px 0 0'}}, this.wrap(
+      h('div',{style:{background:'linear-gradient(135deg,'+C.gold+' 0%,#f0b94a 100%)',borderRadius:'22px',padding:'28px 30px'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'16px'}}, h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'12px',letterSpacing:'.2em',textTransform:'uppercase',color:C.navyDeep}}, this.t('★ Especiales de hoy','★ Today\u2019s Specials'))),
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:'18px'}},
+          specials.map(it=>h('div',{key:it.id,style:{background:'rgba(255,255,255,.65)',borderRadius:'14px',padding:'16px 18px',display:'flex',justifyContent:'space-between',gap:'12px',alignItems:'baseline'}},
+            h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'16px',color:C.navyDeep}}, this.state.lang==='es'?it.es:it.en),
+            h('span',{style:{fontFamily:'Anton',fontSize:'18px',color:C.redDeep}}, this.money(it))))
+        )
+      )
+    )):null;
+    const legendKeys=Object.keys(this.ALLERGENS());
+    const legend=h('section',{style:{padding:'50px 0 90px'}}, this.wrap(
+      h('div',{style:{background:'#fff',borderRadius:'20px',padding:'30px 32px',boxShadow:'0 10px 30px rgba(19,41,63,.07)'}},
+        h('div',{style:{fontFamily:'Anton',fontSize:'24px',color:C.navy,marginBottom:'6px'}}, this.t('Alérgenos','Allergens')),
+        h('p',{style:{color:C.muted,fontSize:'14px',margin:'0 0 18px'}}, this.t('Consulta a nuestro equipo sobre cualquier alergia o intolerancia.','Please ask our team about any allergy or intolerance.')),
+        h('div',{style:{display:'flex',gap:'7px',flexWrap:'wrap'}}, legendKeys.map(a=>this.allergenBadge(a))),
+        h('div',{style:{marginTop:'24px',padding:'16px 18px',background:C.redSoft,borderRadius:'12px',borderLeft:'4px solid '+C.red,color:C.redDeep,fontWeight:600,fontSize:'14px'}}, this.t('Agradecemos el pago en el momento para agilizar el servicio.','We appreciate payment on the spot to speed up the service.'))
+      )
+    ));
+    return h('div',{},
+      this.pageHead(this.t('La Carta','The Menu'), this.t('CARTA','MENU'), this.t('Pica pica frente al mar, cócteles y mucho verano.','Beach bites by the sea, cocktails and plenty of summer.'), this.IMG.food),
+      tabBar,
+      specialsBlock,
+      h('section',{style:{padding:'30px 0 0'}}, this.wrap(h('div',{},
+        h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(30px,4vw,42px)',color:C.navy,margin:'14px 0 4px'}}, catLabel(cats.find(c=>c.id===tab))),
+        h('div',{style:{width:'60px',height:'4px',background:C.red,borderRadius:'4px',margin:'0 0 8px'}}),
+        tabItems.length? tabItems.map(row) : h('p',{style:{color:C.muted,padding:'30px 0'}}, this.t('No hay platos disponibles en esta sección.','No items available in this section.'))
+      ))),
+      legend
+    );
+  }
+  renderEvents(){ const h=this.h,C=this.C;
+    const today=new Date('2026-06-14T00:00:00');
+    const pub=this.state.events.filter(e=>e.published);
+    const upcoming=pub.filter(e=>new Date(e.date+'T00:00:00')>=today).sort((a,b)=>a.date<b.date?-1:1);
+    const past=pub.filter(e=>new Date(e.date+'T00:00:00')<today).sort((a,b)=>a.date>b.date?-1:1);
+    const f=this.state.eventFilter;
+    const weekEnd=new Date(today); weekEnd.setDate(weekEnd.getDate()+7);
+    const monthEnd=new Date(today); monthEnd.setMonth(monthEnd.getMonth()+1);
+    const filtered=upcoming.filter(e=>{ const d=new Date(e.date+'T00:00:00'); if(f==='week') return d<=weekEnd; if(f==='month') return d<=monthEnd; return true; });
+    const filterBtn=(id,label)=>{ const on=f===id; return h('button',{key:id,onClick:()=>this.setState({eventFilter:id}),style:{cursor:'pointer',border:'2px solid '+(on?C.navy:C.line),background:on?C.navy:'#fff',color:on?'#fff':C.navy,fontFamily:'Archivo',fontWeight:800,fontSize:'13px',letterSpacing:'.04em',textTransform:'uppercase',padding:'9px 18px',borderRadius:'999px'}}, label); };
+    const dateBadge=e=>{ const d=new Date(e.date+'T00:00:00'); return h('div',{style:{position:'absolute',top:'14px',left:'14px',background:'#fff',borderRadius:'12px',padding:'8px 12px',textAlign:'center',boxShadow:'0 6px 16px rgba(19,41,63,.2)'}},
+      h('div',{style:{fontFamily:'Anton',fontSize:'24px',color:C.red,lineHeight:1}}, d.getDate()),
+      h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.12em',textTransform:'uppercase',color:C.navy}}, d.toLocaleDateString(this.state.lang==='es'?'es-ES':'en-GB',{month:'short'}))); };
+    const evImg=(i)=>[this.IMG.boards,this.IMG.bar,this.IMG.food][i%3];
+    const card=(e,i)=>h('div',{key:e.id,style:{background:'#fff',borderRadius:'20px',overflow:'hidden',boxShadow:'0 16px 40px rgba(19,41,63,.1)',display:'flex',flexDirection:'column'}},
+      h('div',{style:{position:'relative',height:'180px'}}, h('img',{src:e.image||evImg(i),alt:'',style:{width:'100%',height:'100%',objectFit:'cover'}}), dateBadge(e), h('div',{style:{position:'absolute',top:'14px',right:'14px',background:C.sea,color:'#fff',fontFamily:'Archivo',fontWeight:800,fontSize:'12px',padding:'5px 11px',borderRadius:'999px'}}, e.time)),
+      h('div',{style:{padding:'22px',display:'flex',flexDirection:'column',flex:1}},
+        h('h3',{style:{fontFamily:'Anton',fontSize:'23px',color:C.navy,margin:'0 0 8px',lineHeight:1.05}}, this.state.lang==='es'?e.titleEs:e.titleEn),
+        h('p',{style:{color:C.muted,fontSize:'14.5px',lineHeight:1.6,margin:'0 0 18px',flex:1}}, this.state.lang==='es'?e.descEs:e.descEn),
+        this.btn(this.t('Reservar / Info','Reserve / Info'),()=>this.go('reservations'),'red',{width:'100%'})
+      )
+    );
+    const priv=this.state.privForm;
+    const setP=(k,v)=>this.setState({privForm:Object.assign({},priv,{[k]:v})});
+    const field=(label,k,type,ph)=>h('div',{key:k,style:{display:'flex',flexDirection:'column',gap:'6px'}},
+      h('label',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',letterSpacing:'.08em',textTransform:'uppercase',color:C.navy}}, label),
+      h('input',{type:type||'text',value:priv[k],placeholder:ph||'',onChange:e=>setP(k,e.target.value),style:{border:'2px solid '+C.line,borderRadius:'12px',padding:'12px 14px',fontSize:'15px',outline:'none',background:'#fff'},onFocus:e=>e.target.style.borderColor=C.sea,onBlur:e=>e.target.style.borderColor=C.line}));
+    const privBlock=h('section',{style:{padding:'10px 0 90px'}}, this.wrap(
+      h('div',{style:{background:'linear-gradient(135deg,'+C.navy+','+C.navyDeep+')',borderRadius:'28px',padding:'48px 40px',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'40px',alignItems:'center'}},
+        h('div',{},
+          this.eyebrow(this.t('Eventos privados','Private events'),C.gold),
+          h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(30px,4vw,46px)',color:'#fff',margin:'12px 0 14px',lineHeight:1.02}}, this.t('Celebra en la playa','Host it on the beach')),
+          h('p',{style:{color:'rgba(255,255,255,.78)',fontSize:'16px',lineHeight:1.7,margin:0}}, this.t('Cumpleaños, despedidas, eventos de empresa o bodas frente al mar. Cuéntanos tu idea y la hacemos realidad.','Birthdays, hen parties, corporate events or seafront weddings. Tell us your idea and we\u2019ll make it happen.'))
+        ),
+        this.state.privDone? h('div',{style:{background:'rgba(255,255,255,.1)',borderRadius:'18px',padding:'40px',textAlign:'center',color:'#fff'}},
+          h('div',{style:{fontFamily:'Anton',fontSize:'30px',color:C.gold}}, this.t('¡Recibido!','Got it!')),
+          h('p',{style:{color:'rgba(255,255,255,.82)',margin:'10px 0 0'}}, this.t('Te contactaremos muy pronto.','We\u2019ll be in touch very soon.'))
+        ) : h('div',{style:{background:'#fff',borderRadius:'18px',padding:'28px'}},
+          h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}},
+            field(this.t('Nombre','Name'),'name'), field(this.t('Teléfono','Phone'),'phone','tel'),
+            field('Email','email','email'), field(this.t('Fecha','Date'),'date','date'),
+            field(this.t('Tipo de evento','Event type'),'type','text',this.t('Cumpleaños, empresa…','Birthday, corporate…'))
+          ),
+          h('div',{style:{marginTop:'14px',display:'flex',flexDirection:'column',gap:'6px'}},
+            h('label',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',letterSpacing:'.08em',textTransform:'uppercase',color:C.navy}}, this.t('Mensaje','Message')),
+            h('textarea',{value:priv.msg,onChange:e=>setP('msg',e.target.value),rows:3,style:{border:'2px solid '+C.line,borderRadius:'12px',padding:'12px 14px',fontSize:'15px',outline:'none',resize:'vertical',fontFamily:'Archivo'}})),
+          h('div',{style:{marginTop:'18px'}}, this.btn(this.t('Enviar solicitud','Send inquiry'),()=>{ if(!priv.name||!priv.phone){this.toast(this.t('Completa nombre y teléfono','Add name and phone'));return;} this.setState({privDone:true}); },'red',{width:'100%'}))
+        )
+      )
+    ));
+    return h('div',{},
+      this.pageHead(this.t('Agenda','What\u2019s on'), this.t('EVENTOS','EVENTS'), this.t('DJs al atardecer, fiestas de luna llena y mucho más.','Sunset DJs, full-moon parties and much more.'), this.IMG.boards),
+      h('section',{style:{padding:'46px 0 0'}}, this.wrap(h('div',{},
+        h('div',{style:{display:'flex',gap:'10px',marginBottom:'28px',flexWrap:'wrap'}}, filterBtn('week',this.t('Esta semana','This week')), filterBtn('month',this.t('Este mes','This month')), filterBtn('all',this.t('Todos','All'))),
+        filtered.length? h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(290px,1fr))',gap:'26px'}}, filtered.map((e,i)=>card(e,i))) : h('p',{style:{color:C.muted,padding:'30px 0'}}, this.t('No hay eventos en este periodo.','No events in this period.'))
+      ))),
+      past.length? h('section',{style:{padding:'70px 0 30px'}}, this.wrap(h('div',{},
+        this.eyebrow(this.t('Recuerdos','Memories')),
+        h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(28px,4vw,40px)',color:C.navy,margin:'10px 0 24px'}}, this.t('Eventos pasados','Past events')),
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:'12px'}},
+          past.concat(past).slice(0,6).map((e,i)=>h('div',{key:i,style:{position:'relative',paddingTop:'78%',borderRadius:'16px',overflow:'hidden'}},
+            h('img',{src:e.image||evImg(i+1),alt:'',style:{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}),
+            h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 40%,rgba(12,28,46,.85))'}}),
+            h('div',{style:{position:'absolute',left:'14px',right:'14px',bottom:'12px'}},
+              h('div',{style:{fontFamily:'Anton',fontSize:'16px',color:'#fff',lineHeight:1.1}}, this.state.lang==='es'?e.titleEs:e.titleEn),
+              h('div',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'11px',color:C.gold,marginTop:'3px'}}, this.fmtDate(e.date)))
+          ))
+        )
+      ))):null,
+      privBlock
+    );
+  }
+  inputBase(){ const C=this.C; return {border:'2px solid '+C.line,borderRadius:'12px',padding:'13px 15px',fontSize:'15px',outline:'none',background:'#fff',width:'100%',fontFamily:'Archivo'}; }
+  labeledField(label,node){ const h=this.h,C=this.C; return h('div',{style:{display:'flex',flexDirection:'column',gap:'7px'}}, h('label',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',letterSpacing:'.08em',textTransform:'uppercase',color:C.navy}}, label), node); }
+  renderReservations(){ const h=this.h,C=this.C;
+    const f=this.state.resForm; const set=(k,v)=>this.setState({resForm:Object.assign({},f,{[k]:v})});
+    const inp=(k,type,ph)=>h('input',{type:type||'text',value:f[k],placeholder:ph||'',onChange:e=>set(k,e.target.value),style:this.inputBase(),onFocus:e=>e.target.style.borderColor=C.sea,onBlur:e=>e.target.style.borderColor=C.line});
+    const submit=()=>{ if(!f.name||!f.date||!f.phone){ this.toast(this.t('Completa nombre, fecha y teléfono','Add name, date and phone')); return; } const r=this.load('res',[]); const rec=Object.assign({id:this.uid(),createdAt:Date.now(),status:'new'},f); r.push(rec); this.save('res',r); this.setState({reservations:r,resDone:true}); };
+    const form=this.state.resDone? h('div',{style:{background:'#fff',borderRadius:'22px',padding:'48px 36px',textAlign:'center',boxShadow:'0 16px 40px rgba(19,41,63,.1)'}},
+        h('div',{style:{width:'74px',height:'74px',borderRadius:'50%',background:C.seaSoft,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 18px',fontFamily:'Anton',fontSize:'34px',color:C.seaDeep}}, '✓'),
+        h('h2',{style:{fontFamily:'Anton',fontSize:'34px',color:C.navy,margin:'0 0 10px'}}, this.t('¡Reserva recibida!','Reservation received!')),
+        h('p',{style:{color:C.muted,fontSize:'16px',lineHeight:1.6,maxWidth:'420px',margin:'0 auto 8px'}}, this.t('Gracias, '+f.name+'. Te confirmaremos tu mesa para el '+this.fmtDate(f.date)+' muy pronto.','Thanks, '+f.name+'. We\u2019ll confirm your table for '+this.fmtDate(f.date)+' very soon.')),
+        h('div',{style:{display:'flex',gap:'12px',justifyContent:'center',marginTop:'22px',flexWrap:'wrap'}},
+          this.btn(this.t('Confirmar por WhatsApp','Confirm via WhatsApp'),()=>window.open('https://wa.me/34610367640?text='+encodeURIComponent('Hola Copity! Reserva para '+f.name+', '+f.guests+' pax, '+f.date+' '+f.time),'_blank'),'sea'),
+          this.btn(this.t('Nueva reserva','New booking'),()=>this.setState({resDone:false,resForm:{name:'',date:'',time:'',guests:'2',phone:'',requests:''}}),'ghost')
+        )
+      ) : h('div',{style:{background:'#fff',borderRadius:'22px',padding:'34px',boxShadow:'0 16px 40px rgba(19,41,63,.1)'}},
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px'}},
+          h('div',{style:{gridColumn:'1 / -1'}}, this.labeledField(this.t('Nombre completo','Full name'), inp('name','text',this.t('Tu nombre','Your name')))),
+          this.labeledField(this.t('Fecha','Date'), inp('date','date')),
+          this.labeledField(this.t('Hora','Time'), inp('time','time')),
+          this.labeledField(this.t('Comensales','Guests'), h('select',{value:f.guests,onChange:e=>set('guests',e.target.value),style:this.inputBase()}, ['1','2','3','4','5','6','7','8','9','10','+10'].map(n=>h('option',{key:n,value:n},n)))),
+          this.labeledField(this.t('Teléfono','Phone'), inp('phone','tel','610 000 000')),
+          h('div',{style:{gridColumn:'1 / -1'}}, this.labeledField(this.t('Peticiones especiales','Special requests'), h('textarea',{value:f.requests,onChange:e=>set('requests',e.target.value),rows:3,placeholder:this.t('Trona, alergias, mesa en primera línea…','High chair, allergies, front-row table…'),style:Object.assign({},this.inputBase(),{resize:'vertical'})})))
+        ),
+        h('div',{style:{marginTop:'22px',display:'flex',gap:'12px',flexWrap:'wrap'}},
+          this.btn(this.t('Confirmar reserva','Confirm booking'),submit,'red',{flex:'1 1 200px'}),
+          this.btn('WhatsApp',()=>window.open('https://wa.me/34610367640','_blank'),'sea')
+        ),
+        h('p',{style:{color:C.muted,fontSize:'13px',marginTop:'16px',textAlign:'center'}}, this.t('Las reservas se confirman por teléfono o WhatsApp.','Bookings are confirmed by phone or WhatsApp.'))
+      );
+    return h('div',{},
+      this.pageHead(this.t('Reservas','Reservations'), this.t('RESERVA TU MESA','BOOK A TABLE'), this.t('Tu sitio frente al mar te está esperando.','Your seafront spot is waiting.'), this.IMG.bar),
+      h('section',{style:{padding:'56px 0 90px'}}, this.wrap(h('div',{style:{display:'grid',gridTemplateColumns:'minmax(0,1.4fr) minmax(0,1fr)',gap:'40px',alignItems:'start'},className:'cop-resgrid'},
+        form,
+        h('div',{style:{display:'flex',flexDirection:'column',gap:'18px'}},
+          h('div',{style:{background:'linear-gradient(135deg,'+C.sea+','+C.seaDeep+')',borderRadius:'20px',padding:'28px',color:'#fff'}},
+            h('div',{style:{fontFamily:'Anton',fontSize:'24px',marginBottom:'8px'}}, this.t('Reserva rápida','Quick book')),
+            h('p',{style:{color:'rgba(255,255,255,.85)',fontSize:'15px',lineHeight:1.6,margin:'0 0 18px'}}, this.t('¿Prefieres hablar con nosotros? Escríbenos directamente.','Prefer to talk to us? Message us directly.')),
+            this.btn(this.t('Reservar por WhatsApp','Book via WhatsApp'),()=>window.open('https://wa.me/34610367640','_blank'),'gold',{width:'100%'})
+          ),
+          h('div',{style:{background:'#fff',borderRadius:'20px',padding:'28px',boxShadow:'0 10px 30px rgba(19,41,63,.07)'}},
+            h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy,marginBottom:'14px'}}, this.t('Buen saber','Good to know')),
+            [[this.t('Horario','Hours'),'12:00 — 02:00'],[this.t('Teléfono','Phone'),'610 367 640'],[this.t('Dirección','Address'),'Avda. Niza 32, Playa San Juan']].map(([k,v])=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',gap:'12px',padding:'10px 0',borderBottom:'1px solid '+C.line}}, h('span',{style:{color:C.muted,fontSize:'14px'}},k), h('span',{style:{fontWeight:700,color:C.navy,fontSize:'14px',textAlign:'right'}},v)))
+          )
+        )
+      ))),
+      h('style',{},'@media(max-width:780px){.cop-resgrid{grid-template-columns:1fr!important}}')
+    );
+  }
+  renderVip(){ const h=this.h,C=this.C; const f=this.state.vipForm; const set=(k,v)=>this.setState({vipForm:Object.assign({},f,{[k]:v})});
+    const perk=(n,title,desc)=>h('div',{key:title,style:{background:'rgba(255,255,255,.08)',borderRadius:'16px',padding:'22px',border:'1px solid rgba(255,255,255,.12)'}},
+      h('div',{style:{fontFamily:'Anton',fontSize:'30px',color:C.gold,lineHeight:1}}, n),
+      h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'17px',color:'#fff',margin:'10px 0 6px'}}, title),
+      h('p',{style:{color:'rgba(255,255,255,.72)',fontSize:'14px',lineHeight:1.55,margin:0}}, desc));
+    return h('div',{style:{background:'linear-gradient(160deg,'+C.navy+' 0%,'+C.navyDeep+' 100%)'}},
+      h('section',{style:{padding:'90px 0 30px'}}, this.wrap(h('div',{style:{textAlign:'center'}},
+        this.eyebrow(this.t('Club VIP','VIP Club'), C.gold),
+        h('h1',{style:{fontFamily:'Anton',fontSize:'clamp(40px,7vw,86px)',color:'#fff',margin:'14px 0 0',lineHeight:1}}, this.t('SÉ DE LOS NUESTROS','JOIN THE CLUB')),
+        h('p',{style:{color:'rgba(255,255,255,.8)',fontSize:'18px',maxWidth:'560px',margin:'18px auto 0',lineHeight:1.6}}, this.t('Acceso prioritario, ofertas exclusivas y sorpresas durante todo el verano.','Priority access, exclusive offers and surprises all summer long.'))
+      ))),
+      h('section',{style:{padding:'30px 0 10px'}}, this.wrap(h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'18px'}},
+        perk('01',this.t('Mesa garantizada','Priority table'),this.t('Reserva prioritaria los días de más afluencia.','Skip the wait on the busiest days.')),
+        perk('02',this.t('Ofertas solo VIP','VIP-only offers'),this.t('Cócteles 2x1 y descuentos exclusivos.','2-for-1 cocktails and exclusive discounts.')),
+        perk('03',this.t('Eventos privados','Private events'),this.t('Invitaciones a fiestas cerradas y previews.','Invites to closed parties and previews.')),
+        perk('04',this.t('Cumpleaños Copity','Copity birthday'),this.t('Una copa de regalo en tu día especial.','A drink on us on your special day.'))
+      ))),
+      h('section',{style:{padding:'40px 0 90px'}}, this.wrap(
+        h('div',{style:{maxWidth:'520px',margin:'0 auto',background:'#fff',borderRadius:'22px',padding:'34px'}},
+          this.state.vipDone? h('div',{style:{textAlign:'center',padding:'20px 0'}},
+            h('div',{style:{fontFamily:'Anton',fontSize:'34px',color:C.red}}, this.t('¡Bienvenido al club!','Welcome to the club!')),
+            h('p',{style:{color:C.muted,marginTop:'10px'}}, this.t('Pronto recibirás tus ventajas VIP.','Your VIP perks are on their way.'))
+          ) : h('div',{},
+            h('h2',{style:{fontFamily:'Anton',fontSize:'28px',color:C.navy,margin:'0 0 18px',textAlign:'center'}}, this.t('Únete gratis','Join for free')),
+            h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+              this.labeledField(this.t('Nombre','Name'), h('input',{value:f.name,onChange:e=>set('name',e.target.value),style:this.inputBase()})),
+              this.labeledField('Email', h('input',{type:'email',value:f.email,onChange:e=>set('email',e.target.value),style:this.inputBase()})),
+              this.labeledField(this.t('Teléfono','Phone'), h('input',{type:'tel',value:f.phone,onChange:e=>set('phone',e.target.value),style:this.inputBase()}))
+            ),
+            h('div',{style:{marginTop:'20px'}}, this.btn(this.t('Quiero ser VIP','Become a VIP'),()=>{ if(!f.name||!f.email.includes('@')){this.toast(this.t('Completa nombre y email','Add name and email'));return;} const v=this.load('vip',[]); v.push(Object.assign({at:Date.now()},f)); this.save('vip',v); this.setState({vipDone:true}); },'red',{width:'100%'}))
+          )
+        )
+      ))
+    );
+  }
+  renderQR(){ const h=this.h,C=this.C;
+    const qr=this.qrSvg('https://copitybeachclub.example/menu', 220);
+    return h('div',{style:{minHeight:'100vh',background:C.cream,display:'flex',alignItems:'center',justifyContent:'center',padding:'32px'}},
+      h('div',{style:{background:'#fff',borderRadius:'28px',padding:'48px 44px',textAlign:'center',boxShadow:'0 24px 70px rgba(19,41,63,.16)',maxWidth:'400px',width:'100%',border:'2px solid '+C.line}},
+        h('div',{style:{fontFamily:'Anton',fontSize:'40px',color:C.red,lineHeight:1}}, 'COPITÝ'),
+        h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'12px',letterSpacing:'.34em',color:C.navy,marginTop:'4px'}}, 'BEACH CLUB'),
+        h('div',{style:{margin:'30px auto',width:'248px',height:'248px',background:'#fff',border:'3px solid '+C.navy,borderRadius:'20px',display:'flex',alignItems:'center',justifyContent:'center',padding:'14px'}}, qr),
+        h('div',{style:{fontFamily:'Anton',fontSize:'26px',color:C.navy}}, this.t('ESCANEA LA CARTA','SCAN THE MENU')),
+        h('p',{style:{color:C.muted,fontSize:'14px',margin:'8px 0 0',lineHeight:1.5}}, this.t('Apunta con la cámara de tu móvil para ver la carta completa.','Point your phone camera to view the full menu.')),
+        h('div',{style:{marginTop:'26px',display:'flex',gap:'10px',justifyContent:'center'},className:'cop-noprint'},
+          this.btn(this.t('Imprimir','Print'),()=>window.print(),'navy',{padding:'10px 20px',fontSize:'13px'}),
+          this.btn(this.t('Volver','Back'),()=>this.go('home'),'ghost',{padding:'10px 20px',fontSize:'13px'})
+        ),
+        h('style',{},'@media print{.cop-noprint{display:none!important}body{background:#fff!important}}')
+      )
+    );
+  }
+  qrSvg(text,size){ const h=this.h,C=this.C; // decorative deterministic QR-style pattern
+    const n=21; const cell=size/n; const rects=[];
+    const seedStr=text; let seed=0; for(let i=0;i<seedStr.length;i++) seed=(seed*31+seedStr.charCodeAt(i))>>>0;
+    const rnd=()=>{ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; };
+    const finder=(ox,oy)=>{ for(let y=0;y<7;y++)for(let x=0;x<7;x++){ const edge=x===0||y===0||x===6||y===6; const core=x>=2&&x<=4&&y>=2&&y<=4; if(edge||core) rects.push(h('rect',{key:'f'+ox+oy+x+y,x:(ox+x)*cell,y:(oy+y)*cell,width:cell,height:cell,fill:C.navy})); } };
+    for(let y=0;y<n;y++) for(let x=0;x<n;x++){ const inFinder=(x<8&&y<8)||(x>=n-8&&y<8)||(x<8&&y>=n-8); if(inFinder) continue; if(rnd()>0.52) rects.push(h('rect',{key:'c'+x+y,x:x*cell,y:y*cell,width:cell,height:cell,fill:C.navy})); }
+    finder(0,0); finder(n-7,0); finder(0,n-7);
+    return h('svg',{width:size,height:size,viewBox:'0 0 '+size+' '+size,style:{display:'block'}}, rects);
+  }
+  MANAGERS(){ return { manager1:'copity2024', manager2:'copity2024' }; }
+  authPortal(opts){ const h=this.h,C=this.C; // shared login screen
+    return h('div',{style:{minHeight:'100vh',background:'linear-gradient(160deg,'+C.navy+' 0%,'+C.navyInk+' 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px'}},
+      h('div',{style:{width:'100%',maxWidth:'400px'}},
+        h('button',{onClick:()=>this.go('home'),style:{background:'none',border:'none',color:'rgba(255,255,255,.6)',cursor:'pointer',fontFamily:'Archivo',fontWeight:700,fontSize:'13px',marginBottom:'20px'}}, '← '+this.t('Volver al sitio','Back to site')),
+        h('div',{style:{background:'#fff',borderRadius:'24px',padding:'38px 32px',boxShadow:'0 30px 80px rgba(0,0,0,.4)'}},
+          h('div',{style:{textAlign:'center',marginBottom:'26px'}},
+            h('div',{style:{fontFamily:'Anton',fontSize:'34px',color:C.red,lineHeight:1}}, 'COPITÝ'),
+            h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.3em',color:C.navy,marginTop:'4px'}}, opts.label)
+          ),
+          opts.body
+        )
+      )
+    );
+  }
+  renderAdmin(){ const h=this.h,C=this.C;
+    if(!this.state.adminUser){
+      const lf=this.state.loginForm; const set=(k,v)=>this.setState({loginForm:Object.assign({},lf,{[k]:v}),loginErr:''});
+      const tryLogin=()=>{ const m=this.MANAGERS(); if(m[lf.user]&&m[lf.user]===lf.pass){ this.setState({adminUser:lf.user,loginErr:'',loginForm:{user:'',pass:''}}); this.save('adminUser',lf.user); this.toast(this.t('Sesión iniciada','Logged in')); } else { this.setState({loginErr:this.t('Usuario o contraseña incorrectos','Invalid username or password')}); } };
+      const body=h('div',{},
+        h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+          this.labeledField(this.t('Usuario','Username'), h('input',{value:lf.user,onChange:e=>set('user',e.target.value),placeholder:'manager1',style:this.inputBase()})),
+          this.labeledField(this.t('Contraseña','Password'), h('input',{type:'password',value:lf.pass,onKeyDown:e=>{if(e.key==='Enter')tryLogin();},onChange:e=>set('pass',e.target.value),placeholder:'••••••••',style:this.inputBase()}))
+        ),
+        this.state.loginErr? h('div',{style:{color:C.redDeep,fontSize:'13px',marginTop:'12px',fontWeight:600}}, this.state.loginErr):null,
+        h('div',{style:{marginTop:'20px'}}, this.btn(this.t('Entrar','Sign in'),tryLogin,'navy',{width:'100%'})),
+        h('div',{style:{marginTop:'18px',padding:'12px 14px',background:C.cream,borderRadius:'10px',fontSize:'12px',color:C.muted,lineHeight:1.6}}, h('strong',{},'Demo · '), 'manager1 / manager2 — copity2024')
+      );
+      return this.authPortal({label:this.t('PANEL DE GESTIÓN','MANAGER PANEL'), body});
+    }
+    const sec=this.state.adminSection;
+    const nav=[['dashboard',this.t('Resumen','Dashboard')],['menu',this.t('Carta','Menu')],['events',this.t('Eventos','Events')],['scheduler',this.t('Horarios','Scheduler')]];
+    const sidebar=h('aside',{className:'cop-adminside',style:{width:'230px',flexShrink:0,background:C.navyDeep,minHeight:'100vh',padding:'22px 16px',position:'sticky',top:0,alignSelf:'flex-start'}},
+      h('div',{style:{display:'flex',alignItems:'baseline',gap:'10px',padding:'6px 10px 22px'}}, h('span',{style:{fontFamily:'Anton',fontSize:'24px',color:C.red}},'COPITÝ'), h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'9px',letterSpacing:'.2em',color:'rgba(255,255,255,.6)'}},'ADMIN')),
+      h('nav',{style:{display:'flex',flexDirection:'column',gap:'4px'}}, nav.map(([id,l])=>{ const on=sec===id; return h('button',{key:id,onClick:()=>this.setState({adminSection:id}),style:{textAlign:'left',cursor:'pointer',border:'none',borderRadius:'11px',padding:'12px 14px',fontFamily:'Archivo',fontWeight:700,fontSize:'15px',background:on?C.red:'transparent',color:on?'#fff':'rgba(255,255,255,.72)'}}, l); })),
+      h('div',{style:{position:'absolute',bottom:'20px',left:'16px',right:'16px'}},
+        h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'12px',padding:'0 10px 10px'}}, this.t('Conectado','Signed in')+': '+this.state.adminUser),
+        h('button',{onClick:()=>{this.setState({adminUser:null});this.save('adminUser',null);this.go('home');},style:{width:'100%',cursor:'pointer',border:'1px solid rgba(255,255,255,.25)',background:'transparent',color:'#fff',borderRadius:'10px',padding:'10px',fontFamily:'Archivo',fontWeight:700,fontSize:'13px'}}, this.t('Cerrar sesión','Log out'))
+      )
+    );
+    let content;
+    if(sec==='dashboard') content=this.adminDashboard();
+    else if(sec==='menu') content=this.adminMenu();
+    else if(sec==='events') content=this.adminEvents();
+    else if(sec==='scheduler') content=this.adminScheduler();
+    return h('div',{style:{display:'flex',background:C.creamDeep,minHeight:'100vh'}},
+      sidebar,
+      h('div',{style:{flex:1,minWidth:0,padding:'30px 32px 60px'}}, content),
+      h('style',{},'@media(max-width:760px){.cop-adminside{width:100%!important;min-height:auto!important;position:static!important;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px!important}.cop-adminside nav{flex-direction:row!important;flex-wrap:wrap}.cop-adminside>div:last-child{position:static!important;display:flex;gap:10px;width:auto}}'),
+      this.renderEditModal()
+    );
+  }
+  adminTitle(t,sub,action){ const h=this.h,C=this.C; return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:'14px',marginBottom:'26px'}},
+    h('div',{}, h('h1',{style:{fontFamily:'Anton',fontSize:'clamp(30px,4vw,42px)',color:C.navy,margin:0,lineHeight:1}}, t), sub?h('p',{style:{color:C.muted,margin:'6px 0 0',fontSize:'15px'}}, sub):null), action||null); }
+  adminDashboard(){ const h=this.h,C=this.C;
+    const today='2026-06-14';
+    const res=this.state.reservations;
+    const todayRes=res.filter(r=>r.date===today);
+    const upcoming=this.state.events.filter(e=>e.published && e.date>=today);
+    const onShift=this.state.shifts.filter(s=>s.date===today);
+    const changes=this.state.shifts.filter(s=>s.changed);
+    const stat=(n,label,sub,color,onClick)=>h('button',{key:label,onClick,style:{textAlign:'left',cursor:onClick?'pointer':'default',border:'none',background:'#fff',borderRadius:'18px',padding:'24px',boxShadow:'0 8px 24px rgba(19,41,63,.07)',borderTop:'4px solid '+color}},
+      h('div',{style:{fontFamily:'Anton',fontSize:'46px',color:color,lineHeight:1}}, n),
+      h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'14px',color:C.navy,marginTop:'8px'}}, label),
+      h('div',{style:{color:C.muted,fontSize:'13px',marginTop:'3px'}}, sub));
+    const recentRes=res.slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,6);
+    return h('div',{},
+      this.adminTitle(this.t('Buenos días','Good morning'), this.t('Resumen de hoy · sáb 14 jun 2026','Today\u2019s overview · Sat 14 Jun 2026')),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'18px',marginBottom:'30px'}},
+        stat(todayRes.length, this.t('Reservas hoy','Reservations today'), this.t('Mesas para hoy','Tables for today'), C.red, ()=>{}),
+        stat(upcoming.length, this.t('Próximos eventos','Upcoming events'), this.t('Publicados','Published'), C.sea, ()=>this.setState({adminSection:'events'})),
+        stat(onShift.length, this.t('Staff en turno','Staff on shift'), this.t('Trabajando hoy','Working today'), C.gold, ()=>this.setState({adminSection:'scheduler'})),
+        stat(changes.length, this.t('Cambios pendientes','Pending changes'), this.t('Turnos modificados','Modified shifts'), C.navy, ()=>this.setState({adminSection:'scheduler'}))
+      ),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(290px,1fr))',gap:'20px'}},
+        h('div',{style:{background:'#fff',borderRadius:'18px',padding:'24px',boxShadow:'0 8px 24px rgba(19,41,63,.07)'}},
+          h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy,marginBottom:'14px'}}, this.t('Reservas recientes','Recent reservations')),
+          recentRes.length? recentRes.map(r=>h('div',{key:r.id,style:{display:'flex',justifyContent:'space-between',gap:'10px',padding:'11px 0',borderBottom:'1px solid '+C.line}},
+            h('div',{}, h('div',{style:{fontWeight:700,color:C.navy,fontSize:'14px'}}, r.name), h('div',{style:{color:C.muted,fontSize:'12px'}}, r.phone)),
+            h('div',{style:{textAlign:'right'}}, h('div',{style:{fontWeight:700,color:C.red,fontSize:'13px'}}, this.fmtDate(r.date)+' · '+(r.time||'—')), h('div',{style:{color:C.muted,fontSize:'12px'}}, r.guests+' '+this.t('pax','guests')))
+          )) : h('p',{style:{color:C.muted,fontSize:'14px'}}, this.t('Aún no hay reservas. Las nuevas aparecerán aquí.','No reservations yet. New ones will appear here.'))
+        ),
+        h('div',{style:{background:'#fff',borderRadius:'18px',padding:'24px',boxShadow:'0 8px 24px rgba(19,41,63,.07)'}},
+          h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy,marginBottom:'14px'}}, this.t('Atajos','Quick actions')),
+          h('div',{style:{display:'flex',flexDirection:'column',gap:'10px'}},
+            this.btn(this.t('+ Nuevo plato','+ New menu item'),()=>{this.setState({adminSection:'menu'});this.openEdit('item',null);},'red',{width:'100%'}),
+            this.btn(this.t('+ Nuevo evento','+ New event'),()=>{this.setState({adminSection:'events'});this.openEdit('event',null);},'sea',{width:'100%'}),
+            this.btn(this.t('Ver horarios','View scheduler'),()=>this.setState({adminSection:'scheduler'}),'navy',{width:'100%'}),
+            this.btn(this.t('Ver sitio público','View public site'),()=>this.go('home'),'ghost',{width:'100%'})
+          )
+        )
+      )
+    );
+  }
+  renderStaff(){ const h=this.h,C=this.C;
+    if(!this.state.staffSess){
+      const sl=this.state.staffLogin; const set=(k,v)=>this.setState({staffLogin:Object.assign({},sl,{[k]:v}),staffErr:''});
+      const tryLogin=()=>{ const m=this.state.staff.find(s=>s.id===sl.name); if(m && m.pin===sl.pin){ this.setState({staffSess:m.id,staffErr:'',staffLogin:{name:'',pin:''}}); this.save('staffSess',m.id); this.toast(this.t('Hola','Hi')+' '+m.name.split(' ')[0]+'!'); } else { this.setState({staffErr:this.t('Nombre o PIN incorrectos','Wrong name or PIN')}); } };
+      const body=h('div',{},
+        h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+          this.labeledField(this.t('¿Quién eres?','Who are you?'), h('select',{value:sl.name,onChange:e=>set('name',e.target.value),style:this.inputBase()}, [h('option',{key:'_',value:''}, this.t('Selecciona tu nombre','Select your name'))].concat(this.state.staff.map(s=>h('option',{key:s.id,value:s.id}, s.name))))),
+          this.labeledField(this.t('PIN de 4 dígitos','4-digit PIN'), h('input',{value:sl.pin,maxLength:4,inputMode:'numeric',onKeyDown:e=>{if(e.key==='Enter')tryLogin();},onChange:e=>set('pin',e.target.value.replace(/\D/g,'').slice(0,4)),placeholder:'••••',style:Object.assign({},this.inputBase(),{letterSpacing:'.5em',textAlign:'center',fontSize:'22px'})}))
+        ),
+        this.state.staffErr? h('div',{style:{color:C.redDeep,fontSize:'13px',marginTop:'12px',fontWeight:600}}, this.state.staffErr):null,
+        h('div',{style:{marginTop:'20px'}}, this.btn(this.t('Entrar','Enter'),tryLogin,'red',{width:'100%'})),
+        h('div',{style:{marginTop:'16px',padding:'12px 14px',background:C.cream,borderRadius:'10px',fontSize:'12px',color:C.muted,lineHeight:1.6}}, h('strong',{},'Demo · '),'Lucía 1234 · Marco 2345 · Elena 3456 · Javier 4567')
+      );
+      return this.authPortal({label:this.t('ACCESO PERSONAL','STAFF PORTAL'), body});
+    }
+    const me=this.state.staff.find(s=>s.id===this.state.staffSess);
+    if(!me){ this.save('staffSess',null); return h('div',{}, 'session ended'); }
+    const today=new Date('2026-06-14T00:00:00');
+    const next7=[]; for(let i=0;i<7;i++){ const d=new Date(today); d.setDate(d.getDate()+i); next7.push(d.toISOString().slice(0,10)); }
+    const myShifts=this.state.shifts.filter(s=>s.staffId===me.id && next7.includes(s.date)).sort((a,b)=>a.date<b.date?-1:1);
+    const myChanges=myShifts.filter(s=>s.changed);
+    const week=this.weekDays('2026-06-15');
+    const dn=this.state.lang==='es'?['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const myCard=s=>{ const dt=new Date(s.date+'T00:00:00'); return h('div',{key:s.id,style:{display:'flex',alignItems:'center',gap:'16px',padding:'16px 18px',background:s.changed?'#FFF4E6':'#fff',border:'1px solid '+(s.changed?C.gold:C.line),borderLeft:'5px solid '+(s.changed?C.gold:C.sea),borderRadius:'14px'}},
+      h('div',{style:{textAlign:'center',minWidth:'54px'}}, h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',color:C.muted}}, dt.toLocaleDateString(this.state.lang==='es'?'es-ES':'en-GB',{weekday:'short'})), h('div',{style:{fontFamily:'Anton',fontSize:'26px',color:C.navy,lineHeight:1}}, dt.getDate())),
+      h('div',{style:{flex:1}}, h('div',{style:{fontWeight:800,color:C.navy,fontSize:'17px'}}, s.start+' – '+s.end), h('div',{style:{color:C.seaDeep,fontWeight:700,fontSize:'13px',marginTop:'2px'}}, s.position)),
+      s.changed?h('span',{style:{background:C.gold,color:C.navyDeep,fontSize:'11px',fontWeight:800,padding:'5px 11px',borderRadius:'999px',letterSpacing:'.04em'}}, this.t('CAMBIADO','CHANGED')):null
+    ); };
+    return h('div',{style:{background:C.creamDeep,minHeight:'100vh'}},
+      h('header',{style:{background:C.navyDeep,padding:'18px 0'}}, h('div',{style:{maxWidth:'960px',margin:'0 auto',padding:'0 24px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'14px'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:'12px'}},
+          h('div',{style:{width:'44px',height:'44px',borderRadius:'50%',background:this.staffColor(me.id),color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Anton',fontSize:'20px'}}, me.name.charAt(0)),
+          h('div',{}, h('div',{style:{color:'#fff',fontWeight:800,fontSize:'17px'}}, me.name), h('div',{style:{color:'rgba(255,255,255,.6)',fontSize:'12px'}}, me.role+' · Copity Beach Club'))),
+        h('button',{onClick:()=>{this.setState({staffSess:null});this.save('staffSess',null);this.go('home');},style:{border:'1px solid rgba(255,255,255,.3)',background:'transparent',color:'#fff',borderRadius:'10px',padding:'9px 16px',cursor:'pointer',fontFamily:'Archivo',fontWeight:700,fontSize:'13px'}}, this.t('Salir','Log out'))
+      )),
+      h('div',{style:{maxWidth:'960px',margin:'0 auto',padding:'34px 24px 70px'}},
+        myChanges.length? h('div',{style:{background:C.gold,borderRadius:'14px',padding:'16px 20px',marginBottom:'24px',display:'flex',alignItems:'center',gap:'12px'}}, h('span',{style:{fontSize:'22px'}},'⚠'), h('span',{style:{fontWeight:700,color:C.navyDeep,fontSize:'15px'}}, this.t('Tienes '+myChanges.length+' turno(s) con cambios. Revísalos abajo.','You have '+myChanges.length+' shift(s) with changes. Check them below.'))):null,
+        h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:'12px',marginBottom:'18px'}},
+          h('h1',{style:{fontFamily:'Anton',fontSize:'clamp(28px,4vw,38px)',color:C.navy,margin:0}}, this.t('Mis próximos turnos','My upcoming shifts')),
+          this.btn(this.t('Contactar manager','Message manager'),()=>window.open('https://wa.me/34610367640?text='+encodeURIComponent('Hola! Soy '+me.name+' ('+me.role+')'),'_blank'),'sea',{padding:'10px 18px',fontSize:'13px'})),
+        h('div',{style:{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'40px'}}, myShifts.length?myShifts.map(myCard):h('div',{style:{background:'#fff',borderRadius:'14px',padding:'30px',textAlign:'center',color:C.muted}}, this.t('No tienes turnos en los próximos 7 días.','No shifts in the next 7 days.'))),
+        h('h2',{style:{fontFamily:'Anton',fontSize:'26px',color:C.navy,margin:'0 0 6px'}}, this.t('Horario semanal completo','Full weekly schedule')),
+        h('p',{style:{color:C.muted,fontSize:'14px',margin:'0 0 18px'}}, this.t('Solo lectura · todo el equipo','Read-only · whole team')),
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(7,minmax(120px,1fr))',gap:'8px',overflowX:'auto',paddingBottom:'8px'}},
+          week.map((d,i)=>{ const dt=new Date(d+'T00:00:00'); const sh=this.state.shifts.filter(s=>s.date===d).sort((a,b)=>a.start<b.start?-1:1);
+            return h('div',{key:d,style:{background:'#fff',borderRadius:'12px',padding:'10px',minWidth:'120px'}},
+              h('div',{style:{textAlign:'center',marginBottom:'8px'}}, h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.08em',textTransform:'uppercase',color:C.navy}}, dn[i]), h('div',{style:{fontFamily:'Anton',fontSize:'18px',color:C.navy}}, dt.getDate())),
+              h('div',{style:{display:'flex',flexDirection:'column',gap:'6px'}}, sh.length?sh.map(s=>h('div',{key:s.id,style:{borderLeft:'3px solid '+this.staffColor(s.staffId),background:s.staffId===me.id?C.seaSoft:C.cream,borderRadius:'7px',padding:'6px 8px'}},
+                h('div',{style:{fontWeight:700,fontSize:'11px',color:C.navy,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, this.staffName(s.staffId).split(' ')[0]),
+                h('div',{style:{color:C.muted,fontSize:'10px'}}, s.start+'–'+s.end))):h('div',{style:{color:C.muted,fontSize:'10px',textAlign:'center',padding:'8px 0'}}, '—'))
+            ); })
+        )
+      )
+    );
+  }
+  openEdit(type,data){ const defaults={
+      item:{cat:'starters',es:'',en:'',descEs:'',descEn:'',price:'',allergens:[],available:true,special:false},
+      event:{titleEs:'',titleEn:'',date:'',time:'20:00',descEs:'',descEn:'',image:'',published:false},
+      staff:{name:'',role:'Server',phone:'',pin:''},
+      shift:{staffId:(this.state.staff[0]||{}).id||'',date:'2026-06-15',start:'12:00',end:'20:00',position:'Terrace',changed:false}
+    };
+    const isNew=!data; const d=data? JSON.parse(JSON.stringify(data)) : Object.assign({id:this.uid()},defaults[type]);
+    this.setState({editModal:{type,data:d,isNew}});
+  }
+  closeEdit(){ this.setState({editModal:null}); }
+  setEditField(k,v){ const em=this.state.editModal; this.setState({editModal:Object.assign({},em,{data:Object.assign({},em.data,{[k]:v})})}); }
+  saveEdit(){ const em=this.state.editModal; if(!em) return; const {type,data,isNew}=em;
+    const upsert=(arr)=>{ const i=arr.findIndex(x=>x.id===data.id); if(i>=0){ arr[i]=data; } else arr.push(data); return arr.slice(); };
+    if(type==='item'){ if(!data.es&&!data.en){this.toast(this.t('Añade un nombre','Add a name'));return;} this.persist({menu:upsert(this.state.menu.slice())}); }
+    else if(type==='event'){ if(!data.titleEn&&!data.titleEs){this.toast(this.t('Añade un título','Add a title'));return;} this.persist({events:upsert(this.state.events.slice())}); }
+    else if(type==='staff'){ if(!data.name||data.pin.length!==4){this.toast(this.t('Nombre y PIN de 4 dígitos','Name and 4-digit PIN'));return;} this.persist({staff:upsert(this.state.staff.slice())}); }
+    else if(type==='shift'){ if(!data.staffId){this.toast(this.t('Elige un miembro','Pick a staff member'));return;} this.persist({shifts:upsert(this.state.shifts.slice())}); }
+    this.toast(isNew?this.t('Creado','Created'):this.t('Guardado','Saved')); this.closeEdit();
+  }
+  delRecord(type,id){ if(!window.confirm(this.t('¿Eliminar definitivamente?','Delete permanently?'))) return;
+    if(type==='item') this.persist({menu:this.state.menu.filter(x=>x.id!==id)});
+    else if(type==='event') this.persist({events:this.state.events.filter(x=>x.id!==id)});
+    else if(type==='staff') this.persist({staff:this.state.staff.filter(x=>x.id!==id), shifts:this.state.shifts.filter(s=>s.staffId!==id)});
+    else if(type==='shift') this.persist({shifts:this.state.shifts.filter(x=>x.id!==id)});
+    this.toast(this.t('Eliminado','Deleted'));
+  }
+  mInput(k,type,ph){ const h=this.h,C=this.C; const d=this.state.editModal.data; return h('input',{type:type||'text',value:d[k]==null?'':d[k],placeholder:ph||'',onChange:e=>this.setEditField(k,e.target.value),style:this.inputBase()}); }
+  mToggle(k,label){ const h=this.h,C=this.C; const on=!!this.state.editModal.data[k]; return h('button',{onClick:()=>this.setEditField(k,!on),style:{display:'flex',alignItems:'center',gap:'10px',cursor:'pointer',background:'none',border:'none',padding:'4px 0'}},
+    h('span',{style:{width:'46px',height:'26px',borderRadius:'999px',background:on?C.sea:C.line,position:'relative',transition:'background .2s'}}, h('span',{style:{position:'absolute',top:'3px',left:on?'23px':'3px',width:'20px',height:'20px',borderRadius:'50%',background:'#fff',transition:'left .2s',boxShadow:'0 1px 3px rgba(0,0,0,.3)'}})),
+    h('span',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'14px',color:C.navy}}, label)); }
+  renderEditModal(){ const em=this.state.editModal; if(!em) return null; const h=this.h,C=this.C; const {type,data,isNew}=em;
+    const titleMap={item:this.t('Plato','Menu item'),event:this.t('Evento','Event'),staff:this.t('Personal','Staff member'),shift:this.t('Turno','Shift')};
+    let fields;
+    if(type==='item'){ const cats=this.CATS(); const al=this.ALLERGENS();
+      fields=h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+        this.labeledField(this.t('Categoría','Category'), h('select',{value:data.cat,onChange:e=>this.setEditField('cat',e.target.value),style:this.inputBase()}, cats.map(c=>h('option',{key:c.id,value:c.id}, this.state.lang==='es'?c.es:c.en)))),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}, this.labeledField(this.t('Nombre (ES)','Name (ES)'), this.mInput('es')), this.labeledField(this.t('Nombre (EN)','Name (EN)'), this.mInput('en'))),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}, this.labeledField(this.t('Descripción (ES)','Description (ES)'), h('textarea',{value:data.descEs,onChange:e=>this.setEditField('descEs',e.target.value),rows:2,style:Object.assign({},this.inputBase(),{resize:'vertical'})})), this.labeledField(this.t('Descripción (EN)','Description (EN)'), h('textarea',{value:data.descEn,onChange:e=>this.setEditField('descEn',e.target.value),rows:2,style:Object.assign({},this.inputBase(),{resize:'vertical'})}))),
+        this.labeledField(this.t('Precio','Price'), this.mInput('price','text','9.50')),
+        this.labeledField(this.t('Alérgenos','Allergens'), h('div',{style:{display:'flex',gap:'6px',flexWrap:'wrap'}}, Object.keys(al).map(a=>{ const on=(data.allergens||[]).includes(a); return h('button',{key:a,onClick:()=>{ const cur=new Set(data.allergens||[]); on?cur.delete(a):cur.add(a); this.setEditField('allergens',Array.from(cur)); },style:{cursor:'pointer',border:'1px solid '+(on?C.sea:C.line),background:on?C.seaSoft:'#fff',color:on?C.seaDeep:C.muted,borderRadius:'999px',padding:'5px 11px',fontFamily:'Archivo',fontWeight:700,fontSize:'11px'}}, al[a][this.state.lang==='es'?0:1]); }))),
+        h('div',{style:{display:'flex',gap:'24px',paddingTop:'4px'}}, this.mToggle('available',this.t('Disponible','Available')), this.mToggle('special',this.t('Especial de hoy','Today\u2019s special')))
+      );
+    } else if(type==='event'){
+      fields=h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}, this.labeledField(this.t('Título (ES)','Title (ES)'), this.mInput('titleEs')), this.labeledField(this.t('Título (EN)','Title (EN)'), this.mInput('titleEn'))),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}, this.labeledField(this.t('Fecha','Date'), this.mInput('date','date')), this.labeledField(this.t('Hora','Time'), this.mInput('time','time'))),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}, this.labeledField(this.t('Descripción (ES)','Description (ES)'), h('textarea',{value:data.descEs,onChange:e=>this.setEditField('descEs',e.target.value),rows:2,style:Object.assign({},this.inputBase(),{resize:'vertical'})})), this.labeledField(this.t('Descripción (EN)','Description (EN)'), h('textarea',{value:data.descEn,onChange:e=>this.setEditField('descEn',e.target.value),rows:2,style:Object.assign({},this.inputBase(),{resize:'vertical'})}))),
+        this.labeledField(this.t('URL de imagen','Image URL'), this.mInput('image','text','https://…')),
+        h('div',{style:{paddingTop:'4px'}}, this.mToggle('published',this.t('Publicado','Published')))
+      );
+    } else if(type==='staff'){
+      fields=h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+        this.labeledField(this.t('Nombre','Name'), this.mInput('name')),
+        this.labeledField(this.t('Rol','Role'), h('select',{value:data.role,onChange:e=>this.setEditField('role',e.target.value),style:this.inputBase()}, ['Vendor','Server','Bar'].map(r=>h('option',{key:r,value:r},r)))),
+        this.labeledField(this.t('Teléfono','Phone'), this.mInput('phone','tel')),
+        this.labeledField(this.t('PIN de acceso (4 dígitos)','Access PIN (4 digits)'), h('input',{value:data.pin,maxLength:4,onChange:e=>this.setEditField('pin',e.target.value.replace(/\D/g,'').slice(0,4)),style:this.inputBase()}))
+      );
+    } else if(type==='shift'){
+      fields=h('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+        this.labeledField(this.t('Miembro','Staff member'), h('select',{value:data.staffId,onChange:e=>this.setEditField('staffId',e.target.value),style:this.inputBase()}, this.state.staff.map(s=>h('option',{key:s.id,value:s.id}, s.name+' · '+s.role)))),
+        this.labeledField(this.t('Fecha','Date'), this.mInput('date','date')),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}, this.labeledField(this.t('Inicio','Start'), this.mInput('start','time')), this.labeledField(this.t('Fin','End'), this.mInput('end','time'))),
+        this.labeledField(this.t('Puesto','Position'), this.mInput('position','text','Terrace, Bar, Beach…')),
+        h('div',{style:{paddingTop:'4px'}}, this.mToggle('changed',this.t('Marcar como cambiado (avisa al staff)','Mark as changed (alerts staff)')))
+      );
+    }
+    return h('div',{onClick:e=>{if(e.target===e.currentTarget)this.closeEdit();},style:{position:'fixed',inset:0,zIndex:300,background:'rgba(12,28,46,.6)',backdropFilter:'blur(4px)',display:'flex',alignItems:'flex-start',justifyContent:'center',padding:'40px 20px',overflowY:'auto'}},
+      h('div',{style:{background:'#fff',borderRadius:'22px',width:'100%',maxWidth:'560px',padding:'30px',boxShadow:'0 30px 80px rgba(0,0,0,.4)'}},
+        h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'22px'}},
+          h('h2',{style:{fontFamily:'Anton',fontSize:'28px',color:C.navy,margin:0}}, (isNew?this.t('Nuevo','New')+' ':this.t('Editar','Edit')+' ')+titleMap[type]),
+          h('button',{onClick:()=>this.closeEdit(),style:{background:C.cream,border:'none',width:'36px',height:'36px',borderRadius:'50%',cursor:'pointer',fontSize:'20px',color:C.navy}}, '×')),
+        fields,
+        h('div',{style:{display:'flex',gap:'12px',marginTop:'26px'}}, this.btn(this.t('Guardar','Save'),()=>this.saveEdit(),'red',{flex:1}), this.btn(this.t('Cancelar','Cancel'),()=>this.closeEdit(),'ghost'))
+      )
+    );
+  }
+  adminMenu(){ const h=this.h,C=this.C; const cats=this.CATS();
+    const itemRow=it=>h('div',{key:it.id,style:{display:'flex',alignItems:'center',gap:'12px',padding:'12px 14px',background:'#fff',borderRadius:'12px',border:'1px solid '+C.line,opacity:it.available?1:.55}},
+      h('div',{style:{flex:1,minWidth:0}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:'8px',flexWrap:'wrap'}}, h('span',{style:{fontWeight:800,color:C.navy,fontSize:'15px'}}, it.es), it.special?h('span',{style:{background:C.gold,color:C.navyDeep,fontSize:'9px',fontWeight:800,padding:'2px 7px',borderRadius:'999px',letterSpacing:'.08em'}}, this.t('ESPECIAL','SPECIAL')):null, !it.available?h('span',{style:{background:C.line,color:C.muted,fontSize:'9px',fontWeight:800,padding:'2px 7px',borderRadius:'999px'}}, this.t('OCULTO','HIDDEN')):null),
+        h('div',{style:{color:C.muted,fontSize:'12px',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, it.en)
+      ),
+      h('div',{style:{fontFamily:'Anton',fontSize:'17px',color:C.red,whiteSpace:'nowrap'}}, this.money(it)),
+      h('div',{style:{display:'flex',gap:'6px'}},
+        this.iconBtn(it.available?'👁':'🚫', this.t('Visibilidad','Visibility'), ()=>this.persist({menu:this.state.menu.map(x=>x.id===it.id?Object.assign({},x,{available:!x.available}):x)})),
+        this.iconBtn('★', this.t('Especial','Special'), ()=>this.persist({menu:this.state.menu.map(x=>x.id===it.id?Object.assign({},x,{special:!x.special}):x)}), it.special?C.gold:null),
+        this.iconBtn('✎', this.t('Editar','Edit'), ()=>this.openEdit('item',it)),
+        this.iconBtn('🗑', this.t('Eliminar','Delete'), ()=>this.delRecord('item',it.id))
+      )
+    );
+    return h('div',{},
+      this.adminTitle(this.t('Gestión de carta','Menu manager'), this.state.menu.length+' '+this.t('platos · '+this.state.menu.filter(i=>i.available).length+' visibles','items · '+this.state.menu.filter(i=>i.available).length+' visible'), this.btn(this.t('+ Nuevo plato','+ New item'),()=>this.openEdit('item',null),'red')),
+      cats.map(c=>{ const items=this.state.menu.filter(i=>i.cat===c.id); if(!items.length) return null; return h('div',{key:c.id,style:{marginBottom:'26px'}},
+        h('div',{style:{fontFamily:'Anton',fontSize:'19px',color:C.navy,marginBottom:'10px',display:'flex',alignItems:'center',gap:'10px'}}, (this.state.lang==='es'?c.es:c.en), h('span',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',color:C.muted,background:'#fff',padding:'2px 9px',borderRadius:'999px',border:'1px solid '+C.line}}, items.length)),
+        h('div',{style:{display:'flex',flexDirection:'column',gap:'8px'}}, items.map(itemRow))
+      ); })
+    );
+  }
+  iconBtn(glyph,title,onClick,activeColor){ const h=this.h,C=this.C; return h('button',{title,onClick,style:{width:'34px',height:'34px',borderRadius:'9px',border:'1px solid '+C.line,background:activeColor||'#fff',cursor:'pointer',fontSize:'14px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}, glyph); }
+  adminEvents(){ const h=this.h,C=this.C;
+    const evs=this.state.events.slice().sort((a,b)=>a.date<b.date?-1:1);
+    const row=e=>h('div',{key:e.id,style:{display:'flex',alignItems:'center',gap:'14px',padding:'14px',background:'#fff',borderRadius:'14px',border:'1px solid '+C.line,opacity:e.published?1:.6}},
+      h('div',{style:{width:'58px',height:'58px',borderRadius:'12px',background:C.navy,color:'#fff',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',flexShrink:0}},
+        h('span',{style:{fontFamily:'Anton',fontSize:'20px',lineHeight:1}}, new Date(e.date+'T00:00:00').getDate()),
+        h('span',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'9px',letterSpacing:'.1em',textTransform:'uppercase'}}, new Date(e.date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'}))),
+      h('div',{style:{flex:1,minWidth:0}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:'8px',flexWrap:'wrap'}}, h('span',{style:{fontWeight:800,color:C.navy,fontSize:'16px'}}, e.titleEn), h('span',{style:{background:e.published?C.success500||C.sea:C.line,color:e.published?'#fff':C.muted,fontSize:'9px',fontWeight:800,padding:'2px 8px',borderRadius:'999px',letterSpacing:'.06em'}}, e.published?this.t('PUBLICADO','LIVE'):this.t('BORRADOR','DRAFT'))),
+        h('div',{style:{color:C.muted,fontSize:'12px'}}, e.time+' · '+(e.descEn||'').slice(0,60))
+      ),
+      h('div',{style:{display:'flex',gap:'6px'}},
+        this.iconBtn(e.published?'👁':'🚫', this.t('Publicar','Publish'), ()=>this.persist({events:this.state.events.map(x=>x.id===e.id?Object.assign({},x,{published:!x.published}):x)})),
+        this.iconBtn('✎', this.t('Editar','Edit'), ()=>this.openEdit('event',e)),
+        this.iconBtn('🗑', this.t('Eliminar','Delete'), ()=>this.delRecord('event',e.id))
+      )
+    );
+    return h('div',{},
+      this.adminTitle(this.t('Gestión de eventos','Events manager'), this.state.events.filter(e=>e.published).length+' '+this.t('publicados','published'), this.btn(this.t('+ Nuevo evento','+ New event'),()=>this.openEdit('event',null),'red')),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:'10px'}}, evs.length?evs.map(row):h('p',{style:{color:C.muted}}, this.t('No hay eventos.','No events.')))
+    );
+  }
+  weekDays(start){ const days=[]; const base=new Date(start+'T00:00:00'); for(let i=0;i<7;i++){ const d=new Date(base); d.setDate(d.getDate()+i); days.push(d.toISOString().slice(0,10)); } return days; }
+  shiftWeek(start,delta){ const d=new Date(start+'T00:00:00'); d.setDate(d.getDate()+delta*7); return d.toISOString().slice(0,10); }
+  staffName(id){ const s=this.state.staff.find(x=>x.id===id); return s?s.name:'—'; }
+  staffColor(id){ const C=this.C; const cols=[C.red,C.sea,C.gold,C.navy,C.seaDeep,C.redDeep]; const i=this.state.staff.findIndex(x=>x.id===id); return cols[(i<0?0:i)%cols.length]; }
+  adminScheduler(){ const h=this.h,C=this.C;
+    const week=this.state.schedWeek||'2026-06-15';
+    const days=this.weekDays(week);
+    const dn=this.state.lang==='es'?['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const shiftsOn=d=>this.state.shifts.filter(s=>s.date===d).sort((a,b)=>a.start<b.start?-1:1);
+    const shiftCard=s=>{ const col=this.staffColor(s.staffId); return h('div',{key:s.id,style:{background:s.changed?'#FFF4E6':'#fff',border:'1px solid '+(s.changed?C.gold:C.line),borderLeft:'4px solid '+col,borderRadius:'10px',padding:'9px 10px',position:'relative'}},
+      s.changed?h('span',{style:{position:'absolute',top:'6px',right:'6px',background:C.gold,color:C.navyDeep,fontSize:'8px',fontWeight:800,padding:'1px 5px',borderRadius:'999px',letterSpacing:'.06em'}}, this.t('CAMBIO','CHG')):null,
+      h('div',{style:{fontWeight:800,color:C.navy,fontSize:'13px',paddingRight:s.changed?'34px':0}}, this.staffName(s.staffId)),
+      h('div',{style:{color:C.muted,fontSize:'11px',marginTop:'2px'}}, s.start+'–'+s.end),
+      h('div',{style:{color:col,fontSize:'11px',fontWeight:700,marginTop:'2px'}}, s.position),
+      h('div',{style:{display:'flex',gap:'5px',marginTop:'7px'},className:'cop-noprint'},
+        h('button',{title:this.t('Marcar cambio','Toggle change'),onClick:()=>this.persist({shifts:this.state.shifts.map(x=>x.id===s.id?Object.assign({},x,{changed:!x.changed}):x)}),style:{flex:1,border:'1px solid '+C.line,background:s.changed?C.gold:'#fff',borderRadius:'7px',padding:'3px',cursor:'pointer',fontSize:'11px'}}, '⚠'),
+        h('button',{onClick:()=>this.openEdit('shift',s),style:{flex:1,border:'1px solid '+C.line,background:'#fff',borderRadius:'7px',padding:'3px',cursor:'pointer',fontSize:'11px'}}, '✎'),
+        h('button',{onClick:()=>this.delRecord('shift',s.id),style:{flex:1,border:'1px solid '+C.line,background:'#fff',borderRadius:'7px',padding:'3px',cursor:'pointer',fontSize:'11px'}}, '🗑')
+      )
+    ); };
+    const grid=h('div',{className:'cop-schedgrid',style:{display:'grid',gridTemplateColumns:'repeat(7,minmax(150px,1fr))',gap:'10px',overflowX:'auto',paddingBottom:'8px'}},
+      days.map((d,i)=>{ const dt=new Date(d+'T00:00:00'); const isToday=d==='2026-06-14'; const sh=shiftsOn(d);
+        return h('div',{key:d,style:{background:C.creamDeep,borderRadius:'14px',padding:'10px',minWidth:'150px'}},
+          h('div',{style:{textAlign:'center',marginBottom:'10px'}},
+            h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'12px',letterSpacing:'.1em',textTransform:'uppercase',color:isToday?C.red:C.navy}}, dn[i]),
+            h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:isToday?C.red:C.navy,lineHeight:1}}, dt.getDate())),
+          h('div',{style:{display:'flex',flexDirection:'column',gap:'8px'}}, sh.length?sh.map(shiftCard):h('div',{style:{color:C.muted,fontSize:'11px',textAlign:'center',padding:'14px 0'}}, '—')),
+          h('button',{className:'cop-noprint',onClick:()=>{ this.openEdit('shift',null); setTimeout(()=>this.setEditField('date',d),0); },style:{width:'100%',marginTop:'8px',border:'1px dashed '+C.border||C.line,background:'transparent',borderRadius:'8px',padding:'7px',cursor:'pointer',color:C.muted,fontFamily:'Archivo',fontWeight:700,fontSize:'12px'}}, '+ '+this.t('Turno','Shift'))
+        ); })
+    );
+    const roster=h('div',{className:'cop-noprint',style:{background:'#fff',borderRadius:'16px',padding:'22px',marginTop:'26px',boxShadow:'0 8px 24px rgba(19,41,63,.06)'}},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px',flexWrap:'wrap',gap:'10px'}},
+        h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy}}, this.t('Equipo','Team roster')),
+        this.btn(this.t('+ Añadir miembro','+ Add member'),()=>this.openEdit('staff',null),'sea',{padding:'9px 16px',fontSize:'12px'})),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'10px'}}, this.state.staff.map(s=>h('div',{key:s.id,style:{display:'flex',alignItems:'center',gap:'10px',padding:'11px',border:'1px solid '+C.line,borderRadius:'12px'}},
+        h('div',{style:{width:'38px',height:'38px',borderRadius:'50%',background:this.staffColor(s.id),color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Anton',fontSize:'16px',flexShrink:0}}, s.name.charAt(0)),
+        h('div',{style:{flex:1,minWidth:0}}, h('div',{style:{fontWeight:800,color:C.navy,fontSize:'14px'}}, s.name), h('div',{style:{color:C.muted,fontSize:'12px'}}, s.role+' · PIN '+s.pin)),
+        this.iconBtn('✎',this.t('Editar','Edit'),()=>this.openEdit('staff',s)),
+        this.iconBtn('🗑',this.t('Eliminar','Delete'),()=>this.delRecord('staff',s.id))
+      )))
+    );
+    return h('div',{},
+      this.adminTitle(this.t('Horarios','Scheduler'), this.t('Semana del','Week of')+' '+this.fmtDate(days[0])+' – '+this.fmtDate(days[6]),
+        h('div',{className:'cop-noprint',style:{display:'flex',gap:'8px',alignItems:'center'}},
+          this.iconBtn('‹',this.t('Anterior','Prev'),()=>this.setState({schedWeek:this.shiftWeek(week,-1)})),
+          this.btn(this.t('Hoy','Today'),()=>this.setState({schedWeek:'2026-06-15'}),'ghost',{padding:'8px 14px',fontSize:'12px'}),
+          this.iconBtn('›',this.t('Siguiente','Next'),()=>this.setState({schedWeek:this.shiftWeek(week,1)})),
+          this.btn(this.t('Imprimir','Export'),()=>window.print(),'navy',{padding:'9px 16px',fontSize:'12px'})
+        )),
+      h('div',{className:'cop-printtitle',style:{display:'none'}}),
+      grid,
+      roster,
+      h('style',{},'@media print{.cop-adminside{display:none!important}.cop-noprint{display:none!important}body{background:#fff!important}.cop-schedgrid{grid-template-columns:repeat(7,1fr)!important}}')
+    );
+  }
+  stub(name){ const h=this.h,C=this.C; return h('div',{style:{padding:'120px 24px',textAlign:'center',color:C.muted}}, h('div',{style:{fontFamily:'Anton',fontSize:'40px',color:C.navy}}, name), 'Coming up…'); }
+
+  renderVals(){ return { app: this.renderApp() }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="./image-slot.js"></script>
+  <style>
+    html, body { margin: 0; background: #0e1f30; }
+    .r { opacity: 1; }
+    @keyframes rise { from { transform: translateY(32px); } to { transform: none; } }
+    @keyframes waveIn { from { transform: translateY(46px) scale(1.05); } to { transform: none; } }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: no-preference) {
+      [data-deck-active] .r { animation: rise .65s cubic-bezier(.2,.75,.25,1) both; }
+      [data-deck-active] .wave { animation: waveIn .9s cubic-bezier(.2,.75,.25,1) both; }
+      .marquee-track { animation: marquee 22s linear infinite; }
+    }
+  </style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <!-- ════════════════ SLIDE 1 — COVER ════════════════ -->
+  <section data-label="Cover" data-speaker-notes="Open warm. This is the complete digital solution for Copity, presented by D Embassy. Set the tone: luxury, effortless, ready now." style="width:100%;height:100%;position:relative;overflow:hidden;background:#1B3A5C;font-family:Archivo,sans-serif;color:#F5F0E8">
+    <image-slot id="cover-bg" shape="rect" placeholder="Drop a beach-club sunset photo" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+    <div style="position:absolute;inset:0;background:linear-gradient(105deg, rgba(27,58,92,.92) 0%, rgba(27,58,92,.62) 45%, rgba(224,56,43,.30) 100%)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(14,31,48,.85) 0%, rgba(14,31,48,0) 50%)"></div>
+    <div style="position:absolute;inset:0;padding:96px 120px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between">
+      <div class="wave" style="display:flex;align-items:center;gap:18px">
+        <div style="width:14px;height:14px;background:#E0382B;border-radius:50%"></div>
+        <div style="font:700 19px/1 Archivo;letter-spacing:.34em;text-transform:uppercase;color:#F5F0E8">Copitý Beach Club · 2026</div>
+      </div>
+      <div>
+        <div class="wave" style="font:700 22px/1 Archivo;letter-spacing:.3em;text-transform:uppercase;color:#19A7B8;margin-bottom:22px">Presented by D Embassy</div>
+        <h1 class="wave" style="margin:0;font:400 168px/0.88 Anton;letter-spacing:.005em;text-transform:uppercase;color:#F5F0E8;text-shadow:0 4px 40px rgba(0,0,0,.35)">Copitý<br>Digital</h1>
+        <p class="wave" style="margin:30px 0 0;font:500 32px/1.4 Archivo;color:#F5F0E8;max-width:920px;text-shadow:0 2px 16px rgba(0,0,0,.4)">Your complete digital solution<span style="color:#E0382B"> — </span>built, branded and ready for the season.</p>
+      </div>
+      <div class="wave" style="display:flex;align-items:center;gap:16px;font:600 18px/1 Archivo;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.78)">
+        <span>Confidential commercial proposal</span>
+        <span style="width:6px;height:6px;background:#19A7B8;border-radius:50%"></span>
+        <span>2026 Season</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 2 — WHAT WE BUILT ════════════════ -->
+  <section data-label="What we built" data-speaker-notes="One platform, three tools. Walk through the customer story: discovery to booking in two minutes, no phone call." style="width:100%;height:100%;box-sizing:border-box;background:#F5F0E8;color:#1B3A5C;padding:78px 110px;display:flex;flex-direction:column;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(27,58,92,.32)">02 / 09</div>
+    <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">The platform</div>
+    <h1 class="r" style="margin:14px 0 0;font:400 78px/0.95 Anton;text-transform:uppercase;color:#1B3A5C;max-width:1100px">One platform.<br>Three powerful tools.</h1>
+    <p class="r" style="margin:18px 0 0;font:500 28px/1.4 Archivo;color:rgba(27,58,92,.7)">Everything your beach club needs, in one place.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:46px">
+      <div class="r" style="animation-delay:.12s;background:#fff;border-radius:8px;padding:38px 34px;box-shadow:0 16px 40px rgba(27,58,92,.10);border-top:6px solid #E0382B">
+        <div style="width:64px;height:64px;border-radius:14px;background:rgba(224,56,43,.12);display:flex;align-items:center;justify-content:center;font:400 34px/1 Anton;color:#E0382B">01</div>
+        <h3 style="margin:24px 0 10px;font:400 38px/1 Anton;text-transform:uppercase;color:#1B3A5C">Public Website</h3>
+        <p style="margin:0;font:400 23px/1.45 Archivo;color:rgba(27,58,92,.72)">Your clients discover, explore, and book.</p>
+      </div>
+      <div class="r" style="animation-delay:.26s;background:#fff;border-radius:8px;padding:38px 34px;box-shadow:0 16px 40px rgba(27,58,92,.10);border-top:6px solid #1B3A5C">
+        <div style="width:64px;height:64px;border-radius:14px;background:rgba(27,58,92,.12);display:flex;align-items:center;justify-content:center;font:400 34px/1 Anton;color:#1B3A5C">02</div>
+        <h3 style="margin:24px 0 10px;font:400 38px/1 Anton;text-transform:uppercase;color:#1B3A5C">Manager Panel</h3>
+        <p style="margin:0;font:400 23px/1.45 Archivo;color:rgba(27,58,92,.72)">You control everything from your phone.</p>
+      </div>
+      <div class="r" style="animation-delay:.40s;background:#fff;border-radius:8px;padding:38px 34px;box-shadow:0 16px 40px rgba(27,58,92,.10);border-top:6px solid #19A7B8">
+        <div style="width:64px;height:64px;border-radius:14px;background:rgba(25,167,184,.14);display:flex;align-items:center;justify-content:center;font:400 34px/1 Anton;color:#19A7B8">03</div>
+        <h3 style="margin:24px 0 10px;font:400 38px/1 Anton;text-transform:uppercase;color:#1B3A5C">Staff Portal</h3>
+        <p style="margin:0;font:400 23px/1.45 Archivo;color:rgba(27,58,92,.72)">Your team always knows where to be.</p>
+      </div>
+    </div>
+
+    <div class="r" style="animation-delay:.5s;margin-top:auto;background:rgba(25,167,184,.10);border-left:6px solid #E0382B;border-radius:4px;padding:24px 34px;display:flex;gap:24px;align-items:flex-start">
+      <span style="font:700 15px/1.3 Archivo;letter-spacing:.2em;text-transform:uppercase;color:#E0382B;white-space:nowrap;padding-top:3px">Picture<br>this</span>
+      <p style="margin:0;font:400 24px/1.5 Archivo;color:#1B3A5C">A client at home in Alicante on a Sunday night searches for a beach club. They find Copity. They browse the menu, check the upcoming DJ night, and book a table — all in 2 minutes, without calling anyone.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 3 — PUBLIC WEBSITE (1) ════════════════ -->
+  <section data-label="Homepage" data-speaker-notes="The homepage works 24/7. Full-screen hero, animated banner, quick-access cards, gallery, newsletter. Three languages." style="width:100%;height:100%;box-sizing:border-box;background:#1B3A5C;color:#F5F0E8;display:flex;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <!-- left: copy -->
+    <div style="flex:0 0 46%;box-sizing:border-box;padding:78px 64px 78px 110px;display:flex;flex-direction:column">
+      <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(245,240,232,.4)">03 / 09</div>
+      <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">The public website · part 1</div>
+      <h1 class="r" style="margin:14px 0 0;font:400 66px/0.96 Anton;text-transform:uppercase;color:#F5F0E8">A stunning homepage. Available 24/7.</h1>
+
+      <div style="margin-top:34px;display:flex;flex-direction:column;gap:16px">
+        <div class="r" style="animation-delay:.1s;display:flex;gap:16px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 24px/1.35 Archivo;color:rgba(245,240,232,.9)">Full-screen hero with your images and brand</span></div>
+        <div class="r" style="animation-delay:.18s;display:flex;gap:16px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 24px/1.35 Archivo;color:rgba(245,240,232,.9)">Animated scrolling banner with your name</span></div>
+        <div class="r" style="animation-delay:.26s;display:flex;gap:16px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 24px/1.35 Archivo;color:rgba(245,240,232,.9)">3 quick-access cards — Menu / Book / Events</span></div>
+        <div class="r" style="animation-delay:.34s;display:flex;gap:16px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 24px/1.35 Archivo;color:rgba(245,240,232,.9)">Photo &amp; video gallery — tap to expand</span></div>
+        <div class="r" style="animation-delay:.42s;display:flex;gap:16px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 24px/1.35 Archivo;color:rgba(245,240,232,.9)">Newsletter signup</span></div>
+      </div>
+
+      <div class="r" style="animation-delay:.5s;margin-top:30px;display:inline-flex;align-self:flex-start;align-items:center;gap:14px;background:rgba(25,167,184,.18);border:1px solid rgba(25,167,184,.5);border-radius:40px;padding:14px 26px">
+        <span style="font:400 26px/1 Anton;color:#19A7B8">3</span>
+        <span style="font:600 19px/1.2 Archivo;letter-spacing:.04em;color:#F5F0E8">languages — Spanish · English · French</span>
+      </div>
+
+      <div class="r" style="animation-delay:.56s;margin-top:auto;background:rgba(245,240,232,.07);border-left:6px solid #E0382B;border-radius:4px;padding:22px 28px;display:flex;gap:22px;align-items:flex-start">
+        <span style="font:700 14px/1.3 Archivo;letter-spacing:.2em;text-transform:uppercase;color:#19A7B8;white-space:nowrap;padding-top:3px">Picture<br>this</span>
+        <p style="margin:0;font:400 22px/1.5 Archivo;color:rgba(245,240,232,.92)">Your club is closed at midnight, but your website isn't. While you sleep, potential customers are browsing, falling in love with the visuals, and signing up for your newsletter.</p>
+      </div>
+    </div>
+    <!-- right: visual -->
+    <div style="flex:1;position:relative;overflow:hidden">
+      <image-slot id="home-hero" shape="rect" placeholder="Drop a luxe beach-club photo" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(27,58,92,1) 0%, rgba(27,58,92,0) 22%, rgba(27,58,92,.15) 100%)"></div>
+      <div style="position:absolute;left:64px;top:130px;font:400 86px/0.92 Anton;text-transform:uppercase;color:#F5F0E8;text-shadow:0 4px 30px rgba(0,0,0,.5)">Endless<br>Summer</div>
+      <!-- animated scrolling banner -->
+      <div style="position:absolute;bottom:46px;left:0;right:0;overflow:hidden;background:rgba(224,56,43,.92);padding:14px 0">
+        <div class="marquee-track" style="display:inline-flex;white-space:nowrap;font:400 30px/1 Anton;letter-spacing:.12em;text-transform:uppercase;color:#F5F0E8">
+          <span style="padding:0 28px">Copitý Beach Club ✺ Endless Summer ✺ Live DJ Nights ✺ Cocktails ✺ Mediterranean Kitchen ✺&nbsp;</span>
+          <span style="padding:0 28px">Copitý Beach Club ✺ Endless Summer ✺ Live DJ Nights ✺ Cocktails ✺ Mediterranean Kitchen ✺&nbsp;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 4 — THE MENU ════════════════ -->
+  <section data-label="The menu" data-speaker-notes="Digital menu, always current, zero printing. The sea bass story: hide an item in 30 seconds from your phone. Allergen compliance." style="width:100%;height:100%;box-sizing:border-box;background:#F5F0E8;color:#1B3A5C;padding:78px 110px;display:flex;flex-direction:column;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(27,58,92,.32)">04 / 09</div>
+    <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">The public website · part 2</div>
+    <h1 class="r" style="margin:14px 0 0;font:400 64px/0.96 Anton;text-transform:uppercase;color:#1B3A5C;max-width:1300px">Your menu. Always up to date. Zero printing costs.</h1>
+
+    <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:48px;margin-top:38px;align-items:start">
+      <!-- menu mockup -->
+      <div class="r" style="animation-delay:.12s;background:#fff;border-radius:10px;box-shadow:0 18px 44px rgba(27,58,92,.12);overflow:hidden">
+        <div style="display:flex;gap:8px;padding:20px 22px 0;flex-wrap:wrap">
+          <span style="font:600 17px/1 Archivo;padding:11px 18px;border-radius:30px;background:#E0382B;color:#fff">Starters</span>
+          <span style="font:600 17px/1 Archivo;padding:11px 18px;border-radius:30px;background:rgba(27,58,92,.07);color:rgba(27,58,92,.7)">Mains</span>
+          <span style="font:600 17px/1 Archivo;padding:11px 18px;border-radius:30px;background:rgba(27,58,92,.07);color:rgba(27,58,92,.7)">Cocktails</span>
+          <span style="font:600 17px/1 Archivo;padding:11px 18px;border-radius:30px;background:rgba(27,58,92,.07);color:rgba(27,58,92,.7)">Desserts</span>
+        </div>
+        <div style="padding:8px 22px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 6px;border-bottom:1px solid rgba(27,58,92,.08)">
+            <div><div style="display:flex;align-items:center;gap:10px"><span style="font:600 22px/1.2 Archivo;color:#1B3A5C">Grilled Sea Bass</span><span style="font:700 11px/1 Archivo;letter-spacing:.1em;background:#19A7B8;color:#fff;padding:5px 9px;border-radius:5px">TODAY'S SPECIAL</span></div><div style="font:400 16px/1.3 Archivo;color:rgba(27,58,92,.55);margin-top:4px">Allergens: Fish</div></div>
+            <span style="font:400 26px/1 Anton;color:#E0382B">€24</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 6px;border-bottom:1px solid rgba(27,58,92,.08)">
+            <div><span style="font:600 22px/1.2 Archivo;color:#1B3A5C">Iberico Croquetas</span><div style="font:400 16px/1.3 Archivo;color:rgba(27,58,92,.55);margin-top:4px">Allergens: Gluten · Milk · Egg</div></div>
+            <span style="font:400 26px/1 Anton;color:#1B3A5C">€12</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 6px;opacity:.45">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font:600 22px/1.2 Archivo;color:#1B3A5C;text-decoration:line-through">Octopus a la Gallega</span><span style="font:700 11px/1 Archivo;letter-spacing:.08em;background:rgba(27,58,92,.12);color:rgba(27,58,92,.7);padding:5px 9px;border-radius:5px">HIDDEN</span></div>
+            <span style="font:400 26px/1 Anton;color:#1B3A5C">€18</span>
+          </div>
+        </div>
+      </div>
+      <!-- features list -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="r" style="animation-delay:.18s;display:flex;gap:14px;align-items:flex-start"><span style="width:11px;height:11px;margin-top:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 24px/1.4 Archivo;color:#1B3A5C"><b>80+ dishes &amp; drinks</b> across 12 categories</span></div>
+        <div class="r" style="animation-delay:.24s;display:flex;gap:14px;align-items:flex-start"><span style="width:11px;height:11px;margin-top:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 24px/1.4 Archivo;color:#1B3A5C">Full allergen information — 14 EU allergens displayed</span></div>
+        <div class="r" style="animation-delay:.3s;display:flex;gap:14px;align-items:flex-start"><span style="width:11px;height:11px;margin-top:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 24px/1.4 Archivo;color:#1B3A5C">"Today's specials" highlighted automatically</span></div>
+        <div class="r" style="animation-delay:.36s;display:flex;gap:14px;align-items:flex-start"><span style="width:11px;height:11px;margin-top:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 24px/1.4 Archivo;color:#1B3A5C">Hide unavailable items in 1 click</span></div>
+
+        <div style="display:flex;gap:14px;margin-top:14px">
+          <div class="r" style="animation-delay:.42s;flex:1;background:#fff;border-radius:8px;padding:18px 16px;box-shadow:0 10px 26px rgba(27,58,92,.08);text-align:center"><div style="font:400 46px/1 Anton;color:#E0382B">0€</div><div style="font:600 14px/1.3 Archivo;color:rgba(27,58,92,.62);margin-top:4px">printing costs<br>per season</div></div>
+          <div class="r" style="animation-delay:.48s;flex:1;background:#fff;border-radius:8px;padding:18px 16px;box-shadow:0 10px 26px rgba(27,58,92,.08);text-align:center"><div style="font:400 46px/1 Anton;color:#19A7B8">30s</div><div style="font:600 14px/1.3 Archivo;color:rgba(27,58,92,.62);margin-top:4px">to update<br>any dish</div></div>
+          <div class="r" style="animation-delay:.54s;flex:1;background:#fff;border-radius:8px;padding:18px 16px;box-shadow:0 10px 26px rgba(27,58,92,.08);text-align:center"><div style="font:400 46px/1 Anton;color:#1B3A5C">14</div><div style="font:600 14px/1.3 Archivo;color:rgba(27,58,92,.62);margin-top:4px">allergens —<br>legally compliant</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r" style="animation-delay:.6s;margin-top:auto;background:rgba(25,167,184,.10);border-left:6px solid #E0382B;border-radius:4px;padding:22px 34px;display:flex;gap:24px;align-items:flex-start">
+      <span style="font:700 15px/1.3 Archivo;letter-spacing:.2em;text-transform:uppercase;color:#E0382B;white-space:nowrap;padding-top:3px">Picture<br>this</span>
+      <p style="margin:0;font:400 23px/1.45 Archivo;color:#1B3A5C">It's Saturday and you run out of the sea bass. On a classic website you'd disappoint clients or wait until Monday to call your agency. Here, you pull out your phone, tap "hide", and it disappears from the menu in real time.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 5 — EVENTS & RESERVATIONS ════════════════ -->
+  <section data-label="Events &amp; Booking" data-speaker-notes="Events fill tables, reservations create the buzz. Instagram-to-booking story. Every reservation lands in the admin panel instantly." style="width:100%;height:100%;box-sizing:border-box;background:#F5F0E8;color:#1B3A5C;padding:78px 110px;display:flex;flex-direction:column;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(27,58,92,.32)">05 / 09</div>
+    <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">The public website · parts 3 &amp; 4</div>
+    <h1 class="r" style="margin:14px 0 0;font:400 72px/0.95 Anton;text-transform:uppercase;color:#1B3A5C">Fill your tables. Create your buzz.</h1>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:38px">
+      <!-- events -->
+      <div class="r" style="animation-delay:.12s;background:#fff;border-radius:10px;padding:30px 32px;box-shadow:0 16px 40px rgba(27,58,92,.10)">
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:42px;height:42px;border-radius:10px;background:rgba(224,56,43,.12);display:flex;align-items:center;justify-content:center;font:400 22px/1 Anton;color:#E0382B">E</span><h3 style="margin:0;font:400 34px/1 Anton;text-transform:uppercase;color:#1B3A5C">Events</h3></div>
+        <div style="margin-top:20px;display:flex;gap:14px;align-items:center;background:#F5F0E8;border-radius:8px;padding:14px 16px">
+          <div style="text-align:center;background:#1B3A5C;color:#F5F0E8;border-radius:8px;padding:8px 14px"><div style="font:400 28px/1 Anton">FRI</div><div style="font:700 13px/1 Archivo;letter-spacing:.1em;margin-top:3px">23:00</div></div>
+          <div><div style="font:600 22px/1.2 Archivo;color:#1B3A5C">DJ Sunset Session</div><div style="font:400 16px/1.3 Archivo;color:rgba(27,58,92,.6)">This week · Main terrace</div></div>
+        </div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:12px;align-items:center"><span style="width:9px;height:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 20px/1.35 Archivo;color:rgba(27,58,92,.82)">Upcoming events with date, time &amp; photo</span></div>
+          <div style="display:flex;gap:12px;align-items:center"><span style="width:9px;height:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 20px/1.35 Archivo;color:rgba(27,58,92,.82)">Filter by this week / this month</span></div>
+          <div style="display:flex;gap:12px;align-items:center"><span style="width:9px;height:9px;background:#19A7B8;border-radius:50%;flex:none"></span><span style="font:400 20px/1.35 Archivo;color:rgba(27,58,92,.82)">Private events form → WhatsApp redirect</span></div>
+        </div>
+      </div>
+      <!-- reservations -->
+      <div class="r" style="animation-delay:.26s;background:#fff;border-radius:10px;padding:30px 32px;box-shadow:0 16px 40px rgba(27,58,92,.10)">
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:42px;height:42px;border-radius:10px;background:rgba(25,167,184,.14);display:flex;align-items:center;justify-content:center;font:400 22px/1 Anton;color:#19A7B8">R</span><h3 style="margin:0;font:400 34px/1 Anton;text-transform:uppercase;color:#1B3A5C">Reservations</h3></div>
+        <div style="margin-top:20px;background:#F5F0E8;border-radius:8px;padding:16px 18px">
+          <div style="display:flex;gap:10px"><div style="flex:1;background:#fff;border:1px solid rgba(27,58,92,.12);border-radius:6px;padding:9px 12px;font:400 17px/1 Archivo;color:rgba(27,58,92,.55)">Name</div><div style="flex:1;background:#fff;border:1px solid rgba(27,58,92,.12);border-radius:6px;padding:9px 12px;font:400 17px/1 Archivo;color:rgba(27,58,92,.55)">4 guests</div></div>
+          <div style="margin-top:12px;background:#19A7B8;border-radius:6px;padding:11px;text-align:center;font:700 17px/1 Archivo;letter-spacing:.04em;color:#fff">✓ Confirmed — see you, María!</div>
+        </div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:12px;align-items:center"><span style="width:9px;height:9px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 20px/1.35 Archivo;color:rgba(27,58,92,.82)">Online booking — name, date, guests, requests</span></div>
+          <div style="display:flex;gap:12px;align-items:center"><span style="width:9px;height:9px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 20px/1.35 Archivo;color:rgba(27,58,92,.82)">Instant confirmation with the client's name</span></div>
+          <div style="display:flex;gap:12px;align-items:center"><span style="width:9px;height:9px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 20px/1.35 Archivo;color:rgba(27,58,92,.82)">WhatsApp confirmation to reduce no-shows</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r" style="animation-delay:.4s;margin-top:26px;display:flex;gap:30px;align-items:stretch">
+      <div style="flex:0 0 auto;background:rgba(25,167,184,.10);border-left:6px solid #E0382B;border-radius:4px;padding:20px 30px;display:flex;gap:22px;align-items:flex-start;flex:1">
+        <span style="font:700 14px/1.3 Archivo;letter-spacing:.2em;text-transform:uppercase;color:#E0382B;white-space:nowrap;padding-top:3px">Picture<br>this</span>
+        <p style="margin:0;font:400 21px/1.45 Archivo;color:#1B3A5C">A client sees your DJ Night post on Instagram at 10pm. He taps the link in bio, lands on your events page, sees it's next Friday, clicks "Book a table", fills the form, gets a confirmation — all without you lifting a finger.</p>
+      </div>
+      <div style="flex:0 0 320px;background:#1B3A5C;border-radius:8px;padding:24px 28px;display:flex;flex-direction:column;justify-content:center">
+        <div style="font:600 15px/1.3 Archivo;letter-spacing:.06em;text-transform:uppercase;color:#19A7B8">Every reservation</div>
+        <div style="font:400 30px/1.1 Anton;text-transform:uppercase;color:#F5F0E8;margin-top:8px">Stored &amp; visible in your admin panel in real time.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 6 — MANAGER PANEL ════════════════ -->
+  <section data-label="Manager Panel" data-speaker-notes="Total control from the phone in 30 seconds. No agency, no waiting. The Tuesday roster-change story." style="width:100%;height:100%;box-sizing:border-box;background:#1B3A5C;color:#F5F0E8;padding:78px 110px;display:flex;flex-direction:column;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(245,240,232,.4)">06 / 09</div>
+    <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">The manager panel</div>
+    <h1 class="r" style="margin:14px 0 0;font:400 70px/0.95 Anton;text-transform:uppercase;color:#F5F0E8">Total control. From your phone. In 30 seconds.</h1>
+    <p class="r" style="margin:14px 0 0;font:500 26px/1.4 Archivo;color:#19A7B8">No agency. No waiting. No extra costs.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:34px">
+      <div class="r" style="animation-delay:.12s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:10px;padding:26px 30px">
+        <div style="display:flex;align-items:baseline;gap:14px"><span style="font:400 30px/1 Anton;color:#E0382B">01</span><h3 style="margin:0;font:400 30px/1 Anton;text-transform:uppercase;color:#F5F0E8">Dashboard</h3></div>
+        <p style="margin:12px 0 0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.85)">See today's reservations, upcoming events, staff on duty and pending schedule changes at a glance.</p>
+      </div>
+      <div class="r" style="animation-delay:.22s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:10px;padding:26px 30px">
+        <div style="display:flex;align-items:baseline;gap:14px"><span style="font:400 30px/1 Anton;color:#19A7B8">02</span><h3 style="margin:0;font:400 30px/1 Anton;text-transform:uppercase;color:#F5F0E8">Menu Management</h3></div>
+        <p style="margin:12px 0 0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.85)">Add a dish, change a price, hide an item, promote a special. Done before your next table arrives.</p>
+      </div>
+      <div class="r" style="animation-delay:.32s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:10px;padding:26px 30px">
+        <div style="display:flex;align-items:baseline;gap:14px"><span style="font:400 30px/1 Anton;color:#E0382B">03</span><h3 style="margin:0;font:400 30px/1 Anton;text-transform:uppercase;color:#F5F0E8">Events Management</h3></div>
+        <p style="margin:12px 0 0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.85)">Create an event in under 1 minute. Schedule it in advance. Publish or unpublish with a toggle. No technical knowledge needed.</p>
+      </div>
+      <div class="r" style="animation-delay:.42s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:10px;padding:26px 30px">
+        <div style="display:flex;align-items:baseline;gap:14px"><span style="font:400 30px/1 Anton;color:#19A7B8">04</span><h3 style="margin:0;font:400 30px/1 Anton;text-transform:uppercase;color:#F5F0E8">Staff Scheduling</h3></div>
+        <p style="margin:12px 0 0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.85)">Build your weekly roster, assign shifts, flag last-minute changes. Your team is notified automatically.</p>
+      </div>
+    </div>
+
+    <div class="r" style="animation-delay:.52s;margin-top:auto;background:rgba(245,240,232,.07);border-left:6px solid #E0382B;border-radius:4px;padding:22px 34px;display:flex;gap:24px;align-items:flex-start">
+      <span style="font:700 15px/1.3 Archivo;letter-spacing:.2em;text-transform:uppercase;color:#19A7B8;white-space:nowrap;padding-top:3px">Picture<br>this</span>
+      <p style="margin:0;font:400 23px/1.45 Archivo;color:rgba(245,240,232,.92)">It's Tuesday evening and you realize you need to change the Friday roster. You open the manager panel on your phone, edit two shifts, mark them as "changed", save. Your staff will see it the next time they log in. No group chat needed.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 7 — STAFF PORTAL ════════════════ -->
+  <section data-label="Staff Portal" data-speaker-notes="The team always informed, no WhatsApp chaos. PIN login, 7-day shifts, orange changed-shift badges. Lucía's story." style="width:100%;height:100%;box-sizing:border-box;background:#F5F0E8;color:#1B3A5C;display:flex;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="flex:1;box-sizing:border-box;padding:78px 64px 78px 110px;display:flex;flex-direction:column">
+      <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(27,58,92,.32)">07 / 09</div>
+      <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">The staff portal</div>
+      <h1 class="r" style="margin:14px 0 0;font:400 62px/0.96 Anton;text-transform:uppercase;color:#1B3A5C">Your team. Always informed. No WhatsApp chaos.</h1>
+
+      <div style="margin-top:30px;display:flex;flex-direction:column;gap:15px">
+        <div class="r" style="animation-delay:.12s;display:flex;gap:14px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 23px/1.35 Archivo;color:#1B3A5C">Each staff member logs in with name + 4-digit PIN</span></div>
+        <div class="r" style="animation-delay:.2s;display:flex;gap:14px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 23px/1.35 Archivo;color:#1B3A5C">They see their upcoming shifts for the next 7 days</span></div>
+        <div class="r" style="animation-delay:.28s;display:flex;gap:14px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 23px/1.35 Archivo;color:#1B3A5C">Changed shifts highlighted in orange — impossible to miss</span></div>
+        <div class="r" style="animation-delay:.36s;display:flex;gap:14px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 23px/1.35 Archivo;color:#1B3A5C">Full weekly roster visible (read-only)</span></div>
+        <div class="r" style="animation-delay:.44s;display:flex;gap:14px;align-items:center"><span style="width:11px;height:11px;background:#E0382B;border-radius:50%;flex:none"></span><span style="font:400 23px/1.35 Archivo;color:#1B3A5C">Direct WhatsApp button to contact the manager</span></div>
+      </div>
+
+      <div class="r" style="animation-delay:.5s;margin-top:28px;display:inline-flex;align-self:flex-start;gap:18px;background:#1B3A5C;border-radius:10px;padding:20px 28px;align-items:center">
+        <div style="font:400 56px/1 Anton;color:#19A7B8">PIN</div>
+        <div style="font:500 20px/1.4 Archivo;color:#F5F0E8;max-width:320px">4-digit access for each staff member. Zero app to download. Works on any phone.</div>
+      </div>
+
+      <div class="r" style="animation-delay:.56s;margin-top:auto;background:rgba(25,167,184,.10);border-left:6px solid #E0382B;border-radius:4px;padding:22px 30px;display:flex;gap:22px;align-items:flex-start">
+        <span style="font:700 14px/1.3 Archivo;letter-spacing:.2em;text-transform:uppercase;color:#E0382B;white-space:nowrap;padding-top:3px">Picture<br>this</span>
+        <p style="margin:0;font:400 21px/1.45 Archivo;color:#1B3A5C">Lucía, your bartender, works the next morning. At 9pm she opens the Staff Portal, enters her PIN, and sees an orange badge: "Shift changed". She taps "Contact manager" and confirms. No missed message. No confusion.</p>
+      </div>
+    </div>
+    <!-- phone mockup -->
+    <div style="flex:0 0 500px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#1B3A5C,#0e1f30)">
+      <div style="width:300px;height:620px;background:#0e1f30;border-radius:42px;padding:14px;box-shadow:0 30px 70px rgba(0,0,0,.4);border:2px solid rgba(245,240,232,.12)">
+        <div style="width:100%;height:100%;background:#F5F0E8;border-radius:30px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:#1B3A5C;padding:24px 22px 18px;color:#F5F0E8">
+            <div style="font:700 12px/1 Archivo;letter-spacing:.16em;color:#19A7B8">STAFF PORTAL</div>
+            <div style="font:400 30px/1 Anton;margin-top:8px">Hola, Lucía</div>
+            <div style="font:400 14px/1 Archivo;color:rgba(245,240,232,.7);margin-top:6px">Next 7 days · 4 shifts</div>
+          </div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:11px;flex:1">
+            <div style="background:#fff;border-radius:10px;padding:13px 15px;box-shadow:0 4px 12px rgba(27,58,92,.08)"><div style="font:700 13px/1 Archivo;color:#1B3A5C">THU · Bar</div><div style="font:400 15px/1 Archivo;color:rgba(27,58,92,.6);margin-top:5px">16:00 — 23:00</div></div>
+            <div style="background:#fff;border-radius:10px;padding:13px 15px;border:2px solid #E0382B;box-shadow:0 4px 12px rgba(224,56,43,.18)"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font:700 13px/1 Archivo;color:#1B3A5C">FRI · Bar</div><span style="font:700 9px/1 Archivo;letter-spacing:.08em;background:#E0382B;color:#fff;padding:4px 7px;border-radius:5px">CHANGED</span></div><div style="font:400 15px/1 Archivo;color:#E0382B;margin-top:5px">12:00 → now 14:00</div></div>
+            <div style="background:#fff;border-radius:10px;padding:13px 15px;box-shadow:0 4px 12px rgba(27,58,92,.08)"><div style="font:700 13px/1 Archivo;color:#1B3A5C">SAT · Terrace</div><div style="font:400 15px/1 Archivo;color:rgba(27,58,92,.6);margin-top:5px">18:00 — 02:00</div></div>
+            <div style="margin-top:auto;background:#19A7B8;border-radius:10px;padding:13px;text-align:center;font:700 14px/1 Archivo;color:#fff">Contact manager</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 8 — PRICING ════════════════ -->
+  <section data-label="Investment" data-speaker-notes="Pricing. €900 one-time setup, monthly maintenance €100 in season / €30 off-season. 2026 season totals €1,400. Agencies charge 5-12k." style="width:100%;height:100%;box-sizing:border-box;background:#F5F0E8;color:#1B3A5C;padding:70px 110px;display:flex;flex-direction:column;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="position:absolute;top:62px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(27,58,92,.32)">08 / 09</div>
+    <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">Investment &amp; pricing</div>
+    <h1 class="r" style="margin:12px 0 0;font:400 58px/0.97 Anton;text-transform:uppercase;color:#1B3A5C">A professional digital solution for your season.</h1>
+
+    <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:30px;margin-top:30px;align-items:stretch">
+      <!-- one-time -->
+      <div class="r" style="animation-delay:.12s;background:#fff;border-radius:12px;padding:34px 36px;box-shadow:0 16px 40px rgba(27,58,92,.10);display:flex;flex-direction:column">
+        <div style="font:700 16px/1 Archivo;letter-spacing:.14em;text-transform:uppercase;color:rgba(27,58,92,.55)">One-time fee</div>
+        <div style="font:400 38px/1 Anton;text-transform:uppercase;color:#1B3A5C;margin-top:8px">Setup &amp; Delivery</div>
+        <div style="font:400 84px/1 Anton;color:#1B3A5C;margin-top:10px">€900</div>
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:11px">
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:#19A7B8;font:700 20px/1.2 Archivo">✓</span><span style="font:400 20px/1.35 Archivo;color:#1B3A5C">Full website built and delivered</span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:#19A7B8;font:700 20px/1.2 Archivo">✓</span><span style="font:400 20px/1.35 Archivo;color:#1B3A5C">All content loaded — menu, events, 3 languages</span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:#19A7B8;font:700 20px/1.2 Archivo">✓</span><span style="font:400 20px/1.35 Archivo;color:#1B3A5C">Admin panel configured</span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:#19A7B8;font:700 20px/1.2 Archivo">✓</span><span style="font:400 20px/1.35 Archivo;color:#1B3A5C">Staff portal set up</span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="color:#19A7B8;font:700 20px/1.2 Archivo">✓</span><span style="font:400 20px/1.35 Archivo;color:#1B3A5C">Live on the web in days, not weeks</span></div>
+        </div>
+      </div>
+      <!-- monthly (highlighted) -->
+      <div class="r" style="animation-delay:.26s;background:#1B3A5C;border-radius:12px;padding:34px 38px;box-shadow:0 24px 54px rgba(27,58,92,.28);position:relative;display:flex;flex-direction:column">
+        <div style="position:absolute;top:-14px;right:34px;background:#E0382B;color:#fff;font:700 13px/1 Archivo;letter-spacing:.12em;text-transform:uppercase;padding:9px 16px;border-radius:30px">Recommended</div>
+        <div style="font:700 16px/1 Archivo;letter-spacing:.14em;text-transform:uppercase;color:#19A7B8">Monthly plan</div>
+        <div style="font:400 38px/1 Anton;text-transform:uppercase;color:#F5F0E8;margin-top:8px">Maintenance</div>
+        <div style="display:flex;align-items:flex-end;gap:22px;margin-top:10px">
+          <div><div style="font:400 64px/0.9 Anton;color:#19A7B8">€100<span style="font:400 24px/1 Anton;color:rgba(245,240,232,.7)">/mo</span></div><div style="font:600 14px/1 Archivo;letter-spacing:.04em;color:rgba(245,240,232,.7);margin-top:4px">In season · May — Oct</div></div>
+          <div style="padding-bottom:6px"><div style="font:400 38px/0.9 Anton;color:#F5F0E8">€30<span style="font:400 18px/1 Anton;color:rgba(245,240,232,.6)">/mo</span></div><div style="font:600 14px/1 Archivo;letter-spacing:.04em;color:rgba(245,240,232,.6);margin-top:4px">Off season · Nov — Apr</div></div>
+        </div>
+        <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px 18px">
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#19A7B8;font:700 18px/1.2 Archivo">✓</span><span style="font:400 18px/1.3 Archivo;color:rgba(245,240,232,.92)">Up to 3 updates per month</span></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#19A7B8;font:700 18px/1.2 Archivo">✓</span><span style="font:400 18px/1.3 Archivo;color:rgba(245,240,232,.92)">Menu changes, new events, photos</span></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#19A7B8;font:700 18px/1.2 Archivo">✓</span><span style="font:400 18px/1.3 Archivo;color:rgba(245,240,232,.92)">Priority support (48h response)</span></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#19A7B8;font:700 18px/1.2 Archivo">✓</span><span style="font:400 18px/1.3 Archivo;color:rgba(245,240,232,.92)">Always online, always updated</span></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#19A7B8;font:700 18px/1.2 Archivo">✓</span><span style="font:400 18px/1.3 Archivo;color:rgba(245,240,232,.92)">Pre-season setup included</span></div>
+        </div>
+        <div style="margin-top:auto;padding-top:22px">
+          <div style="background:rgba(25,167,184,.16);border:1px solid rgba(25,167,184,.4);border-radius:10px;padding:16px 20px">
+            <div style="font:600 14px/1 Archivo;letter-spacing:.08em;text-transform:uppercase;color:#19A7B8">2026 season — if you sign now</div>
+            <div style="font:400 30px/1.1 Anton;color:#F5F0E8;margin-top:7px">€900 setup + 5 × €100 = <span style="color:#E0382B">€1,400 total</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="r" style="animation-delay:.42s;margin-top:auto;padding-top:24px;text-align:center">
+      <p style="margin:0;font:500 26px/1.4 Archivo;color:#1B3A5C">Agencies charge <b style="color:#E0382B">€5,000 to €12,000</b> for this. You get the same result for a fraction of the price.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════ SLIDE 9 — NEXT STEPS ════════════════ -->
+  <section data-label="Next steps" data-speaker-notes="Close. Three steps: agree today, you provide details, we go live. The platform is already built — your version ships in days. Hand over contact." style="width:100%;height:100%;box-sizing:border-box;background:#1B3A5C;color:#F5F0E8;padding:78px 110px;display:flex;flex-direction:column;font-family:Archivo,sans-serif;position:relative;overflow:hidden">
+    <div style="position:absolute;top:70px;right:104px;font:700 20px/1 Archivo;letter-spacing:.3em;color:rgba(245,240,232,.4)">09 / 09</div>
+    <div class="r" style="font:700 19px/1 Archivo;letter-spacing:.28em;text-transform:uppercase;color:#19A7B8">Next steps</div>
+    <h1 class="r" style="margin:14px 0 0;font:400 84px/0.92 Anton;text-transform:uppercase;color:#F5F0E8">Ready when you are.</h1>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:42px">
+      <div class="r" style="animation-delay:.12s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:12px;padding:30px 30px">
+        <div style="font:400 70px/0.9 Anton;color:#E0382B">1</div>
+        <h3 style="margin:14px 0 8px;font:400 32px/1 Anton;text-transform:uppercase;color:#F5F0E8">We agree today</h3>
+        <p style="margin:0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.82)">Sign the proposal, pay the setup fee.</p>
+      </div>
+      <div class="r" style="animation-delay:.24s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:12px;padding:30px 30px">
+        <div style="font:400 70px/0.9 Anton;color:#19A7B8">2</div>
+        <h3 style="margin:14px 0 8px;font:400 32px/1 Anton;text-transform:uppercase;color:#F5F0E8">You provide details</h3>
+        <p style="margin:0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.82)">Your real photos, final menu prices, event schedule, staff list and PINs.</p>
+      </div>
+      <div class="r" style="animation-delay:.36s;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.12);border-radius:12px;padding:30px 30px">
+        <div style="font:400 70px/0.9 Anton;color:#E0382B">3</div>
+        <h3 style="margin:14px 0 8px;font:400 32px/1 Anton;text-transform:uppercase;color:#F5F0E8">We go live</h3>
+        <p style="margin:0;font:400 22px/1.45 Archivo;color:rgba(245,240,232,.82)">Your personalized Copity Digital platform is live. Clients book. Your team is organized. You focus on the season.</p>
+      </div>
+    </div>
+
+    <div class="r" style="animation-delay:.46s;margin-top:38px;background:#E0382B;border-radius:12px;padding:34px 44px;display:flex;align-items:center;justify-content:space-between;gap:30px">
+      <div>
+        <div style="font:400 46px/0.95 Anton;text-transform:uppercase;color:#fff">The platform is already built.</div>
+        <div style="font:500 26px/1.2 Archivo;color:rgba(255,255,255,.92);margin-top:6px">Your version is ready in days.</div>
+      </div>
+      <div style="text-align:right;flex:none">
+        <div style="font:700 15px/1 Archivo;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85)">D Embassy</div>
+        <div style="font:600 22px/1.3 Archivo;color:#fff;margin-top:8px">damiendambassador@gmail.com</div>
+        <div style="margin-top:12px;display:inline-flex;align-items:center;gap:10px;background:#fff;color:#E0382B;border-radius:30px;padding:11px 22px;font:700 17px/1 Archivo">Let's talk — send a WhatsApp</div>
+      </div>
+    </div>
+  </section>
+
+</x-import>
+</x-dc>
+</body>
+</html>

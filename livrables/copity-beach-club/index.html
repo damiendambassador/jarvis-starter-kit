@@ -94,103 +94,103 @@ class Component extends DCLogic {
   fmtDate(d){ try{ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString(this.state.lang==='es'?'es-ES':'en-GB',{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return d; } }
 
   // ---------- seed data ----------
-  ALLERGENS(){ return { gluten:['Gluten','Gluten'], crust:['Crustáceos','Crustaceans'], egg:['Huevo','Eggs'], fish:['Pescado','Fish'], peanut:['Cacahuete','Peanuts'], soya:['Soja','Soya'], milk:['Lácteos','Milk'], nuts:['F. secos','Nuts'], celery:['Apio','Celery'], mustard:['Mostaza','Mustard'], sesame:['Sésamo','Sesame'], sulphite:['Sulfitos','Sulphites'], lupin:['Altramuz','Lupins'], mollusc:['Moluscos','Shellfish'] }; }
+  ALLERGENS(){ return { gluten:['Gluten','Gluten','Gluten'], crust:['Crustáceos','Crustaceans','Crustacés'], egg:['Huevo','Eggs','Œufs'], fish:['Pescado','Fish','Poisson'], peanut:['Cacahuete','Peanuts','Arachides'], soya:['Soja','Soya','Soja'], milk:['Lácteos','Milk','Lait'], nuts:['F. secos','Nuts','Fruits à coques'], celery:['Apio','Celery','Céleri'], mustard:['Mostaza','Mustard','Moutarde'], sesame:['Sésamo','Sesame','Sésame'], sulphite:['Sulfitos','Sulphites','Sulfites'], lupin:['Altramuz','Lupins','Lupin'], mollusc:['Moluscos','Shellfish','Mollusques'] }; }
   CATS(){ return [
-    {id:'starters', es:'Pica Pica On The Beach', en:'Starters'},
-    {id:'bread', es:'Entre Panes', en:'Between Bread'},
-    {id:'protein', es:'Pura Proteína', en:'Clean Protein'},
-    {id:'kids', es:'Para los Peques', en:'For The Kids'},
-    {id:'desserts', es:'Postres', en:'Desserts'},
-    {id:'cocktails', es:'Cócteles', en:'Cocktails'},
-    {id:'mocktails', es:'Cócteles Sin Alcohol', en:'0% Cocktails'},
-    {id:'spritz', es:'Spritz', en:'Spritz'},
-    {id:'softs', es:'Bebidas Sin Alcohol', en:'Non-Alcoholic'},
-    {id:'wine', es:'Bodega', en:'Winery'},
-    {id:'beer', es:'Cerveza', en:'Beers'},
-    {id:'spirits', es:'Bebidas', en:'Spirits'}
+    {id:'starters', es:'Pica Pica On The Beach', en:'Starters', fr:'Entrées'},
+    {id:'bread', es:'Entre Panes', en:'Between Bread', fr:'Sandwichs & Burgers'},
+    {id:'protein', es:'Pura Proteína', en:'Clean Protein', fr:'Protéines'},
+    {id:'kids', es:'Para los Peques', en:'For The Kids', fr:'Enfants'},
+    {id:'desserts', es:'Postres', en:'Desserts', fr:'Desserts'},
+    {id:'cocktails', es:'Cócteles', en:'Cocktails', fr:'Cocktails'},
+    {id:'mocktails', es:'Cócteles Sin Alcohol', en:'0% Cocktails', fr:'0% Alcool'},
+    {id:'spritz', es:'Spritz', en:'Spritz', fr:'Spritz'},
+    {id:'softs', es:'Bebidas Sin Alcohol', en:'Non-Alcoholic', fr:'Sans Alcool'},
+    {id:'wine', es:'Bodega', en:'Winery', fr:'Vins & Caves'},
+    {id:'beer', es:'Cerveza', en:'Beers', fr:'Bières'},
+    {id:'spirits', es:'Bebidas', en:'Spirits', fr:'Spiritueux'}
   ]; }
   mi(cat,es,en,descEs,descEn,price,allergens,opts){ return Object.assign({id:this.uid(),cat,es,en,descEs,descEn,price,allergens:allergens||[],available:true,special:false}, opts||{}); }
   seedMenu(){ const m=[];
     const s=(...a)=>m.push(this.mi('starters',...a));
-    s('Chanchullo de Boquerón','Anchovies & Chips','Boquerones en vinagre con patatas chips y aceitunas','Anchovies in vinegar with potato chips and olives','9.50',['fish','sulphite']);
-    s('Nachos Copity','Copity Nachos','Totopos con salsa cheddar, guacamole, crema agria y pico de gallo','Tortilla chips, cheddar sauce, guacamole, sour cream, pico de gallo','11.50',['gluten','milk']);
-    s('Ensaladilla Rusa','Russian Salad','Patata, mayonesa y atún','Cold potato salad with mayonnaise','7.50',['egg','fish']);
-    s('Ricas Marineras','Marineras','Rosquilleta con ensaladilla y anchoa','Bread stick with potato salad and anchovies','5.50',['gluten','fish','egg']);
-    s('Calamar a la Plancha','Grilled Squid','Calamar con patatas baby','Grilled squid with baby potatoes','19.50',['mollusc']);
-    s('Zamburiñas','Scallops','Zamburiñas a la plancha','Grilled scallops','4.50',['mollusc']);
-    s('Ensalada César','Caesar Salad','Rúcula, pollo, picatostes, parmesano, salsa césar','Arugula, chicken, croutons, parmesan, Caesar sauce','13.50',['gluten','milk','egg','fish']);
-    s('Ensalada Tropical','Tropical Salad','Rúcula, wakame, salmón, mango, aguacate, vinagreta de miel y mostaza','Arugula, wakame, salmon, mango, avocado, honey mustard vinaigrette','13.50',['fish','soya','mustard']);
-    s('Tacos Crunchy Tex-Mex','Crunchy Tex-Mex Tacos','3 tacos crujientes de pollo con especias, queso y pico de gallo','3 crispy chicken tacos with spice, cheese, pico de gallo','10.50',['gluten','milk']);
+    s('Chanchullo de Boquerón','Anchovies & Chips','Boquerones en vinagre con patatas chips y aceitunas','Anchovies in vinegar with potato chips and olives','9.50',['fish','sulphite'],{fr:'Anchois & Chips',descFr:'Anchois marinés avec chips et olives'});
+    s('Nachos Copity','Copity Nachos','Totopos con salsa cheddar, guacamole, crema agria y pico de gallo','Tortilla chips, cheddar sauce, guacamole, sour cream, pico de gallo','11.50',['gluten','milk'],{fr:'Nachos Copity',descFr:'Chips tortilla, sauce cheddar, guacamole, crème aigre, pico de gallo'});
+    s('Ensaladilla Rusa','Russian Salad','Patata, mayonesa y atún','Cold potato salad with mayonnaise','7.50',['egg','fish'],{fr:'Salade Russe',descFr:'Salade froide de pommes de terre et thon'});
+    s('Ricas Marineras','Marineras','Rosquilleta con ensaladilla y anchoa','Bread stick with potato salad and anchovies','5.50',['gluten','fish','egg'],{fr:'Marineras',descFr:'Bâtonnet de pain, salade russe et anchois'});
+    s('Calamar a la Plancha','Grilled Squid','Calamar con patatas baby','Grilled squid with baby potatoes','19.50',['mollusc'],{fr:'Calamar Grillé',descFr:'Calamar grillé avec pommes de terre grenaille'});
+    s('Zamburiñas','Scallops','Zamburiñas a la plancha','Grilled scallops','4.50',['mollusc'],{fr:'Coquilles Saint-Jacques',descFr:'Coquilles saint-jacques grillées'});
+    s('Ensalada César','Caesar Salad','Rúcula, pollo, picatostes, parmesano, salsa césar','Arugula, chicken, croutons, parmesan, Caesar sauce','13.50',['gluten','milk','egg','fish'],{fr:'Salade César',descFr:'Roquette, poulet, croûtons, parmesan, sauce César'});
+    s('Ensalada Tropical','Tropical Salad','Rúcula, wakame, salmón, mango, aguacate, vinagreta de miel y mostaza','Arugula, wakame, salmon, mango, avocado, honey mustard vinaigrette','13.50',['fish','soya','mustard'],{fr:'Salade Tropicale',descFr:'Roquette, wakame, saumon, mangue, avocat, vinaigrette miel-moutarde'});
+    s('Tacos Crunchy Tex-Mex','Crunchy Tex-Mex Tacos','3 tacos crujientes de pollo con especias, queso y pico de gallo','3 crispy chicken tacos with spice, cheese, pico de gallo','10.50',['gluten','milk'],{fr:'Tacos Croustillants Tex-Mex',descFr:'3 tacos croustillants de poulet avec épices, fromage, pico de gallo'});
     const b=(...a)=>m.push(this.mi('bread',...a));
-    b('Brioche Trufado Beach','Truffle Brioche','Pavo, queso fundido y mantequilla de trufa','Turkey, melted cheese, truffle butter','9.50',['gluten','milk']);
-    b('Copity Beach Club','Copity Beach Club','Pollo, rúcula, guacamole, havarti, tomate, salsa cheddar','Chicken, arugula, guacamole, havarti, tomato, cheddar sauce','10.00',['gluten','milk']);
-    b('Brioche de Salmón','Salmon Brioche','Queso de cabra, tomate, rúcula, salsa miel y mostaza','Goat cheese, tomato, arugula, honey mustard sauce','10.00',['gluten','milk','fish','mustard']);
-    b('Mc Copity Burger','Mc Copity Burger','Burger de ternera dorada, doble cheddar, bacon, salsa BH','Golden beef burger, double cheddar, bacon, BH sauce','13.50',['gluten','milk','egg']);
-    b('Vegan Burger','Vegan Burger','Rúcula, tomate, cebolla, pepinillos, salsa miel y mostaza','Arugula, tomato, onion, pickles, honey mustard sauce','13.50',['gluten','mustard','soya']);
-    b('Hot Dog Beach','Hot Dog Beach','Queso, pico de gallo, ketchup, mayo y cebolla crujiente','Cheese, pico de gallo, ketchup, mayo, crispy onion','9.00',['gluten','milk','egg','mustard']);
+    b('Brioche Trufado Beach','Truffle Brioche','Pavo, queso fundido y mantequilla de trufa','Turkey, melted cheese, truffle butter','9.50',['gluten','milk'],{fr:'Brioche Truffée Beach',descFr:'Dinde, fromage fondu, beurre de truffe'});
+    b('Copity Beach Club','Copity Beach Club','Pollo, rúcula, guacamole, havarti, tomate, salsa cheddar','Chicken, arugula, guacamole, havarti, tomato, cheddar sauce','10.00',['gluten','milk'],{fr:'Copity Beach Club',descFr:'Poulet, roquette, guacamole, havarti, tomate, sauce cheddar'});
+    b('Brioche de Salmón','Salmon Brioche','Queso de cabra, tomate, rúcula, salsa miel y mostaza','Goat cheese, tomato, arugula, honey mustard sauce','10.00',['gluten','milk','fish','mustard'],{fr:'Brioche au Saumon',descFr:'Fromage de chèvre, tomate, roquette, sauce miel-moutarde'});
+    b('Mc Copity Burger','Mc Copity Burger','Burger de ternera dorada, doble cheddar, bacon, salsa BH','Golden beef burger, double cheddar, bacon, BH sauce','13.50',['gluten','milk','egg'],{fr:'Mc Copity Burger',descFr:'Burger de bœuf doré, double cheddar, bacon, sauce BH'});
+    b('Vegan Burger','Vegan Burger','Rúcula, tomate, cebolla, pepinillos, salsa miel y mostaza','Arugula, tomato, onion, pickles, honey mustard sauce','13.50',['gluten','mustard','soya'],{fr:'Vegan Burger',descFr:'Roquette, tomate, oignon, cornichons, sauce miel-moutarde'});
+    b('Hot Dog Beach','Hot Dog Beach','Queso, pico de gallo, ketchup, mayo y cebolla crujiente','Cheese, pico de gallo, ketchup, mayo, crispy onion','9.00',['gluten','milk','egg','mustard'],{fr:'Hot Dog Beach',descFr:'Fromage, pico de gallo, ketchup, mayo, oignon croustillant'});
     const p=(...a)=>m.push(this.mi('protein',...a));
-    p('Abanico Ibérico','Iberian Pork','La parte más tierna de la costilla, con guarnición','Tender pork ribs, with garnish','16.50',[]);
-    p('Pechuga de Pollo','Chicken Breast','Pechuga de pollo con guarnición','Chicken breast with garnish','15.00',[]);
+    p('Abanico Ibérico','Iberian Pork','La parte más tierna de la costilla, con guarnición','Tender pork ribs, with garnish','16.50',[],{fr:'Porc Ibérique',descFr:'La partie la plus tendre des côtes, avec garniture'});
+    p('Pechuga de Pollo','Chicken Breast','Pechuga de pollo con guarnición','Chicken breast with garnish','15.00',[],{fr:'Blanc de Poulet',descFr:'Blanc de poulet avec garniture'});
     const k=(...a)=>m.push(this.mi('kids',...a));
-    k('Sándwich Mixto con Chips','Ham & Cheese + Chips','Sándwich de jamón y queso con patatas','Ham and cheese sandwich with chips','7.50',['gluten','milk']);
-    k('Perrito Caliente','Hot Dog','Perrito con ketchup, mostaza y mayo','Hot dog: ketchup, mustard, mayo','7.50',['gluten','egg','mustard']);
-    k('Fruta Fresca','Fresh Fruit','Fruta fresca del día','Fresh fruit of the day','5.50',[]);
-    k('Helados Frigo','Frigo Ice Cream','Consulta nuestra carta','Ask for our menu','',[],{priceRaw:true,price:'—'});
+    k('Sándwich Mixto con Chips','Ham & Cheese + Chips','Sándwich de jamón y queso con patatas','Ham and cheese sandwich with chips','7.50',['gluten','milk'],{fr:'Jambon-Fromage + Chips',descFr:'Sandwich jambon-fromage avec chips'});
+    k('Perrito Caliente','Hot Dog','Perrito con ketchup, mostaza y mayo','Hot dog: ketchup, mustard, mayo','7.50',['gluten','egg','mustard'],{fr:'Hot Dog',descFr:'Hot dog : ketchup, moutarde, mayo'});
+    k('Fruta Fresca','Fresh Fruit','Fruta fresca del día','Fresh fruit of the day','5.50',[],{fr:'Fruits Frais',descFr:'Fruits frais du jour'});
+    k('Helados Frigo','Frigo Ice Cream','Consulta nuestra carta','Ask for our menu','',[],{priceRaw:true,price:'—',fr:'Glaces Frigo',descFr:'Voir notre carte'});
     const d=(...a)=>m.push(this.mi('desserts',...a));
-    d('Fruta Fresca','Fresh Fruit','Fruta fresca del día','Fresh fruit of the day','5.50',[]);
-    d('Helados Frigo','Frigo Ice Cream','Consulta la carta','Check menu','',[],{priceRaw:true,price:'—'});
+    d('Fruta Fresca','Fresh Fruit','Fruta fresca del día','Fresh fruit of the day','5.50',[],{fr:'Fruits Frais',descFr:'Fruits frais du jour'});
+    d('Helados Frigo','Frigo Ice Cream','Consulta la carta','Check menu','',[],{priceRaw:true,price:'—',fr:'Glaces Frigo',descFr:'Voir notre carte'});
     const c=(...a)=>m.push(this.mi('cocktails',...a));
-    c('Mojito Copity','Copity Mojito','Azúcar moreno, lima, menta, ron, soda o Sprite','Brown sugar, lime, mint, rum, soda or Sprite','9.50',['sulphite']);
-    c('Mojito Sabores','Flavoured Mojito','Mojito de sabores','Flavoured mojito','10.50',['sulphite']);
-    c('Daiquiri','Daiquiri','Ron, Cointreau, zumo de limón','Rum, Cointreau, lemon juice','9.50',['sulphite']);
-    c('Piña Colada','Piña Colada','Zumo de piña, mangaroca, Malibu','Pineapple juice, mangaroca, Malibu','9.50',['milk','sulphite']);
-    c('Caipiriña','Caipirinha','Azúcar moreno, lima, cachaça','Brown sugar, lime, cachaça','9.50',['sulphite']);
-    c('Caipiroska','Caipiroska','Azúcar moreno, lima, vodka','Brown sugar, lime, vodka','9.50',['sulphite']);
-    c('Sex on the Beach','Sex on the Beach','Zumo naranja/melocotón, granadina, vodka, licor de melón','Orange/peach juice, grenadine, vodka, melon liqueur','9.50',['sulphite']);
-    c('Tequila Sunrise','Tequila Sunrise','Tequila, zumo de naranja, granadina','Tequila, orange juice, grenadine','9.50',['sulphite']);
-    c('Pornstar Martini','Pornstar Martini','Vodka, Passoa, vainilla, maracuyá','Vodka, Passoa, vanilla, passion fruit','9.50',['sulphite']);
+    c('Mojito Copity','Copity Mojito','Azúcar moreno, lima, menta, ron, soda o Sprite','Brown sugar, lime, mint, rum, soda or Sprite','9.50',['sulphite'],{fr:'Mojito Copity',descFr:'Sucre roux, citron vert, menthe, rhum, soda ou Sprite'});
+    c('Mojito Sabores','Flavoured Mojito','Mojito de sabores','Flavoured mojito','10.50',['sulphite'],{fr:'Mojito Parfumé',descFr:'Mojito parfumé'});
+    c('Daiquiri','Daiquiri','Ron, Cointreau, zumo de limón','Rum, Cointreau, lemon juice','9.50',['sulphite'],{fr:'Daiquiri',descFr:'Rhum, Cointreau, jus de citron'});
+    c('Piña Colada','Piña Colada','Zumo de piña, mangaroca, Malibu','Pineapple juice, mangaroca, Malibu','9.50',['milk','sulphite'],{fr:'Piña Colada',descFr:"Jus d'ananas, mangaroca, Malibu"});
+    c('Caipiriña','Caipirinha','Azúcar moreno, lima, cachaça','Brown sugar, lime, cachaça','9.50',['sulphite'],{fr:'Caipirinha',descFr:'Sucre roux, citron vert, cachaça'});
+    c('Caipiroska','Caipiroska','Azúcar moreno, lima, vodka','Brown sugar, lime, vodka','9.50',['sulphite'],{fr:'Caipiroska',descFr:'Sucre roux, citron vert, vodka'});
+    c('Sex on the Beach','Sex on the Beach','Zumo naranja/melocotón, granadina, vodka, licor de melón','Orange/peach juice, grenadine, vodka, melon liqueur','9.50',['sulphite'],{fr:'Sex on the Beach',descFr:'Jus orange/pêche, grenadine, vodka, liqueur de melon'});
+    c('Tequila Sunrise','Tequila Sunrise','Tequila, zumo de naranja, granadina','Tequila, orange juice, grenadine','9.50',['sulphite'],{fr:'Tequila Sunrise',descFr:"Tequila, jus d'orange, grenadine"});
+    c('Pornstar Martini','Pornstar Martini','Vodka, Passoa, vainilla, maracuyá','Vodka, Passoa, vanilla, passion fruit','9.50',['sulphite'],{fr:'Pornstar Martini',descFr:'Vodka, Passoa, vanille, fruit de la passion'});
     const mo=(...a)=>m.push(this.mi('mocktails',...a));
-    mo('San Francisco','San Francisco','Naranja, piña, melocotón, granadina','Orange, pineapple, peach juice, grenadine','8.50',[]);
-    mo('Mojito Sin Alcohol','Virgin Mojito','Azúcar moreno, lima, menta, Sprite','Brown sugar, lime, mint, Sprite','8.50',[]);
+    mo('San Francisco','San Francisco','Naranja, piña, melocotón, granadina','Orange, pineapple, peach juice, grenadine','8.50',[],{fr:'San Francisco',descFr:'Orange, ananas, pêche, grenadine'});
+    mo('Mojito Sin Alcohol','Virgin Mojito','Azúcar moreno, lima, menta, Sprite','Brown sugar, lime, mint, Sprite','8.50',[],{fr:'Mojito Virgin',descFr:'Sucre roux, citron vert, menthe, Sprite'});
     const sp=(...a)=>m.push(this.mi('spritz',...a));
-    sp('Aperol Spritz','Aperol Spritz','','','9.00',['sulphite']);
-    sp('Campari Spritz','Campari Spritz','','','9.00',['sulphite']);
-    sp('Hugo Spritz','Hugo Spritz','','','10.00',['sulphite']);
+    sp('Aperol Spritz','Aperol Spritz','','','9.00',['sulphite'],{fr:'Aperol Spritz'});
+    sp('Campari Spritz','Campari Spritz','','','9.00',['sulphite'],{fr:'Campari Spritz'});
+    sp('Hugo Spritz','Hugo Spritz','','','10.00',['sulphite'],{fr:'Hugo Spritz'});
     const so=(...a)=>m.push(this.mi('softs',...a));
-    so('Limón Granizado','Lemon Granita','Grande / Pequeño','Large / Small','5.00 / 3.50',[],{priceRaw:true,price:'5.00 € · 3.50 €'});
-    so('Refrescos','Soft Drinks','','','3.00',[]);
-    so('Zumos','Juices','Piña, melocotón, naranja','Pineapple, peach, orange','3.50',[]);
-    so('Red Bull','Red Bull','Original, Sugar free, Colours','Original, Sugar free, Colours','4.00',[]);
-    so('Agua','Water','','','2.50',[]);
+    so('Limón Granizado','Lemon Granita','Grande / Pequeño','Large / Small','5.00 / 3.50',[],{priceRaw:true,price:'5.00 € · 3.50 €',fr:'Granité Citron',descFr:'Grand / Petit'});
+    so('Refrescos','Soft Drinks','','','3.00',[],{fr:'Sodas'});
+    so('Zumos','Juices','Piña, melocotón, naranja','Pineapple, peach, orange','3.50',[],{fr:'Jus de Fruits',descFr:'Ananas, pêche, orange'});
+    so('Red Bull','Red Bull','Original, Sugar free, Colours','Original, Sugar free, Colours','4.00',[],{fr:'Red Bull',descFr:'Original, Sans Sucre, Colours'});
+    so('Agua','Water','','','2.50',[],{fr:'Eau'});
     const w=(...a)=>m.push(this.mi('wine',...a));
-    w('Septimo Sentido','Septimo Sentido','Tinto Tempranillo · copa / botella','Tempranillo red · glass / bottle','',['sulphite'],{priceRaw:true,price:'4 € · 23.50 €'});
-    w('Bienbevido Pulpo','Bienbevido Pulpo','Albariño · copa / botella','Albariño · glass / bottle','',['sulphite'],{priceRaw:true,price:'4 € · 23.50 €'});
-    w('Bardos Verdejo','Bardos Verdejo','Rueda · copa / botella','Rueda · glass / bottle','',['sulphite'],{priceRaw:true,price:'5 € · 29 €'});
-    w('Mateus Rosé','Mateus Rosé','Copa / botella','Glass / bottle','',['sulphite'],{priceRaw:true,price:'3.50 € · 20 €'});
+    w('Septimo Sentido','Septimo Sentido','Tinto Tempranillo · copa / botella','Tempranillo red · glass / bottle','',['sulphite'],{priceRaw:true,price:'4 € · 23.50 €',fr:'Septimo Sentido',descFr:'Tempranillo rouge · verre / bouteille'});
+    w('Bienbevido Pulpo','Bienbevido Pulpo','Albariño · copa / botella','Albariño · glass / bottle','',['sulphite'],{priceRaw:true,price:'4 € · 23.50 €',fr:'Bienbevido Pulpo',descFr:'Albariño · verre / bouteille'});
+    w('Bardos Verdejo','Bardos Verdejo','Rueda · copa / botella','Rueda · glass / bottle','',['sulphite'],{priceRaw:true,price:'5 € · 29 €',fr:'Bardos Verdejo',descFr:'Rueda · verre / bouteille'});
+    w('Mateus Rosé','Mateus Rosé','Copa / botella','Glass / bottle','',['sulphite'],{priceRaw:true,price:'3.50 € · 20 €',fr:'Mateus Rosé',descFr:'Verre / bouteille'});
     w('Vermouth Yzaguirre','Yzaguirre Vermouth','Bianco / Rosso','Bianco / Rosso','5.00',['sulphite']);
-    w('Tinto de Verano','Summer Red','La Casera','La Casera','5.00',['sulphite']);
-    w('Sangría','Sangria','','','7.00',['sulphite']);
-    w('Moët Ice','Moët Ice','Botella','Bottle','',['sulphite'],{priceRaw:true,price:'120 €'});
-    w('Francesc Ricart','Francesc Ricart','Cava · copa / botella','Cava · glass / bottle','',['sulphite'],{priceRaw:true,price:'6 € · 30 €'});
+    w('Tinto de Verano','Summer Red','La Casera','La Casera','5.00',['sulphite'],{fr:'Tinto de Verano',descFr:'La Casera'});
+    w('Sangría','Sangria','','','7.00',['sulphite'],{fr:'Sangria'});
+    w('Moët Ice','Moët Ice','Botella','Bottle','',['sulphite'],{priceRaw:true,price:'120 €',fr:'Moët Ice',descFr:'Bouteille'});
+    w('Francesc Ricart','Francesc Ricart','Cava · copa / botella','Cava · glass / bottle','',['sulphite'],{priceRaw:true,price:'6 € · 30 €',fr:'Francesc Ricart',descFr:'Cava · verre / bouteille'});
     const be=(...a)=>m.push(this.mi('beer',...a));
-    be('Cerveza Pinta','Beer Pint','','','5.00',['gluten']);
-    be('Cerveza Caña','Beer Cane','','','3.50',['gluten']);
+    be('Cerveza Pinta','Beer Pint','','','5.00',['gluten'],{fr:'Bière Pinte'});
+    be('Cerveza Caña','Beer Cane','','','3.50',['gluten'],{fr:'Bière Petite'});
     const sj=(...a)=>m.push(this.mi('spirits',...a));
-    sj('Ginebras','Gins','Bombay Sapphire · Larios 12 · Larios Rosé','Bombay Sapphire · Larios 12 · Larios Rosé','8.50',['sulphite']);
-    sj('Ron','Rum','Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva','Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva','',['sulphite'],{priceRaw:true,price:'8.50 € · 12 €'});
-    sj('Whiskys','Whiskies','DYC 8 · Toki','DYC 8 · Toki','',[],{priceRaw:true,price:'8.50 € · 12 €'});
-    sj('Vodka','Vodka','Eristoff · Moskovskaya · Grey Goose','Eristoff · Moskovskaya · Grey Goose','',[],{priceRaw:true,price:'8.50 € · 12 €'});
-    sj('Tequilas','Tequilas','Jose Cuervo · Sauza Reposado · Patrón Blanco','Jose Cuervo · Sauza Reposado · Patrón Blanco','',[],{priceRaw:true,price:'8.50 € · 12 €'});
-    sj('Licores','Liqueurs','Jägermeister · Crema de orujo · Licor de hierbas · Malibu','Jägermeister · Orujo cream · Herb liqueur · Malibu','',['milk','sulphite'],{priceRaw:true,price:'5 € · 8.50 €'});
+    sj('Ginebras','Gins','Bombay Sapphire · Larios 12 · Larios Rosé','Bombay Sapphire · Larios 12 · Larios Rosé','8.50',['sulphite'],{fr:'Gins',descFr:'Bombay Sapphire · Larios 12 · Larios Rosé'});
+    sj('Ron','Rum','Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva','Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva','',['sulphite'],{priceRaw:true,price:'8.50 € · 12 €',fr:'Rhum',descFr:'Santa Teresa · Bacardi · Brugal Añejo · Brugal Reserva'});
+    sj('Whiskys','Whiskies','DYC 8 · Toki','DYC 8 · Toki','',[],{priceRaw:true,price:'8.50 € · 12 €',fr:'Whiskies',descFr:'DYC 8 · Toki'});
+    sj('Vodka','Vodka','Eristoff · Moskovskaya · Grey Goose','Eristoff · Moskovskaya · Grey Goose','',[],{priceRaw:true,price:'8.50 € · 12 €',fr:'Vodka',descFr:'Eristoff · Moskovskaya · Grey Goose'});
+    sj('Tequilas','Tequilas','Jose Cuervo · Sauza Reposado · Patrón Blanco','Jose Cuervo · Sauza Reposado · Patrón Blanco','',[],{priceRaw:true,price:'8.50 € · 12 €',fr:'Tequilas',descFr:'Jose Cuervo · Sauza Reposado · Patrón Blanco'});
+    sj('Licores','Liqueurs','Jägermeister · Crema de orujo · Licor de hierbas · Malibu','Jägermeister · Orujo cream · Herb liqueur · Malibu','',['milk','sulphite'],{priceRaw:true,price:'5 € · 8.50 €',fr:'Liqueurs',descFr:"Jägermeister · Crème d'orujo · Liqueur d'herbes · Malibu"});
     return m;
   }
   seedEvents(){ return [
-    {id:this.uid(), titleEs:'Sunset Sessions · DJ Marea', titleEn:'Sunset Sessions · DJ Marea', date:'2026-06-20', time:'19:00', descEs:'House melódico frente al mar mientras cae el sol.', descEn:'Melodic house facing the sea as the sun goes down.', image:'', published:true},
-    {id:this.uid(), titleEs:'Noche de Flamenco Fusión', titleEn:'Flamenco Fusion Night', date:'2026-06-27', time:'21:00', descEs:'Guitarra, cajón y voz en directo bajo las estrellas.', descEn:'Live guitar, cajón and vocals under the stars.', image:'', published:true},
-    {id:this.uid(), titleEs:'Full Moon Beach Party', titleEn:'Full Moon Beach Party', date:'2026-07-04', time:'22:00', descEs:'La fiesta más grande del verano sobre la arena.', descEn:'The biggest party of the summer on the sand.', image:'', published:true},
-    {id:this.uid(), titleEs:'Domingo de Paella', titleEn:'Paella Sunday', date:'2026-07-12', time:'14:00', descEs:'Paella valenciana, sangría y sobremesa larga.', descEn:'Valencian paella, sangria and a long lunch.', image:'', published:true},
-    {id:this.uid(), titleEs:'White Party 2026', titleEn:'White Party 2026', date:'2026-05-30', time:'21:00', descEs:'Todo de blanco. Una noche inolvidable.', descEn:'All in white. An unforgettable night.', image:'', published:true},
-    {id:this.uid(), titleEs:'Opening Night', titleEn:'Opening Night', date:'2026-06-06', time:'20:00', descEs:'Arrancó la temporada por todo lo alto.', descEn:'The season kicked off in style.', image:'', published:true}
+    {id:this.uid(), titleEs:'Sunset Sessions · DJ Marea', titleEn:'Sunset Sessions · DJ Marea', titleFr:'Sunset Sessions · DJ Marea', date:'2026-06-20', time:'19:00', descEs:'House melódico frente al mar mientras cae el sol.', descEn:'Melodic house facing the sea as the sun goes down.', descFr:'House mélodique face à la mer au coucher du soleil.', image:'', published:true},
+    {id:this.uid(), titleEs:'Noche de Flamenco Fusión', titleEn:'Flamenco Fusion Night', titleFr:'Soirée Flamenco Fusion', date:'2026-06-27', time:'21:00', descEs:'Guitarra, cajón y voz en directo bajo las estrellas.', descEn:'Live guitar, cajón and vocals under the stars.', descFr:'Guitare, cajón et voix en direct sous les étoiles.', image:'', published:true},
+    {id:this.uid(), titleEs:'Full Moon Beach Party', titleEn:'Full Moon Beach Party', titleFr:'Fête de la Pleine Lune', date:'2026-07-04', time:'22:00', descEs:'La fiesta más grande del verano sobre la arena.', descEn:'The biggest party of the summer on the sand.', descFr:"La plus grande fête de l'été sur le sable.", image:'', published:true},
+    {id:this.uid(), titleEs:'Domingo de Paella', titleEn:'Paella Sunday', titleFr:'Dimanche Paella', date:'2026-07-12', time:'14:00', descEs:'Paella valenciana, sangría y sobremesa larga.', descEn:'Valencian paella, sangria and a long lunch.', descFr:'Paella valencienne, sangria et long déjeuner.', image:'', published:true},
+    {id:this.uid(), titleEs:'White Party 2026', titleEn:'White Party 2026', titleFr:'White Party 2026', date:'2026-05-30', time:'21:00', descEs:'Todo de blanco. Una noche inolvidable.', descEn:'All in white. An unforgettable night.', descFr:'Tout en blanc. Une nuit inoubliable.', image:'', published:true},
+    {id:this.uid(), titleEs:'Opening Night', titleEn:'Opening Night', titleFr:"Soirée d'Ouverture", date:'2026-06-06', time:'20:00', descEs:'Arrancó la temporada por todo lo alto.', descEn:'The season kicked off in style.', descFr:'La saison a démarré en beauté.', image:'', published:true}
   ]; }
   seedStaff(){ return [
     {id:'st1', name:'Lucía Romero', role:'Bar', phone:'612 100 201', pin:'1234'},
@@ -251,7 +251,6 @@ class Component extends DCLogic {
       case 'menu': return this.renderMenu();
       case 'events': return this.renderEvents();
       case 'reservations': return this.renderReservations();
-      case 'vip': return this.renderVip();
       case 'admin': return this.renderAdmin();
       case 'staff': return this.renderStaff();
       default: return this.renderHome();
@@ -263,8 +262,7 @@ class Component extends DCLogic {
     ['home', this.t('Inicio','Home','Accueil')],
     ['menu', this.t('Carta','Menu','Carte')],
     ['events', this.t('Eventos','Events','Événements')],
-    ['reservations', this.t('Reservas','Reservations','Réservations')],
-    ['vip', this.t('VIP','VIP','VIP')]
+    ['reservations', this.t('Reservas','Reservations','Réservations')]
   ]; }
   renderNav(){ const h=this.h, C=this.C; const r=this.state.route;
     const link=(id,label)=>h('button',{key:id,onClick:()=>this.go(id),style:{background:'none',border:'none',cursor:'pointer',fontFamily:'Archivo',fontWeight:700,fontSize:'15px',color:r===id?C.red:C.navy,padding:'6px 0',position:'relative',letterSpacing:'.01em'}},
@@ -304,28 +302,28 @@ class Component extends DCLogic {
         h('div',{},
           h('div',{style:{fontFamily:'Anton',fontSize:'34px',color:C.red,lineHeight:1}},'COPITÝ'),
           h('div',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'11px',letterSpacing:'.34em',marginTop:'4px',color:'rgba(255,255,255,.7)'}},'BEACH CLUB'),
-          h('p',{style:{marginTop:'18px',color:'rgba(255,255,255,.72)',fontSize:'15px',lineHeight:1.7,maxWidth:'240px'}}, this.t('Verano sin fin en Playa San Juan. Comida fresca, cócteles y atardeceres frente al Mediterráneo.','Endless summer on Playa San Juan. Fresh food, cocktails and sunsets facing the Mediterranean.'))
+          h('p',{style:{marginTop:'18px',color:'rgba(255,255,255,.72)',fontSize:'15px',lineHeight:1.7,maxWidth:'240px'}}, this.t('Verano sin fin en Playa San Juan. Comida fresca, cócteles y atardeceres frente al Mediterráneo.','Endless summer on Playa San Juan. Fresh food, cocktails and sunsets facing the Mediterranean.','Été sans fin à Playa San Juan. Cuisine fraîche, cocktails et couchers de soleil face à la Méditerranée.'))
         ),
-        h('div',{}, colTitle(this.t('Visítanos','Visit Us')),
+        h('div',{}, colTitle(this.t('Visítanos','Visit Us','Nous trouver')),
           h('div',{style:{color:'rgba(255,255,255,.82)',fontSize:'15px',lineHeight:1.9}},'Avda. Niza 32',h('br'),'Playa San Juan',h('br'),'03540 Alicante, España')
         ),
-        h('div',{}, colTitle(this.t('Contacto','Contact')),
-          ln('610 367 640', ()=>{window.location.href='tel:+34610367640';}),
-          ln('@copitybeachclub', ()=>{window.open('https://instagram.com/copitybeachclub','_blank');}),
-          ln('WhatsApp', ()=>{window.open('https://wa.me/34610367640','_blank');})
+        h('div',{}, colTitle(this.t('Contacto','Contact','Contact')),
+          ln('+34 610 367 640', ()=>{window.location.href='tel:+34610367640';}),
+          ln('Instagram', ()=>{window.open('https://instagram.com/copitybeachclub','_blank');}),
+          ln('Facebook', ()=>{window.open('https://facebook.com/copitybeachclub','_blank');})
         ),
-        h('div',{}, colTitle(this.t('Explora','Explore')),
+        h('div',{}, colTitle(this.t('Explora','Explore','Explorer')),
           this.navLinks().map(([id,l])=>ln(l,()=>this.go(id))),
-          ln(this.t('Carta QR','Menu QR'), ()=>this.go('menu-qr'))
+          ln(this.t('Carta QR','Menu QR','Carte QR'), ()=>this.go('menu-qr'))
         ),
-        h('div',{}, colTitle(this.t('Equipo','Team')),
-          ln(this.t('Acceso Staff','Staff Portal'), ()=>this.go('staff')),
-          ln(this.t('Panel Admin','Admin Panel'), ()=>this.go('admin'))
+        h('div',{}, colTitle(this.t('Equipo','Team','Équipe')),
+          ln(this.t('Acceso Staff','Staff Portal','Portail Staff'), ()=>this.go('staff')),
+          ln(this.t('Panel Admin','Admin Panel','Panneau Admin'), ()=>this.go('admin'))
         )
       ),
       h('div',{style:{maxWidth:'1200px',margin:'40px auto 0',padding:'22px 24px',borderTop:'1px solid rgba(255,255,255,.12)',display:'flex',flexWrap:'wrap',gap:'12px',justifyContent:'space-between',alignItems:'center'}},
         h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'13px'}},'© 2026 Copity Beach Club'),
-        h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'12px',maxWidth:'620px',textAlign:'right',lineHeight:1.6}}, this.t('Información de alérgenos disponible en carta. Consulta a nuestro equipo sobre cualquier alergia o intolerancia.','Allergen information available on the menu. Please ask our team about any allergy or intolerance.'))
+        h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'12px',maxWidth:'620px',textAlign:'right',lineHeight:1.6}}, this.t('Información de alérgenos disponible en carta. Consulta a nuestro equipo sobre cualquier alergia o intolerancia.','Allergen information available on the menu. Please ask our team about any allergy or intolerance.','Informations allergènes disponibles sur la carte. Demandez à notre équipe pour toute allergie ou intolérance.'))
       ),
       h('div',{style:{height:'10px',background:'linear-gradient(90deg,'+C.red+' 0 33%,'+C.gold+' 33% 66%,'+C.sea+' 66% 100%)',marginTop:'24px'}})
     );
@@ -453,7 +451,7 @@ class Component extends DCLogic {
       )
     );
   }
-  allergenBadge(a){ const h=this.h,C=this.C; const map=this.ALLERGENS(); const nm=map[a]?map[a][this.state.lang==='es'?0:1]:a;
+  allergenBadge(a){ const h=this.h,C=this.C; const map=this.ALLERGENS(); const nm=map[a]?map[a][this.state.lang==='es'?0:(this.state.lang==='fr'?2:1)]:a;
     return h('span',{key:a,title:nm,style:{display:'inline-flex',alignItems:'center',fontFamily:'Archivo',fontWeight:700,fontSize:'10px',letterSpacing:'.04em',textTransform:'uppercase',color:C.seaDeep,background:C.seaSoft,border:'1px solid '+C.sea,borderRadius:'999px',padding:'2px 8px'}}, nm);
   }
   renderMenu(){ const h=this.h,C=this.C;
@@ -462,7 +460,7 @@ class Component extends DCLogic {
     const specials=visible.filter(it=>it.special);
     const tab=this.state.menuTab;
     const tabItems=visible.filter(it=>it.cat===tab);
-    const catLabel=c=>this.state.lang==='es'?c.es:c.en;
+    const catLabel=c=>this.state.lang==='es'?c.es:(this.state.lang==='fr'?(c.fr||c.en):c.en);
     const tabBar=h('div',{style:{position:'sticky',top:'70px',zIndex:80,background:'rgba(245,240,232,.94)',backdropFilter:'blur(10px)',borderBottom:'1px solid '+C.line}},
       h('div',{style:{maxWidth:'1200px',margin:'0 auto',padding:'12px 16px',display:'flex',gap:'8px',overflowX:'auto'}},
         cats.map(c=>{ const on=c.id===tab; return h('button',{key:c.id,onClick:()=>this.setState({menuTab:c.id}),style:{whiteSpace:'nowrap',cursor:'pointer',border:'2px solid '+(on?C.red:'transparent'),background:on?C.red:'#fff',color:on?'#fff':C.navy,fontFamily:'Archivo',fontWeight:800,fontSize:'13px',letterSpacing:'.03em',padding:'9px 16px',borderRadius:'999px',boxShadow:on?'0 8px 18px rgba(224,56,43,.28)':'0 1px 3px rgba(19,41,63,.08)'}}, catLabel(c)); })
@@ -471,11 +469,11 @@ class Component extends DCLogic {
     const row=it=>h('div',{key:it.id,style:{display:'flex',gap:'16px',padding:'20px 0',borderBottom:'1px solid '+C.line,alignItems:'flex-start'}},
       h('div',{style:{flex:1}},
         h('div',{style:{display:'flex',alignItems:'baseline',gap:'10px',flexWrap:'wrap'}},
-          h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'19px',color:C.navy}}, this.state.lang==='es'?it.es:it.en),
-          it.special? h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.1em',textTransform:'uppercase',color:'#fff',background:C.gold,padding:'2px 8px',borderRadius:'999px'}}, this.t('Especial','Special')):null,
+          h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'19px',color:C.navy}}, this.state.lang==='es'?it.es:(this.state.lang==='fr'?(it.fr||it.en):it.en)),
+          it.special? h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.1em',textTransform:'uppercase',color:'#fff',background:C.gold,padding:'2px 8px',borderRadius:'999px'}}, this.t('Especial','Special','Spécial')):null,
           this.state.lang==='es' && it.en!==it.es? h('span',{style:{fontFamily:'Archivo',fontWeight:600,fontSize:'13px',color:C.muted,fontStyle:'italic'}}, it.en):null
         ),
-        (this.state.lang==='es'?it.descEs:it.descEn)? h('p',{style:{margin:'6px 0 0',color:C.muted,fontSize:'14.5px',lineHeight:1.55,maxWidth:'560px'}}, this.state.lang==='es'?it.descEs:it.descEn):null,
+        (this.state.lang==='es'?it.descEs:(this.state.lang==='fr'?(it.descFr||it.descEn):it.descEn))? h('p',{style:{margin:'6px 0 0',color:C.muted,fontSize:'14.5px',lineHeight:1.55,maxWidth:'560px'}}, this.state.lang==='es'?it.descEs:(this.state.lang==='fr'?(it.descFr||it.descEn):it.descEn)):null,
         it.allergens && it.allergens.length? h('div',{style:{display:'flex',gap:'5px',flexWrap:'wrap',marginTop:'9px'}}, it.allergens.map(a=>this.allergenBadge(a))):null
       ),
       h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.red,whiteSpace:'nowrap',paddingTop:'2px'}}, this.money(it))
@@ -485,7 +483,7 @@ class Component extends DCLogic {
         h('div',{style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'16px'}}, h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'12px',letterSpacing:'.2em',textTransform:'uppercase',color:C.navyDeep}}, this.t('★ Especiales de hoy','★ Today\u2019s Specials'))),
         h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:'18px'}},
           specials.map(it=>h('div',{key:it.id,style:{background:'rgba(255,255,255,.65)',borderRadius:'14px',padding:'16px 18px',display:'flex',justifyContent:'space-between',gap:'12px',alignItems:'baseline'}},
-            h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'16px',color:C.navyDeep}}, this.state.lang==='es'?it.es:it.en),
+            h('span',{style:{fontFamily:'Archivo',fontWeight:800,fontSize:'16px',color:C.navyDeep}}, this.state.lang==='es'?it.es:(this.state.lang==='fr'?(it.fr||it.en):it.en)),
             h('span',{style:{fontFamily:'Anton',fontSize:'18px',color:C.redDeep}}, this.money(it))))
         )
       )
@@ -493,20 +491,20 @@ class Component extends DCLogic {
     const legendKeys=Object.keys(this.ALLERGENS());
     const legend=h('section',{style:{padding:'50px 0 90px'}}, this.wrap(
       h('div',{style:{background:'#fff',borderRadius:'20px',padding:'30px 32px',boxShadow:'0 10px 30px rgba(19,41,63,.07)'}},
-        h('div',{style:{fontFamily:'Anton',fontSize:'24px',color:C.navy,marginBottom:'6px'}}, this.t('Alérgenos','Allergens')),
-        h('p',{style:{color:C.muted,fontSize:'14px',margin:'0 0 18px'}}, this.t('Consulta a nuestro equipo sobre cualquier alergia o intolerancia.','Please ask our team about any allergy or intolerance.')),
+        h('div',{style:{fontFamily:'Anton',fontSize:'24px',color:C.navy,marginBottom:'6px'}}, this.t('Alérgenos','Allergens','Allergènes')),
+        h('p',{style:{color:C.muted,fontSize:'14px',margin:'0 0 18px'}}, this.t('Consulta a nuestro equipo sobre cualquier alergia o intolerancia.','Please ask our team about any allergy or intolerance.','Interrogez notre équipe pour toute allergie ou intolérance.')),
         h('div',{style:{display:'flex',gap:'7px',flexWrap:'wrap'}}, legendKeys.map(a=>this.allergenBadge(a))),
-        h('div',{style:{marginTop:'24px',padding:'16px 18px',background:C.redSoft,borderRadius:'12px',borderLeft:'4px solid '+C.red,color:C.redDeep,fontWeight:600,fontSize:'14px'}}, this.t('Agradecemos el pago en el momento para agilizar el servicio.','We appreciate payment on the spot to speed up the service.'))
+        h('div',{style:{marginTop:'24px',padding:'16px 18px',background:C.redSoft,borderRadius:'12px',borderLeft:'4px solid '+C.red,color:C.redDeep,fontWeight:600,fontSize:'14px'}}, this.t('Agradecemos el pago en el momento para agilizar el servicio.','We appreciate payment on the spot to speed up the service.','Nous apprécions le règlement immédiat pour accélérer le service.'))
       )
     ));
     return h('div',{},
-      this.pageHead(this.t('La Carta','The Menu'), this.t('CARTA','MENU'), this.t('Pica pica frente al mar, cócteles y mucho verano.','Beach bites by the sea, cocktails and plenty of summer.'), this.IMG.food),
+      this.pageHead(this.t('La Carta','The Menu','La Carte'), this.t('CARTA','MENU','LA CARTE'), this.t('Pica pica frente al mar, cócteles y mucho verano.','Beach bites by the sea, cocktails and plenty of summer.',"Tapas au bord de la mer, cocktails et tout l'été."), this.IMG.food),
       tabBar,
       specialsBlock,
       h('section',{style:{padding:'30px 0 0'}}, this.wrap(h('div',{},
         h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(30px,4vw,42px)',color:C.navy,margin:'14px 0 4px'}}, catLabel(cats.find(c=>c.id===tab))),
         h('div',{style:{width:'60px',height:'4px',background:C.red,borderRadius:'4px',margin:'0 0 8px'}}),
-        tabItems.length? tabItems.map(row) : h('p',{style:{color:C.muted,padding:'30px 0'}}, this.t('No hay platos disponibles en esta sección.','No items available in this section.'))
+        tabItems.length? tabItems.map(row) : h('p',{style:{color:C.muted,padding:'30px 0'}}, this.t('No hay platos disponibles en esta sección.','No items available in this section.','Aucun plat disponible dans cette section.'))
       ))),
       legend
     );
@@ -528,9 +526,9 @@ class Component extends DCLogic {
     const card=(e,i)=>h('div',{key:e.id,style:{background:'#fff',borderRadius:'20px',overflow:'hidden',boxShadow:'0 16px 40px rgba(19,41,63,.1)',display:'flex',flexDirection:'column'}},
       h('div',{style:{position:'relative',height:'180px'}}, h('img',{src:e.image||evImg(i),alt:'',style:{width:'100%',height:'100%',objectFit:'cover'}}), dateBadge(e), h('div',{style:{position:'absolute',top:'14px',right:'14px',background:C.sea,color:'#fff',fontFamily:'Archivo',fontWeight:800,fontSize:'12px',padding:'5px 11px',borderRadius:'999px'}}, e.time)),
       h('div',{style:{padding:'22px',display:'flex',flexDirection:'column',flex:1}},
-        h('h3',{style:{fontFamily:'Anton',fontSize:'23px',color:C.navy,margin:'0 0 8px',lineHeight:1.05}}, this.state.lang==='es'?e.titleEs:e.titleEn),
-        h('p',{style:{color:C.muted,fontSize:'14.5px',lineHeight:1.6,margin:'0 0 18px',flex:1}}, this.state.lang==='es'?e.descEs:e.descEn),
-        this.btn(this.t('Reservar / Info','Reserve / Info'),()=>this.go('reservations'),'red',{width:'100%'})
+        h('h3',{style:{fontFamily:'Anton',fontSize:'23px',color:C.navy,margin:'0 0 8px',lineHeight:1.05}}, this.state.lang==='es'?e.titleEs:(this.state.lang==='fr'?(e.titleFr||e.titleEn):e.titleEn)),
+        h('p',{style:{color:C.muted,fontSize:'14.5px',lineHeight:1.6,margin:'0 0 18px',flex:1}}, this.state.lang==='es'?e.descEs:(this.state.lang==='fr'?(e.descFr||e.descEn):e.descEn)),
+        this.btn(this.t('Reservar / Info','Reserve / Info','Réserver / Info'),()=>this.go('reservations'),'red',{width:'100%'})
       )
     );
     const priv=this.state.privForm;
@@ -541,41 +539,41 @@ class Component extends DCLogic {
     const privBlock=h('section',{style:{padding:'10px 0 90px'}}, this.wrap(
       h('div',{style:{background:'linear-gradient(135deg,'+C.navy+','+C.navyDeep+')',borderRadius:'28px',padding:'48px 40px',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'40px',alignItems:'center'}},
         h('div',{},
-          this.eyebrow(this.t('Eventos privados','Private events'),C.gold),
-          h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(30px,4vw,46px)',color:'#fff',margin:'12px 0 14px',lineHeight:1.02}}, this.t('Celebra en la playa','Host it on the beach')),
-          h('p',{style:{color:'rgba(255,255,255,.78)',fontSize:'16px',lineHeight:1.7,margin:0}}, this.t('Cumpleaños, despedidas, eventos de empresa o bodas frente al mar. Cuéntanos tu idea y la hacemos realidad.','Birthdays, hen parties, corporate events or seafront weddings. Tell us your idea and we\u2019ll make it happen.'))
+          this.eyebrow(this.t('Eventos privados','Private events','Événements privés'),C.gold),
+          h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(30px,4vw,46px)',color:'#fff',margin:'12px 0 14px',lineHeight:1.02}}, this.t('Celebra en la playa','Host it on the beach','Fêtez sur la plage')),
+          h('p',{style:{color:'rgba(255,255,255,.78)',fontSize:'16px',lineHeight:1.7,margin:0}}, this.t('Cumpleaños, despedidas, eventos de empresa o bodas frente al mar. Cuéntanos tu idea y la hacemos realidad.','Birthdays, hen parties, corporate events or seafront weddings. Tell us your idea and we\u2019ll make it happen.','Anniversaires, enterrements de vie, événements d’entreprise ou mariages face à la mer. Partagez votre idée et nous la concrétisons.'))
         ),
         this.state.privDone? h('div',{style:{background:'rgba(255,255,255,.1)',borderRadius:'18px',padding:'40px',textAlign:'center',color:'#fff'}},
-          h('div',{style:{fontFamily:'Anton',fontSize:'30px',color:C.gold}}, this.t('¡Recibido!','Got it!')),
-          h('p',{style:{color:'rgba(255,255,255,.82)',margin:'10px 0 0'}}, this.t('Te contactaremos muy pronto.','We\u2019ll be in touch very soon.'))
+          h('div',{style:{fontFamily:'Anton',fontSize:'30px',color:C.gold}}, this.t('¡Recibido!','Got it!','Reçu !')),
+          h('p',{style:{color:'rgba(255,255,255,.82)',margin:'10px 0 0'}}, this.t('Te contactaremos muy pronto.','We\u2019ll be in touch very soon.','Nous vous contacterons très bientôt.'))
         ) : h('div',{style:{background:'#fff',borderRadius:'18px',padding:'28px'}},
           h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}},
-            field(this.t('Nombre','Name'),'name'), field(this.t('Teléfono','Phone'),'phone','tel'),
-            field('Email','email','email'), field(this.t('Fecha','Date'),'date','date'),
-            field(this.t('Tipo de evento','Event type'),'type','text',this.t('Cumpleaños, empresa…','Birthday, corporate…'))
+            field(this.t('Nombre','Name','Nom'),'name'), field(this.t('Teléfono','Phone','Téléphone'),'phone','tel'),
+            field('Email','email','email'), field(this.t('Fecha','Date','Date'),'date','date'),
+            field(this.t('Tipo de evento','Event type','Type d\'événement'),'type','text',this.t('Cumpleaños, empresa…','Birthday, corporate…','Anniversaire, entreprise…'))
           ),
           h('div',{style:{marginTop:'14px',display:'flex',flexDirection:'column',gap:'6px'}},
-            h('label',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',letterSpacing:'.08em',textTransform:'uppercase',color:C.navy}}, this.t('Mensaje','Message')),
+            h('label',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'12px',letterSpacing:'.08em',textTransform:'uppercase',color:C.navy}}, this.t('Mensaje','Message','Message')),
             h('textarea',{value:priv.msg,onChange:e=>setP('msg',e.target.value),rows:3,style:{border:'2px solid '+C.line,borderRadius:'12px',padding:'12px 14px',fontSize:'15px',outline:'none',resize:'vertical',fontFamily:'Archivo'}})),
-          h('div',{style:{marginTop:'18px'}}, this.btn(this.t('Enviar solicitud','Send inquiry'),()=>{ if(!priv.name||!priv.phone){this.toast(this.t('Completa nombre y teléfono','Add name and phone'));return;} this.setState({privDone:true}); },'red',{width:'100%'}))
+          h('div',{style:{marginTop:'18px'}}, this.btn(this.t('Enviar solicitud','Send inquiry','Envoyer la demande'),()=>{ if(!priv.name||!priv.phone){this.toast(this.t('Completa nombre y teléfono','Add name and phone','Complétez le nom et le téléphone'));return;} this.setState({privDone:true}); },'red',{width:'100%'}))
         )
       )
     ));
     return h('div',{},
-      this.pageHead(this.t('Agenda','What\u2019s on'), this.t('EVENTOS','EVENTS'), this.t('DJs al atardecer, fiestas de luna llena y mucho más.','Sunset DJs, full-moon parties and much more.'), this.IMG.boards),
+      this.pageHead(this.t('Agenda','What\u2019s on','Agenda'), this.t('EVENTOS','EVENTS','ÉVÉNEMENTS'), this.t('DJs al atardecer, fiestas de luna llena y mucho más.','Sunset DJs, full-moon parties and much more.','DJs au coucher du soleil, soirées pleine lune et bien plus.'), this.IMG.boards),
       h('section',{style:{padding:'46px 0 0'}}, this.wrap(h('div',{},
-        h('div',{style:{display:'flex',gap:'10px',marginBottom:'28px',flexWrap:'wrap'}}, filterBtn('week',this.t('Esta semana','This week')), filterBtn('month',this.t('Este mes','This month')), filterBtn('all',this.t('Todos','All'))),
-        filtered.length? h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(290px,1fr))',gap:'26px'}}, filtered.map((e,i)=>card(e,i))) : h('p',{style:{color:C.muted,padding:'30px 0'}}, this.t('No hay eventos en este periodo.','No events in this period.'))
+        h('div',{style:{display:'flex',gap:'10px',marginBottom:'28px',flexWrap:'wrap'}}, filterBtn('week',this.t('Esta semana','This week','Cette semaine')), filterBtn('month',this.t('Este mes','This month','Ce mois-ci')), filterBtn('all',this.t('Todos','All','Tous'))),
+        filtered.length? h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(290px,1fr))',gap:'26px'}}, filtered.map((e,i)=>card(e,i))) : h('p',{style:{color:C.muted,padding:'30px 0'}}, this.t('No hay eventos en este periodo.','No events in this period.','Aucun événement sur cette période.'))
       ))),
       past.length? h('section',{style:{padding:'70px 0 30px'}}, this.wrap(h('div',{},
-        this.eyebrow(this.t('Recuerdos','Memories')),
-        h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(28px,4vw,40px)',color:C.navy,margin:'10px 0 24px'}}, this.t('Eventos pasados','Past events')),
+        this.eyebrow(this.t('Recuerdos','Memories','Souvenirs')),
+        h('h2',{style:{fontFamily:'Anton',fontSize:'clamp(28px,4vw,40px)',color:C.navy,margin:'10px 0 24px'}}, this.t('Eventos pasados','Past events','Événements passés')),
         h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:'12px'}},
           past.concat(past).slice(0,6).map((e,i)=>h('div',{key:i,style:{position:'relative',paddingTop:'78%',borderRadius:'16px',overflow:'hidden'}},
             h('img',{src:e.image||evImg(i+1),alt:'',style:{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}),
             h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 40%,rgba(12,28,46,.85))'}}),
             h('div',{style:{position:'absolute',left:'14px',right:'14px',bottom:'12px'}},
-              h('div',{style:{fontFamily:'Anton',fontSize:'16px',color:'#fff',lineHeight:1.1}}, this.state.lang==='es'?e.titleEs:e.titleEn),
+              h('div',{style:{fontFamily:'Anton',fontSize:'16px',color:'#fff',lineHeight:1.1}}, this.state.lang==='es'?e.titleEs:(this.state.lang==='fr'?(e.titleFr||e.titleEn):e.titleEn)),
               h('div',{style:{fontFamily:'Archivo',fontWeight:700,fontSize:'11px',color:C.gold,marginTop:'3px'}}, this.fmtDate(e.date)))
           ))
         )
@@ -588,43 +586,43 @@ class Component extends DCLogic {
   renderReservations(){ const h=this.h,C=this.C;
     const f=this.state.resForm; const set=(k,v)=>this.setState({resForm:Object.assign({},f,{[k]:v})});
     const inp=(k,type,ph)=>h('input',{type:type||'text',value:f[k],placeholder:ph||'',onChange:e=>set(k,e.target.value),style:this.inputBase(),onFocus:e=>e.target.style.borderColor=C.sea,onBlur:e=>e.target.style.borderColor=C.line});
-    const submit=()=>{ if(!f.name||!f.date||!f.phone){ this.toast(this.t('Completa nombre, fecha y teléfono','Add name, date and phone')); return; } const r=this.load('res',[]); const rec=Object.assign({id:this.uid(),createdAt:Date.now(),status:'new'},f); r.push(rec); this.save('res',r); this.setState({reservations:r,resDone:true}); };
+    const submit=()=>{ if(!f.name||!f.date||!f.phone){ this.toast(this.t('Completa nombre, fecha y teléfono','Add name, date and phone','Complétez le nom, la date et le téléphone')); return; } const r=this.load('res',[]); const rec=Object.assign({id:this.uid(),createdAt:Date.now(),status:'new'},f); r.push(rec); this.save('res',r); this.setState({reservations:r,resDone:true}); };
     const form=this.state.resDone? h('div',{style:{background:'#fff',borderRadius:'22px',padding:'48px 36px',textAlign:'center',boxShadow:'0 16px 40px rgba(19,41,63,.1)'}},
         h('div',{style:{width:'74px',height:'74px',borderRadius:'50%',background:C.seaSoft,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 18px',fontFamily:'Anton',fontSize:'34px',color:C.seaDeep}}, '✓'),
-        h('h2',{style:{fontFamily:'Anton',fontSize:'34px',color:C.navy,margin:'0 0 10px'}}, this.t('¡Reserva recibida!','Reservation received!')),
-        h('p',{style:{color:C.muted,fontSize:'16px',lineHeight:1.6,maxWidth:'420px',margin:'0 auto 8px'}}, this.t('Gracias, '+f.name+'. Te confirmaremos tu mesa para el '+this.fmtDate(f.date)+' muy pronto.','Thanks, '+f.name+'. We\u2019ll confirm your table for '+this.fmtDate(f.date)+' very soon.')),
+        h('h2',{style:{fontFamily:'Anton',fontSize:'34px',color:C.navy,margin:'0 0 10px'}}, this.t('¡Reserva recibida!','Reservation received!','Réservation reçue !')),
+        h('p',{style:{color:C.muted,fontSize:'16px',lineHeight:1.6,maxWidth:'420px',margin:'0 auto 8px'}}, this.t('Gracias, '+f.name+'. Te confirmaremos tu mesa para el '+this.fmtDate(f.date)+' muy pronto.','Thanks, '+f.name+'. We\u2019ll confirm your table for '+this.fmtDate(f.date)+' very soon.','Merci, '+f.name+'. Nous confirmerons votre table pour le '+this.fmtDate(f.date)+' très bientôt.')),
         h('div',{style:{display:'flex',gap:'12px',justifyContent:'center',marginTop:'22px',flexWrap:'wrap'}},
-          this.btn(this.t('Confirmar por WhatsApp','Confirm via WhatsApp'),()=>window.open('https://wa.me/34610367640?text='+encodeURIComponent('Hola Copity! Reserva para '+f.name+', '+f.guests+' pax, '+f.date+' '+f.time),'_blank'),'sea'),
-          this.btn(this.t('Nueva reserva','New booking'),()=>this.setState({resDone:false,resForm:{name:'',date:'',time:'',guests:'2',phone:'',requests:''}}),'ghost')
+          this.btn(this.t('Confirmar por WhatsApp','Confirm via WhatsApp','Confirmer par WhatsApp'),()=>window.open('https://wa.me/34610367640?text='+encodeURIComponent('Hola Copity! Reserva para '+f.name+', '+f.guests+' pax, '+f.date+' '+f.time),'_blank'),'sea'),
+          this.btn(this.t('Nueva reserva','New booking','Nouvelle réservation'),()=>this.setState({resDone:false,resForm:{name:'',date:'',time:'',guests:'2',phone:'',requests:''}}),'ghost')
         )
       ) : h('div',{style:{background:'#fff',borderRadius:'22px',padding:'34px',boxShadow:'0 16px 40px rgba(19,41,63,.1)'}},
         h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px'}},
-          h('div',{style:{gridColumn:'1 / -1'}}, this.labeledField(this.t('Nombre completo','Full name'), inp('name','text',this.t('Tu nombre','Your name')))),
-          this.labeledField(this.t('Fecha','Date'), inp('date','date')),
-          this.labeledField(this.t('Hora','Time'), inp('time','time')),
-          this.labeledField(this.t('Comensales','Guests'), h('select',{value:f.guests,onChange:e=>set('guests',e.target.value),style:this.inputBase()}, ['1','2','3','4','5','6','7','8','9','10','+10'].map(n=>h('option',{key:n,value:n},n)))),
-          this.labeledField(this.t('Teléfono','Phone'), inp('phone','tel','610 000 000')),
-          h('div',{style:{gridColumn:'1 / -1'}}, this.labeledField(this.t('Peticiones especiales','Special requests'), h('textarea',{value:f.requests,onChange:e=>set('requests',e.target.value),rows:3,placeholder:this.t('Trona, alergias, mesa en primera línea…','High chair, allergies, front-row table…'),style:Object.assign({},this.inputBase(),{resize:'vertical'})})))
+          h('div',{style:{gridColumn:'1 / -1'}}, this.labeledField(this.t('Nombre completo','Full name','Nom complet'), inp('name','text',this.t('Tu nombre','Your name','Votre nom')))),
+          this.labeledField(this.t('Fecha','Date','Date'), inp('date','date')),
+          this.labeledField(this.t('Hora','Time','Heure'), inp('time','time')),
+          this.labeledField(this.t('Comensales','Guests','Convives'), h('select',{value:f.guests,onChange:e=>set('guests',e.target.value),style:this.inputBase()}, ['1','2','3','4','5','6','7','8','9','10','+10'].map(n=>h('option',{key:n,value:n},n)))),
+          this.labeledField(this.t('Teléfono','Phone','Téléphone'), inp('phone','tel','610 000 000')),
+          h('div',{style:{gridColumn:'1 / -1'}}, this.labeledField(this.t('Peticiones especiales','Special requests','Demandes spéciales'), h('textarea',{value:f.requests,onChange:e=>set('requests',e.target.value),rows:3,placeholder:this.t('Trona, alergias, mesa en primera línea…','High chair, allergies, front-row table…','Chaise haute, allergies, table en bord de mer…'),style:Object.assign({},this.inputBase(),{resize:'vertical'})})))
         ),
         h('div',{style:{marginTop:'22px',display:'flex',gap:'12px',flexWrap:'wrap'}},
-          this.btn(this.t('Confirmar reserva','Confirm booking'),submit,'red',{flex:'1 1 200px'}),
+          this.btn(this.t('Confirmar reserva','Confirm booking','Confirmer la réservation'),submit,'red',{flex:'1 1 200px'}),
           this.btn('WhatsApp',()=>window.open('https://wa.me/34610367640','_blank'),'sea')
         ),
-        h('p',{style:{color:C.muted,fontSize:'13px',marginTop:'16px',textAlign:'center'}}, this.t('Las reservas se confirman por teléfono o WhatsApp.','Bookings are confirmed by phone or WhatsApp.'))
+        h('p',{style:{color:C.muted,fontSize:'13px',marginTop:'16px',textAlign:'center'}}, this.t('Las reservas se confirman por teléfono o WhatsApp.','Bookings are confirmed by phone or WhatsApp.','Les réservations sont confirmées par téléphone ou WhatsApp.'))
       );
     return h('div',{},
-      this.pageHead(this.t('Reservas','Reservations'), this.t('RESERVA TU MESA','BOOK A TABLE'), this.t('Tu sitio frente al mar te está esperando.','Your seafront spot is waiting.'), this.IMG.bar),
+      this.pageHead(this.t('Reservas','Reservations','Réservations'), this.t('RESERVA TU MESA','BOOK A TABLE','RÉSERVEZ VOTRE TABLE'), this.t('Tu sitio frente al mar te está esperando.','Your seafront spot is waiting.','Votre place face à la mer vous attend.'), this.IMG.bar),
       h('section',{style:{padding:'56px 0 90px'}}, this.wrap(h('div',{style:{display:'grid',gridTemplateColumns:'minmax(0,1.4fr) minmax(0,1fr)',gap:'40px',alignItems:'start'},className:'cop-resgrid'},
         form,
         h('div',{style:{display:'flex',flexDirection:'column',gap:'18px'}},
           h('div',{style:{background:'linear-gradient(135deg,'+C.sea+','+C.seaDeep+')',borderRadius:'20px',padding:'28px',color:'#fff'}},
-            h('div',{style:{fontFamily:'Anton',fontSize:'24px',marginBottom:'8px'}}, this.t('Reserva rápida','Quick book')),
-            h('p',{style:{color:'rgba(255,255,255,.85)',fontSize:'15px',lineHeight:1.6,margin:'0 0 18px'}}, this.t('¿Prefieres hablar con nosotros? Escríbenos directamente.','Prefer to talk to us? Message us directly.')),
-            this.btn(this.t('Reservar por WhatsApp','Book via WhatsApp'),()=>window.open('https://wa.me/34610367640','_blank'),'gold',{width:'100%'})
+            h('div',{style:{fontFamily:'Anton',fontSize:'24px',marginBottom:'8px'}}, this.t('Reserva rápida','Quick book','Réservation rapide')),
+            h('p',{style:{color:'rgba(255,255,255,.85)',fontSize:'15px',lineHeight:1.6,margin:'0 0 18px'}}, this.t('¿Prefieres hablar con nosotros? Escríbenos directamente.','Prefer to talk to us? Message us directly.','Vous préférez nous parler ? Écrivez-nous directement.')),
+            this.btn(this.t('Reservar por WhatsApp','Book via WhatsApp','Réserver par WhatsApp'),()=>window.open('https://wa.me/34610367640','_blank'),'gold',{width:'100%'})
           ),
           h('div',{style:{background:'#fff',borderRadius:'20px',padding:'28px',boxShadow:'0 10px 30px rgba(19,41,63,.07)'}},
-            h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy,marginBottom:'14px'}}, this.t('Buen saber','Good to know')),
-            [[this.t('Horario','Hours'),'12:00 — 02:00'],[this.t('Teléfono','Phone'),'610 367 640'],[this.t('Dirección','Address'),'Avda. Niza 32, Playa San Juan']].map(([k,v])=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',gap:'12px',padding:'10px 0',borderBottom:'1px solid '+C.line}}, h('span',{style:{color:C.muted,fontSize:'14px'}},k), h('span',{style:{fontWeight:700,color:C.navy,fontSize:'14px',textAlign:'right'}},v)))
+            h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy,marginBottom:'14px'}}, this.t('Buen saber','Good to know','Bon à savoir')),
+            [[this.t('Horario','Hours','Horaires'),'12:00 — 02:00'],[this.t('Teléfono','Phone','Téléphone'),'+34 610 367 640'],[this.t('Dirección','Address','Adresse'),'Avda. Niza 32, Playa San Juan']].map(([k,v])=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',gap:'12px',padding:'10px 0',borderBottom:'1px solid '+C.line}}, h('span',{style:{color:C.muted,fontSize:'14px'}},k), h('span',{style:{fontWeight:700,color:C.navy,fontSize:'14px',textAlign:'right'}},v)))
           )
         )
       ))),

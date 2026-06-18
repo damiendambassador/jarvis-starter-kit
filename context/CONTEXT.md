@@ -64,7 +64,7 @@ Business Development Executive chez Edrington (groupe qui commercialise des spir
 
 Liste des projets ou chantiers actifs sur lesquels je veux que Claude m'aide :
 
-- **Développement de sites et applications** : site D-VTC en priorité (réservation de chauffeur, tarification, programme fidélité), pour permettre aux VTC de travailler avec leurs clients privés sans passer par Uber/Bolt et leurs charges
+- **Application D-VTC** (`livrables/applications/0 - D-VTC/`) : MVP en cours de développement. Architecture multi-chauffeurs, paiement à bord, notifications email. Phase 1 terminée (scaffolding Next.js 14, schéma Supabase, page de réservation client avec calculateur de prix, page de confirmation, API emails Resend). Prompts Claude Design générés pour les 8 écrans et envoyés en design. Phase 2 à venir : dashboard chauffeur (login, réservations, clients, calendrier). Objectif : proposer à un premier client VTC pour générer des revenus via D Embassy.
 - **Coaching D Embassy** : sport, création de bonnes habitudes, accompagnement, contenu Instagram (@d_embassy_), suivi clients (en phase de test sur Airtable, à développer pour générer du revenu)
 - **Conseil / business development et sites web** : business plans et présentations Canva pour mes clients (ex : A&J Naturals, Solara, Kirjava, Comptoir Malakit, Les Jardins d'Ivry, VTC Patrick) + création de sites web (ex : Copity Beach Club, Alicante, site terminé, pitch commercial en cours)
 - **Poste Edrington** : prospection cavistes, nouveau scope et objectifs chiffrés

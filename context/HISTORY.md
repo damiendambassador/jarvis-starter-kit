@@ -9,6 +9,18 @@
 
 ## 2026-06-18
 
+### Application D-VTC — Lancement du développement MVP
+- Planification du MVP : architecture multi-chauffeurs, paiement à bord, notifications email via Resend
+- Stack choisie : Next.js 14 (App Router), Tailwind CSS, Supabase, Vercel
+- Phase 1 livrée : scaffolding complet, schéma SQL Supabase (4 tables + RLS), page de réservation client avec calculateur de prix en temps réel, page de confirmation, API route d'envoi d'emails
+- Génération des 8 prompts Claude Design (page réservation, confirmation, login, dashboard, réservations, clients, calendrier, paramètres)
+- Prompts envoyés sur Claude Design pour générer les maquettes UI
+- Projet stocké dans livrables/applications/0 - D-VTC/ (nomenclature "0" = première application, scalable)
+- Prochaine étape : intégrer les maquettes Claude Design + développer le dashboard chauffeur (Phase 2)
+- Objectif business : proposer à un premier chauffeur VTC, générer des revenus via D Embassy
+
+---
+
 ### Projet Copity Beach Club — site web terminé + pitch commercial en cours
 - Création complète d'un site web pour le Copity Beach Club (Alicante, Espagne)
 - Fonctionnalités client : réservations, menu, événements à venir

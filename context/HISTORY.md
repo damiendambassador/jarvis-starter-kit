@@ -7,6 +7,20 @@
 
 ---
 
+## 2026-06-18
+
+### Projet Copity Beach Club — site web terminé + pitch commercial en cours
+- Création complète d'un site web pour le Copity Beach Club (Alicante, Espagne)
+- Fonctionnalités client : réservations, menu, événements à venir
+- Fonctionnalités staff/managers : planning, modifications de planning, suivi des jours de travail
+- Site en ligne : copity-beach-club.netlify.app
+- Création d'une présentation commerciale (sales deck) pour vendre la solution
+- Présentation en ligne : presentation-copity-beach-club.netlify.app
+- Livrables stockés dans `livrables/sites-web/0 - Copity Beach Club/`
+- Statut : site terminé, pitch commercial en cours (objectif : générer des revenus via D Embassy)
+
+---
+
 ## 2026-06-14
 
 ### Installation initiale du Jarvis

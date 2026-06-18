@@ -66,7 +66,7 @@ Liste des projets ou chantiers actifs sur lesquels je veux que Claude m'aide :
 
 - **Développement de sites et applications** : site D-VTC en priorité (réservation de chauffeur, tarification, programme fidélité), pour permettre aux VTC de travailler avec leurs clients privés sans passer par Uber/Bolt et leurs charges
 - **Coaching D Embassy** : sport, création de bonnes habitudes, accompagnement, contenu Instagram (@d_embassy_), suivi clients (en phase de test sur Airtable, à développer pour générer du revenu)
-- **Conseil / business development** : business plans et présentations Canva pour mes clients (ex : A&J Naturals, Solara, Kirjava, Comptoir Malakit, Les Jardins d'Ivry, VTC Patrick)
+- **Conseil / business development et sites web** : business plans et présentations Canva pour mes clients (ex : A&J Naturals, Solara, Kirjava, Comptoir Malakit, Les Jardins d'Ivry, VTC Patrick) + création de sites web (ex : Copity Beach Club, Alicante, site terminé, pitch commercial en cours)
 - **Poste Edrington** : prospection cavistes, nouveau scope et objectifs chiffrés
 - **Missions Accor Arena** : vente ponctuelle (revenu complémentaire)
 - **Formation IA** : comprendre et maîtriser l'IA au maximum

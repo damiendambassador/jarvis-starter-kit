@@ -95,23 +95,23 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="flex gap-3.5 overflow-x-auto pb-1.5 mb-[30px]">
+      <div className="flex gap-3.5 overflow-x-auto pb-1.5 mb-[30px] items-stretch">
         {[
-          { label: 'Chiffre d\'affaires', value: formatPrice(totalRevenue), style: 'text-[22px] font-bold text-gold mt-2' },
-          { label: 'Économisé vs Uber',   value: formatPrice(uberSaved),    style: 'text-[22px] font-bold text-green-600 mt-2', tooltip: 'Commission Uber/Bolt : 28%' },
-          { label: 'Ticket moyen',         value: formatPrice(avgTicket),   style: 'text-[22px] font-bold text-navy mt-2' },
-          { label: 'Courses terminées',    value: completed.length,         style: 'text-[22px] font-bold text-navy mt-2' },
-          { label: 'En attente',           value: pending.length,           style: 'text-[22px] font-bold text-navy mt-2', badge: pending.length > 0 ? 'URGENT' : null },
-          { label: 'Total demandes',       value: reservations.length,      style: 'text-[22px] font-bold text-navy mt-2' },
+          { label: 'CA',              value: formatPrice(totalRevenue), style: 'text-[22px] font-bold text-gold' },
+          { label: 'Éco. vs Uber',    value: formatPrice(uberSaved),    style: 'text-[22px] font-bold text-green-600', tooltip: 'Commission Uber/Bolt : 28%' },
+          { label: 'Ticket moyen',    value: formatPrice(avgTicket),    style: 'text-[22px] font-bold text-navy' },
+          { label: 'Terminées',       value: completed.length,          style: 'text-[22px] font-bold text-navy' },
+          { label: 'En attente',      value: pending.length,            style: 'text-[22px] font-bold text-navy', badge: pending.length > 0 ? 'URGENT' : null },
+          { label: 'Total',           value: reservations.length,       style: 'text-[22px] font-bold text-navy' },
         ].map(s => (
-          <div key={s.label} className="flex-none basis-[160px] card px-5 py-5">
-            <div className="flex items-center justify-between">
-              <div className="text-[12px] text-[#8A94A6] font-medium leading-tight">{s.label}</div>
+          <div key={s.label} className="flex-none basis-[150px] card px-5 py-4 flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between gap-1">
+              <div className="text-[12px] text-[#8A94A6] font-medium">{s.label}</div>
               {'badge' in s && s.badge && (
-                <span className="text-[10px] font-bold text-[#9A7B2E] bg-[#FBF7EC] border border-[#EAD9A8] px-1.5 py-0.5 rounded">{s.badge}</span>
+                <span className="text-[10px] font-bold text-[#9A7B2E] bg-[#FBF7EC] border border-[#EAD9A8] px-1.5 py-0.5 rounded whitespace-nowrap">{s.badge}</span>
               )}
               {'tooltip' in s && s.tooltip && (
-                <span title={s.tooltip} className="text-[10px] text-[#A7B0BF] cursor-help">ⓘ</span>
+                <span title={s.tooltip} className="text-[10px] text-[#A7B0BF] cursor-help flex-shrink-0">ⓘ</span>
               )}
             </div>
             <div className={s.style}>{s.value}</div>

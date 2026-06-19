@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react'
 import { supabase, type Driver, type Pricing } from '@/lib/supabase'
 import { useDriver } from '../_context'
 import { formatPrice } from '@/lib/pricing'
-import { Copy, Check, Loader2 } from 'lucide-react'
+import { Copy, Check, Loader2, Eye, EyeOff } from 'lucide-react'
 
 export default function SettingsPage() {
   const driver = useDriver()
   const [pricing, setPricing] = useState<Pricing | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied]   = useState(false)
+  const [pwdForm, setPwdForm] = useState({ current: '', next: '', confirm: '' })
+  const [pwdShow, setPwdShow] = useState(false)
+  const [pwdError, setPwdError] = useState('')
+  const [pwdOk, setPwdOk]     = useState(false)
 
   const [profile, setProfile] = useState({ name: driver.name, phone: driver.phone ?? '' })
   const [vehicle, setVehicle] = useState({
@@ -76,6 +80,18 @@ export default function SettingsPage() {
     navigator.clipboard.writeText(link)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  async function changePassword() {
+    setPwdError(''); setPwdOk(false)
+    if (pwdForm.next.length < 8) { setPwdError('Le mot de passe doit faire au moins 8 caractères.'); return }
+    if (pwdForm.next !== pwdForm.confirm) { setPwdError('Les mots de passe ne correspondent pas.'); return }
+    setSaving('password')
+    const { error } = await supabase.auth.updateUser({ password: pwdForm.next })
+    if (error) { setPwdError(error.message); setSaving(null); return }
+    setPwdOk(true)
+    setPwdForm({ current: '', next: '', confirm: '' })
+    setSaving(null)
   }
 
   const bookingLink = typeof window !== 'undefined'
@@ -190,6 +206,33 @@ export default function SettingsPage() {
             <SaveButton onClick={saveTarif} saving={saving === 'tarif'} />
           </Section>
         )}
+
+        {/* Sécurité — changement de mot de passe */}
+        <Section title="Sécurité">
+          <div className="grid grid-cols-1 gap-[13px] max-w-[420px]">
+            {([
+              { key: 'next',    label: 'Nouveau mot de passe' },
+              { key: 'confirm', label: 'Confirmer le nouveau mot de passe' },
+            ] as { key: keyof typeof pwdForm; label: string }[]).map(f => (
+              <Field key={f.key} label={f.label}>
+                <div className="flex items-center border border-[#D6DEEA] rounded-[9px] overflow-hidden focus-within:border-navy">
+                  <input
+                    type={pwdShow ? 'text' : 'password'}
+                    className="flex-1 px-[14px] py-[11px] text-[14px] outline-none"
+                    value={pwdForm[f.key]}
+                    onChange={e => setPwdForm(p => ({ ...p, [f.key]: e.target.value }))}
+                  />
+                  <button type="button" onClick={() => setPwdShow(v => !v)} className="px-3 text-[#A7B0BF] hover:text-navy">
+                    {pwdShow ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </Field>
+            ))}
+          </div>
+          {pwdError && <p className="text-red-500 text-[12px] mt-2">{pwdError}</p>}
+          {pwdOk    && <p className="text-green-600 text-[12px] mt-2">Mot de passe mis à jour avec succès.</p>}
+          <SaveButton onClick={changePassword} saving={saving === 'password'} />
+        </Section>
 
         {/* Lien de réservation + QR Code */}
         <Section title="Mon lien de réservation">

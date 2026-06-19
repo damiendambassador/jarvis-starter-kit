@@ -17,13 +17,15 @@ const config: Config = {
         gold: {
           DEFAULT: '#C9A84C',
           light: '#D4B96A',
-          dark: '#A88830',
+          dark: '#9A7B2E',
         },
-        cream: '#F8F9FA',
+        cream: '#EDF3FC',
+        blue: '#2D6FE0',
         'blue-gray': '#E8EDF5',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
       },
     },
   },

@@ -7,6 +7,18 @@
 
 ---
 
+## 2026-06-19
+
+### Application D-VTC — Maquettes Claude Design + configuration Supabase
+- Maquettes UI générées via Claude Design pour les 8 écrans (page réservation, confirmation, login, dashboard, réservations, clients, calendrier, paramètres)
+- Création du projet Supabase free tier (région EU West 2, ID : oeyfjzccovshgmuhxukq)
+- Schéma SQL appliqué : 4 tables (drivers, pricing, clients, reservations), 9 politiques RLS, fonction increment_client_rides
+- .env.local configuré avec les vraies clés Supabase
+- App prête à tester en local (reste à ajouter la clé Resend pour les emails)
+- Prochaine étape : lancer npm run dev, tester la page de réservation, puis attaquer la Phase 2
+
+---
+
 ## 2026-06-18
 
 ### Application D-VTC — Lancement du développement MVP

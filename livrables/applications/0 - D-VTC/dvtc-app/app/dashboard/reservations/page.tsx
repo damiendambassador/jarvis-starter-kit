@@ -33,6 +33,11 @@ export default function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>('all')
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    setIsAdmin(!!localStorage.getItem('admin_email'))
+  }, [])
 
   async function load() {
     const { data } = await supabase
@@ -106,7 +111,7 @@ export default function ReservationsPage() {
             <ResCard key={r.id} r={r}
               onAccept={r.status === 'pending' ? () => updateStatus(r.id, 'accepted') : undefined}
               onRefuse={r.status === 'pending' ? () => updateStatus(r.id, 'refused') : undefined}
-              onDelete={() => deleteReservation(r.id)}
+              onDelete={isAdmin ? () => deleteReservation(r.id) : undefined}
             />
           ))}
         </div>
@@ -119,7 +124,7 @@ function ResCard({ r, onAccept, onRefuse, onDelete }: {
   r: Reservation
   onAccept?: () => void
   onRefuse?: () => void
-  onDelete: () => void
+  onDelete?: () => void
 }) {
   const [confirm, setConfirm] = useState(false)
   const dateLabel = format(new Date(r.scheduled_at), "EEE d MMM yyyy 'à' HH'h'mm", { locale: fr })
@@ -175,7 +180,7 @@ function ResCard({ r, onAccept, onRefuse, onDelete }: {
               </button>
             </>
           )}
-          {!confirm ? (
+          {onDelete && (!confirm ? (
             <button onClick={() => setConfirm(true)}
               title="Supprimer"
               className="p-2 rounded-[8px] text-[#C4CDDB] hover:text-red-400 hover:bg-red-50 transition-colors">
@@ -193,7 +198,7 @@ function ResCard({ r, onAccept, onRefuse, onDelete }: {
                 Non
               </button>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

@@ -6,6 +6,48 @@
 <script src="./support.js"></script>
 </head>
 <body>
+<div id="cop-gate" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#13293F 0%,#0C1C2E 100%);display:flex;align-items:center;justify-content:center;padding:24px;font-family:Archivo,system-ui,sans-serif">
+  <div style="width:100%;max-width:380px;text-align:center">
+    <div style="font-family:Anton,sans-serif;font-size:52px;color:#E0382B;letter-spacing:.02em;line-height:1">COPITÝ</div>
+    <div style="font-weight:800;font-size:10px;letter-spacing:.34em;color:rgba(255,255,255,.5);margin-top:6px;text-transform:uppercase">Beach Club · Accès privé</div>
+    <div style="background:rgba(255,255,255,.06);border-radius:20px;padding:32px;margin-top:32px;border:1px solid rgba(255,255,255,.1)">
+      <div style="color:rgba(255,255,255,.7);font-size:14px;line-height:1.6;margin-bottom:20px">Entrez le code d'accès<br>pour visualiser la démo</div>
+      <input id="cop-pwd" type="password" placeholder="••••••••••" autocomplete="off" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 18px;font-size:20px;color:#fff;text-align:center;letter-spacing:.3em;outline:none;font-family:inherit;box-sizing:border-box">
+      <div id="cop-err" style="color:#E0382B;font-size:13px;font-weight:700;margin-top:10px;min-height:18px"></div>
+      <button onclick="copCheck()" style="width:100%;margin-top:8px;background:#E0382B;color:#fff;border:none;border-radius:999px;padding:14px;font-family:inherit;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 24px rgba(224,56,43,.35)">Accéder à la démo</button>
+    </div>
+    <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase">Démo confidentielle · D Embassy</div>
+  </div>
+</div>
+<script>
+  (function(){
+    if(sessionStorage.getItem('copity_demo_ok')==='1'){
+      var g=document.getElementById('cop-gate');
+      if(g) g.style.display='none';
+    }
+  })();
+  function copCheck(){
+    var pwd=document.getElementById('cop-pwd').value.trim().toUpperCase();
+    if(pwd==='COPITY2026'){
+      sessionStorage.setItem('copity_demo_ok','1');
+      var g=document.getElementById('cop-gate');
+      g.style.transition='opacity .5s ease';
+      g.style.opacity='0';
+      setTimeout(function(){g.style.display='none';},500);
+    } else {
+      var e=document.getElementById('cop-err');
+      e.textContent='Code incorrect — réessayez.';
+      document.getElementById('cop-pwd').value='';
+      document.getElementById('cop-pwd').focus();
+      setTimeout(function(){e.textContent='';},2500);
+    }
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var inp=document.getElementById('cop-pwd');
+    if(inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter') copCheck();});
+    if(inp) inp.focus();
+  });
+</script>
 <x-dc>
 <helmet>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -235,13 +277,17 @@ class Component extends DCLogic {
   }
 
   renderApp(){ const h=this.h, C=this.C; const r=this.state.route;
-    if(r==='menu-qr') return h('div',{}, this.renderQR(), this.renderToast());
+    const watermark=h('div',{style:{position:'fixed',bottom:'16px',right:'16px',zIndex:150,background:'rgba(19,41,63,.9)',color:'rgba(255,255,255,.9)',fontFamily:'Archivo',fontWeight:800,fontSize:'10px',letterSpacing:'.12em',textTransform:'uppercase',padding:'6px 13px',borderRadius:'999px',boxShadow:'0 4px 14px rgba(0,0,0,.28)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',pointerEvents:'none',display:'flex',alignItems:'center',gap:'7px'}},
+      h('span',{style:{width:'6px',height:'6px',borderRadius:'50%',background:C.gold,display:'inline-block',flexShrink:0}}),
+      'Demo · D Embassy');
+    if(r==='menu-qr') return h('div',{}, this.renderQR(), watermark, this.renderToast());
     const isPortal = (r==='admin'||r==='staff');
     return h('div',{style:{minHeight:'100vh',background:C.cream,display:'flex',flexDirection:'column'}},
       isPortal? null : this.renderNav(),
       h('main',{id:'cop-scroll',style:{flex:1}}, this.renderScreen()),
       isPortal? null : this.renderFooter(),
       this.renderLightbox(),
+      watermark,
       this.renderToast()
     );
   }
@@ -348,7 +394,7 @@ class Component extends DCLogic {
             this.btn(this.t('Reservar mesa','Book a table','Réserver une table'),()=>this.go('reservations'),'red'),
             this.btn(this.t('Ver la carta','View the menu','Voir la carte'),()=>this.go('menu'),'ghostLight')
           ),
-          h('div',{style:{display:'flex',gap:'48px',marginTop:'46px',flexWrap:'wrap'}}, stat('12—02h', this.t('Cada día','Every day','Tous les jours')), stat('100m', this.t('De arena','Of sand','De sable')), stat('∞', this.t('Verano','Summer','Été')))
+          h('div',{style:{display:'flex',gap:'48px',marginTop:'46px',flexWrap:'wrap'}}, stat('11—02h', this.t('Cada día','Every day','Tous les jours')), stat('100m', this.t('De arena','Of sand','De sable')), stat('∞', this.t('Verano','Summer','Été')))
         )
       )
     );
@@ -622,7 +668,7 @@ class Component extends DCLogic {
           ),
           h('div',{style:{background:'#fff',borderRadius:'20px',padding:'28px',boxShadow:'0 10px 30px rgba(19,41,63,.07)'}},
             h('div',{style:{fontFamily:'Anton',fontSize:'22px',color:C.navy,marginBottom:'14px'}}, this.t('Buen saber','Good to know','Bon à savoir')),
-            [[this.t('Horario','Hours','Horaires'),'12:00 — 02:00'],[this.t('Teléfono','Phone','Téléphone'),'+34 610 367 640'],[this.t('Dirección','Address','Adresse'),'Avda. Niza 32, Playa San Juan']].map(([k,v])=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',gap:'12px',padding:'10px 0',borderBottom:'1px solid '+C.line}}, h('span',{style:{color:C.muted,fontSize:'14px'}},k), h('span',{style:{fontWeight:700,color:C.navy,fontSize:'14px',textAlign:'right'}},v)))
+            [[this.t('Dom — Jue','Sun — Thu','Dim — Jeu'),'11:00 — 02:00'],[this.t('Vie — Sáb','Fri — Sat','Ven — Sam'),'11:00 — 03:00'],[this.t('Teléfono','Phone','Téléphone'),'+34 610 367 640'],[this.t('Dirección','Address','Adresse'),'Avda. Niza 32, Playa San Juan']].map(([k,v])=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',gap:'12px',padding:'10px 0',borderBottom:'1px solid '+C.line}}, h('span',{style:{color:C.muted,fontSize:'14px'}},k), h('span',{style:{fontWeight:700,color:C.navy,fontSize:'14px',textAlign:'right'}},v)))
           )
         )
       ))),
@@ -665,7 +711,7 @@ class Component extends DCLogic {
     );
   }
   renderQR(){ const h=this.h,C=this.C;
-    const qr=this.qrSvg('https://copitybeachclub.example/menu', 220);
+    const qr=this.qrSvg('https://copity-beach-club.netlify.app/', 220);
     return h('div',{style:{minHeight:'100vh',background:C.cream,display:'flex',alignItems:'center',justifyContent:'center',padding:'32px'}},
       h('div',{style:{background:'#fff',borderRadius:'28px',padding:'48px 44px',textAlign:'center',boxShadow:'0 24px 70px rgba(19,41,63,.16)',maxWidth:'400px',width:'100%',border:'2px solid '+C.line}},
         h('div',{style:{fontFamily:'Anton',fontSize:'40px',color:C.red,lineHeight:1}}, 'COPITÝ'),

@@ -160,7 +160,7 @@ export default function LandingPage() {
       <section className="bg-[#F4F6FA] px-8 py-20">
         <div className="max-w-[680px] mx-auto">
           <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-3">
-            À partir de quand D-VTC<br />se rembourse ?
+            À partir de quand<br />êtes-vous rentable ?
           </h2>
           <p className="text-[14px] text-[#6B7280] text-center mb-10">
             Panier moyen 17€ · Commission plateforme 22% · Économie par course directe : <strong className="text-[#0A1628]">3,74€</strong>

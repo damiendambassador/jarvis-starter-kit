@@ -60,7 +60,7 @@
 - Phase 1 livrée : scaffolding complet, schéma SQL Supabase (4 tables + RLS), page de réservation client avec calculateur de prix en temps réel, page de confirmation, API route d'envoi d'emails
 - Génération des 8 prompts Claude Design (page réservation, confirmation, login, dashboard, réservations, clients, calendrier, paramètres)
 - Prompts envoyés sur Claude Design pour générer les maquettes UI
-- Projet stocké dans livrables/applications/0 - D-VTC/ (nomenclature "0" = première application, scalable)
+- Projet stocké dans livrables/applications/d-vtc/ (nomenclature "0" = première application, scalable)
 - Prochaine étape : intégrer les maquettes Claude Design + développer le dashboard chauffeur (Phase 2)
 - Objectif business : proposer à un premier chauffeur VTC, générer des revenus via D Embassy
 

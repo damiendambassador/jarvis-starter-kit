@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { supabase, type Driver } from '@/lib/supabase'
 import { DashboardContext } from './_context'
 import Sidebar from './_sidebar'
+import RealtimeNotif from './_notif'
 import { Loader2 } from 'lucide-react'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +45,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+      <RealtimeNotif driverId={driver.id} />
     </DashboardContext.Provider>
   )
 }

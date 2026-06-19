@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2, ExternalLink, Users, TrendingUp, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import ViewSwitcher from '@/components/ViewSwitcher'
 
 type DriverWithStats = {
   id: string
@@ -66,9 +67,11 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-[#0A1628] text-white px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-[38px] h-[38px] rounded-[9px] border border-[#C9A84C]/50 flex items-center justify-center">
-            <span className="text-[#C9A84C] font-bold text-lg leading-none">D</span>
-          </div>
+          <ViewSwitcher
+            current="admin"
+            driverSlug={drivers[0]?.slug}
+            variant="header"
+          />
           <div>
             <div className="text-[11px] uppercase tracking-[.16em] text-[#C9A84C] font-semibold">D-VTC</div>
             <div className="text-white/60 text-[12px]">Tableau de bord administrateur</div>

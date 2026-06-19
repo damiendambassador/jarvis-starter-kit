@@ -9,6 +9,15 @@
 
 ## 2026-06-19
 
+### Copity Beach Club — finalisation démo + migration Vercel
+- Horaires mis à jour : Dom-Jeu 11h-02h / Ven-Sam 11h-03h
+- Porte d'accès mot de passe ajoutée directement dans le HTML (COPITY2026)
+- Watermark "Demo · D Embassy" sur toutes les pages
+- Site migré de Netlify vers Vercel (centralisation avec D-VTC)
+- Raccourci DEPLOYER.bat créé pour les mises à jour en un clic
+- Décision stratégie hébergement : sites statiques vers Cloudflare Pages (gratuit, illimité), apps Next.js vers Vercel, aucun abonnement pour l'instant
+- Prochaine étape : envoyer le lien au contact pour présentation au client final
+
 ### Application D-VTC — Maquettes Claude Design + configuration Supabase
 - Maquettes UI générées via Claude Design pour les 8 écrans (page réservation, confirmation, login, dashboard, réservations, clients, calendrier, paramètres)
 - Création du projet Supabase free tier (région EU West 2, ID : oeyfjzccovshgmuhxukq)

@@ -21,7 +21,7 @@ export default function ConfirmationPage() {
   useEffect(() => {
     if (!id) { setLoading(false); return }
     supabase.rpc('get_reservation_by_id', { p_id: id }).single()
-      .then(({ data }) => { setReservation(data); setLoading(false) })
+      .then(({ data }) => { setReservation(data as Reservation | null); setLoading(false) })
   }, [id])
 
   function copyRefLink() {

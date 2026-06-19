@@ -399,7 +399,7 @@ export default function BookingPage() {
                 { name: 'lastName', label: 'Nom', placeholder: 'Dupont' },
                 { name: 'phone', label: 'Téléphone', placeholder: '06 12 34 56 78', type: 'tel' },
                 { name: 'email', label: 'Email', placeholder: 'jean@email.com', type: 'email' },
-              ] as const).map(f => (
+              ] as { name: 'firstName' | 'lastName' | 'phone' | 'email'; label: string; placeholder: string; type?: string }[]).map(f => (
                 <label key={f.name} className="block">
                   <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{f.label}</span>
                   <input

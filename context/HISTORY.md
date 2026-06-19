@@ -7,6 +7,30 @@
 
 ---
 
+## 2026-06-20
+
+### Application D-VTC — Phase 3 complète, mise en production, commercialisation
+
+**Ce qui a été livré :**
+- Panel admin complet (login protégé, CRUD chauffeurs, création auto compte Supabase + email de bienvenue, KPIs financiers, suppression en cascade)
+- ViewSwitcher : navigation admin/chauffeur/client depuis n'importe quelle vue
+- Notifications temps réel sur le dashboard chauffeur (Supabase Realtime, toast auto-dismiss 10s)
+- Dashboard multi-période (cette semaine / ce mois / tout), filtre côté client
+- Changement de mot de passe dans les paramètres chauffeur
+- Suppression de réservations (admin uniquement)
+- Landing page publique sur `d-vtc.fr` avec calculateur de rentabilité vs plateformes, comparatif financier, arguments ROI chiffrés
+- Déploiement production Vercel, domaine `d-vtc.fr` configuré (Squarespace)
+- Resend domaine `d-vtc.fr` vérifié — emails envoyés depuis `reservations@d-vtc.fr`
+
+**Décisions stratégiques :**
+- Tarif commercialisé : 74€/mois (analyse de marché : rentable dès 20 courses directes, soit 10% de l'activité d'un chauffeur parisien)
+- Positionnement : liberté et contrôle de l'agenda, sans nommer les plateformes directement
+- Argument de vente principal : "20 courses directes/mois remboursent l'abonnement. Vos 5 clients fidèles suffisent."
+- Premier chauffeur en production : Patrick (patrick.d.vtc@gmail.com)
+- Statut : prêt à commercialiser
+
+---
+
 ## 2026-06-19
 
 ### Copity Beach Club — finalisation démo + migration Vercel

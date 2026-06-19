@@ -74,47 +74,44 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="bg-[#0A1628] text-white px-8 pt-20 pb-24 text-center">
-        <div className="max-w-[700px] mx-auto">
+        <div className="max-w-[660px] mx-auto">
           <span className="inline-block text-[11px] font-bold tracking-[.2em] uppercase text-[#C9A84C] mb-6 border border-[#C9A84C]/30 rounded-full px-4 py-1.5">
-            Pour les chauffeurs VTC indépendants
+            Chauffeurs VTC indépendants
           </span>
-          <h1 className="font-serif text-[46px] font-bold leading-[1.1] mb-6 tracking-[-0.02em]">
-            Reprenez 22% de commission<br />
-            <span className="text-[#C9A84C]">sur chaque course directe</span>
+          <h1 className="font-serif text-[48px] font-bold leading-[1.1] mb-5 tracking-[-0.02em]">
+            Uber prend 22%.<br />
+            <span className="text-[#C9A84C]">Reprenez-les.</span>
           </h1>
-          <p className="text-[17px] text-white/70 leading-[1.7] mb-4 max-w-[540px] mx-auto">
-            Uber et Bolt prennent en moyenne <strong className="text-white">3,74€ par course</strong> de commission. Avec votre page D-VTC, vous encaissez 100% du tarif directement.
-          </p>
-          <p className="text-[15px] text-[#C9A84C] font-semibold mb-10">
-            Rentable dès 19 courses directes par mois — soit 10% de votre activité.
+          <p className="text-[16px] text-white/65 leading-[1.7] mb-8 max-w-[480px] mx-auto">
+            Votre propre page de réservation. Vos clients réservent directement. Vous encaissez 100%.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
               className="bg-[#C9A84C] text-[#0A1628] px-8 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">
-              Demander ma page
+              Je veux ma page
             </a>
             <Link href="/r/patrick-vtc"
               className="bg-white/10 text-white px-8 py-4 rounded-[10px] text-[15px] font-semibold hover:bg-white/20 transition-colors border border-white/20">
-              Réserver une course
+              Voir un exemple live
             </Link>
           </div>
-          <p className="text-[12px] text-white/40 mt-5">Setup en 5 minutes · 69€/mois · Réponse sous 24h</p>
+          <p className="text-[12px] text-white/35 mt-5">69€/mois · Rentable dès 19 courses directes · Réponse sous 24h</p>
         </div>
       </section>
 
       {/* Stats */}
       <section className="bg-[#F8F3E8] px-8 py-10">
-        <div className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="max-w-[800px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { value: '22%', label: 'de commission prélevée par Uber/Bolt en moyenne' },
-            { value: '3,74€', label: 'perdus à chaque course à 17€ via plateforme' },
-            { value: '19', label: 'courses directes/mois pour rembourser D-VTC' },
-            { value: '100%', label: 'de vos revenus directs restent dans votre poche' },
+            { value: '22%', label: 'Commission Uber / Bolt' },
+            { value: '3,74€', label: 'Perdus par course' },
+            { value: '19', label: 'Courses pour être rentable' },
+            { value: '0%', label: 'Commission avec D-VTC' },
           ].map(s => (
             <div key={s.label}>
               <div className="font-serif text-[36px] font-bold text-[#0A1628]">{s.value}</div>
-              <div className="text-[12px] text-[#6B7280] mt-1 leading-[1.5]">{s.label}</div>
+              <div className="text-[13px] text-[#6B7280] mt-1">{s.label}</div>
             </div>
           ))}
         </div>
@@ -126,8 +123,8 @@ export default function LandingPage() {
           <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-3">
             Ce que vous perdez chaque mois
           </h2>
-          <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[520px] mx-auto">
-            Pour un chauffeur qui fait 200 courses/mois à 17€ de panier moyen, la différence est brutale.
+          <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[440px] mx-auto">
+            200 courses/mois à 17€. La différence est brutale.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
 
@@ -192,10 +189,10 @@ export default function LandingPage() {
       <section className="bg-[#F4F6FA] px-8 py-20">
         <div className="max-w-[720px] mx-auto">
           <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-3">
-            À partir de combien de courses<br />D-VTC devient rentable ?
+            À partir de combien de courses<br />D-VTC se rembourse ?
           </h2>
-          <p className="text-[15px] text-[#6B7280] text-center mb-10 max-w-[480px] mx-auto">
-            Basé sur un panier moyen de 17€ et une commission Uber de 22% (soit 3,74€ économisés par course directe).
+          <p className="text-[15px] text-[#6B7280] text-center mb-10 max-w-[400px] mx-auto">
+            Panier moyen 17€ · Commission Uber 22% · Économie par course directe : <strong className="text-[#0A1628]">3,74€</strong>
           </p>
 
           <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
@@ -231,7 +228,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-[13px] text-[#8A94A6] text-center mt-5">
-            Sur 200 courses/mois, 19 courses directes = seulement <strong className="text-[#0A1628]">10% de votre activité</strong>. Le reste continue sur Uber et Bolt.
+            19 courses directes = <strong className="text-[#0A1628]">10% de votre activité</strong>. Uber et Bolt restent pour le reste.
           </p>
         </div>
       </section>
@@ -240,10 +237,10 @@ export default function LandingPage() {
       <section className="px-8 py-20">
         <div className="max-w-[1000px] mx-auto">
           <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-3">
-            Tout ce dont vous avez besoin
+            Tout ce qu'il vous faut
           </h2>
-          <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[480px] mx-auto">
-            Une plateforme conçue pour les chauffeurs indépendants qui veulent garder le contrôle.
+          <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[380px] mx-auto">
+            Rien à coder. Rien à gérer. Prêt en 5 minutes.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {BENEFITS.map(b => (
@@ -283,19 +280,20 @@ export default function LandingPage() {
       {/* CTA final */}
       <section className="bg-[#0A1628] px-8 py-20 text-center">
         <div className="max-w-[600px] mx-auto">
-          <h2 className="font-serif text-[34px] font-bold text-white mb-4">
-            19 courses directes.<br />C'est tout ce qu'il faut.
+          <h2 className="font-serif text-[38px] font-bold text-white mb-4">
+            19 courses.<br />
+            <span className="text-[#C9A84C]">Rentable.</span>
           </h2>
-          <p className="text-[15px] text-white/60 mb-2 leading-[1.7]">
-            Sur 200 courses/mois, 19 en direct via votre lien D-VTC et l'abonnement est remboursé. Tout ce qui dépasse, c'est du gain pur.
+          <p className="text-[16px] text-white/60 mb-3 leading-[1.6]">
+            Vos 5 clients fidèles suffisent à rembourser l'abonnement. Le reste, c'est du gain pur.
           </p>
-          <p className="text-[14px] text-[#C9A84C] font-semibold mb-10">
-            Vos 5 meilleurs clients fidèles = déjà rentable.
+          <p className="text-[13px] text-[#C9A84C]/80 mb-10">
+            Uber garde le reste de vos courses. Vous perdez rien. Vous gagnez tout.
           </p>
           <a
             href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
             className="inline-block bg-[#C9A84C] text-[#0A1628] px-10 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">
-            Demander ma page — 69€/mois
+            Je veux ma page — 69€/mois
           </a>
           <p className="text-[12px] text-white/30 mt-5">Réponse sous 24h · damiendambassador@gmail.com</p>
         </div>

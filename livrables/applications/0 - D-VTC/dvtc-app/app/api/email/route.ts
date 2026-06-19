@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+const FROM = process.env.EMAIL_FROM ?? 'onboarding@resend.dev'
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     if (type === 'new_reservation') {
       // Email au chauffeur
       await resend.emails.send({
-        from: 'D-VTC <notifications@dvtc.app>',
+        from: `D-VTC <${FROM}>`,
         to: driverEmail,
         subject: `Nouvelle réservation — ${reservation.client_name}`,
         html: `
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
 
       // Email de confirmation au client
       await resend.emails.send({
-        from: 'D-VTC <noreply@dvtc.app>',
+        from: `D-VTC <${FROM}>`,
         to: reservation.client_email,
         subject: 'Réservation reçue — confirmation sous peu',
         html: `
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     if (type === 'reservation_accepted') {
       await resend.emails.send({
-        from: 'D-VTC <noreply@dvtc.app>',
+        from: `D-VTC <${FROM}>`,
         to: reservation.client_email,
         subject: 'Course confirmée',
         html: `
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     if (type === 'reservation_refused') {
       await resend.emails.send({
-        from: 'D-VTC <noreply@dvtc.app>',
+        from: `D-VTC <${FROM}>`,
         to: reservation.client_email,
         subject: 'Course non disponible',
         html: `

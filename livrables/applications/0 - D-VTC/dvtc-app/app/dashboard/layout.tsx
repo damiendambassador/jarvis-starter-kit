@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { supabase, type Driver } from '@/lib/supabase'
 import { DashboardContext } from './_context'
 import Sidebar from './_sidebar'
@@ -11,8 +11,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [driver, setDriver] = useState<Driver | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
+    if (pathname === '/dashboard/login') return
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { router.replace('/dashboard/login'); return }
       supabase.from('drivers').select('*').eq('user_id', session.user.id).single()
@@ -23,6 +25,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         })
     })
   }, [])
+
+  if (pathname === '/dashboard/login') return <>{children}</>
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-cream">

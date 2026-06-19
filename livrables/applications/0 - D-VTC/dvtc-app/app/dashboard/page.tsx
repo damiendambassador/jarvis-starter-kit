@@ -39,6 +39,19 @@ export default function DashboardPage() {
   async function updateStatus(id: string, status: 'accepted' | 'refused') {
     await supabase.from('reservations').update({ status }).eq('id', id)
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+    const reservation = reservations.find(r => r.id === id)
+    if (reservation) {
+      fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: status === 'accepted' ? 'reservation_accepted' : 'reservation_refused',
+          reservation: { ...reservation, status },
+          driverEmail: driver.email,
+          driverName: driver.name,
+        }),
+      })
+    }
   }
 
   const pending   = reservations.filter(r => r.status === 'pending')

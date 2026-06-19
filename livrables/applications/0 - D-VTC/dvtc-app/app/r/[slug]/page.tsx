@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase, type Driver, type Pricing } from '@/lib/supabase'
 import { calculateStandardPrice, formatPrice } from '@/lib/pricing'
@@ -62,7 +62,10 @@ export default function BookingPage() {
   const [pricing, setPricing] = useState<Pricing | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [distanceLoading, setDistanceLoading] = useState(false)
+  const [distanceError, setDistanceError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
     firstName: '', lastName: '', phone: '', email: '',
@@ -80,6 +83,21 @@ export default function BookingPage() {
   const selectedDate = form.date ? new Date(form.date + 'T12:00:00') : null
   const calCells = useMemo(() => buildCalCells(viewDate, selectedDate), [viewDate, form.date])
   const pickerLabel = format(viewDate, 'MMMM yyyy', { locale: fr })
+
+  const todayStr = format(new Date(), 'yyyy-MM-dd')
+  const isToday = form.date === todayStr
+  const nowHHMM = useMemo(() => {
+    const n = new Date()
+    return `${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')}`
+  }, [form.date])
+  const minTime = isToday ? nowHHMM : undefined
+  const availableSlots = isToday ? TIME_SLOTS.filter(t => t > nowHHMM) : TIME_SLOTS
+
+  useEffect(() => {
+    if (isToday && form.time <= nowHHMM) {
+      setForm(prev => ({ ...prev, time: availableSlots[0] ?? '10:00' }))
+    }
+  }, [form.date])
 
   const dispoTiers = useMemo(() => pricing ? buildDispoTiers(pricing) : [], [pricing])
   const selectedTier = dispoTiers.find(t => t.value === form.dispoDuration) ?? dispoTiers[0]
@@ -106,21 +124,67 @@ export default function BookingPage() {
     ? `~${Math.round(parseFloat(form.distanceKm) * 1.5)} min`
     : null
 
+  const FIELD_LABELS: Partial<Record<keyof typeof form, string>> = {
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    phone: 'Téléphone',
+    email: 'Email',
+    date: 'Date',
+    pickupAddress: form.rideType === 'standard' ? 'Adresse de départ' : 'Lieu de prise en charge',
+    dropoffAddress: 'Adresse d\'arrivée',
+    distanceKm: 'Distance',
+  }
+
   const requiredFields: (keyof typeof form)[] = [
-    'firstName', 'lastName', 'phone', 'email', 'date', 'time', 'pickupAddress',
+    'firstName', 'lastName', 'phone', 'email', 'date', 'pickupAddress',
     ...(form.rideType === 'standard' ? ['dropoffAddress', 'distanceKm'] as const : []),
   ]
-  const missingCount = requiredFields.filter(f => !form[f]).length
-  const canSubmit = missingCount === 0 && form.acceptPrivacy && !submitting
+  const missingFields = [
+    ...requiredFields.filter(f => !form[f]).map(f => FIELD_LABELS[f] ?? f),
+    ...(!form.acceptPrivacy ? ['Politique de confidentialité'] : []),
+  ]
+  const missingCount = missingFields.length
+  const canSubmit = missingCount === 0 && !submitting
 
   useEffect(() => {
     supabase.from('drivers').select('*').eq('slug', slug).eq('is_active', true).single()
       .then(({ data, error: e }) => {
-        if (e || !data) { setError('Chauffeur introuvable.'); setLoading(false); return }
+        if (e || !data) { setLoadError('Chauffeur introuvable.'); setLoading(false); return }
         supabase.from('pricing').select('*').eq('driver_id', data.id).single()
           .then(({ data: p }) => { setDriver(data); setPricing(p); setLoading(false) })
       })
   }, [slug])
+
+  const distanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (form.rideType !== 'standard') return
+    if (form.pickupAddress.length < 5 || form.dropoffAddress.length < 5) return
+    if (distanceTimer.current) clearTimeout(distanceTimer.current)
+    distanceTimer.current = setTimeout(async () => {
+      setDistanceLoading(true)
+      setDistanceError(null)
+      try {
+        const geocode = async (address: string) => {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`, {
+            headers: { 'Accept-Language': 'fr' }
+          })
+          const data = await res.json()
+          if (!data[0]) throw new Error()
+          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) }
+        }
+        const [from, to] = await Promise.all([geocode(form.pickupAddress), geocode(form.dropoffAddress)])
+        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`)
+        const data = await res.json()
+        const km = Math.round(data.routes[0].distance / 100) / 10
+        setForm(prev => ({ ...prev, distanceKm: String(km) }))
+      } catch {
+        setDistanceError('Distance non trouvée. Entrez-la manuellement.')
+      } finally {
+        setDistanceLoading(false)
+      }
+    }, 1000)
+  }, [form.pickupAddress, form.dropoffAddress, form.rideType])
 
   async function doSubmit() {
     if (!driver || !canSubmit) return
@@ -140,15 +204,45 @@ export default function BookingPage() {
       price_estimate: totalPrice,
       status: 'pending',
     }
-    const { data: reservation, error: insertError } = await supabase
-      .from('reservations').insert(payload).select().single()
-    if (insertError) { setError('Une erreur est survenue. Réessayez.'); setSubmitting(false); return }
+    const { data: reservationId, error: insertError } = await supabase.rpc('create_reservation', {
+      p_driver_id:      payload.driver_id,
+      p_client_name:    payload.client_name,
+      p_client_phone:   payload.client_phone,
+      p_client_email:   payload.client_email,
+      p_ride_type:      payload.ride_type,
+      p_pickup_address: payload.pickup_address,
+      p_dropoff_address: payload.dropoff_address ?? null,
+      p_distance_km:    payload.distance_km ?? null,
+      p_scheduled_at:   payload.scheduled_at,
+      p_passengers:     payload.passengers,
+      p_notes:          payload.notes ?? null,
+      p_price_estimate: payload.price_estimate ?? null,
+      p_status:         payload.status,
+    })
+    if (insertError) {
+      setSubmitError(`Erreur : ${insertError.message}`)
+      setSubmitting(false)
+      return
+    }
     await fetch('/api/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'new_reservation', reservation, driverEmail: driver.email, driverName: driver.name }),
+      body: JSON.stringify({
+        type: 'new_reservation',
+        reservation: { ...payload, id: reservationId },
+        driverEmail: driver.email,
+        driverName: driver.name,
+      }),
     })
-    router.push(`/r/${slug}/confirmation?id=${reservation.id}`)
+    // Créer/mettre à jour le client automatiquement
+    supabase.rpc('upsert_client_on_reservation', {
+      p_driver_id: payload.driver_id,
+      p_name: payload.client_name,
+      p_phone: payload.client_phone,
+      p_email: payload.client_email,
+    })
+
+    router.push(`/r/${slug}/confirmation?id=${reservationId}`)
   }
 
   if (loading) return (
@@ -157,10 +251,10 @@ export default function BookingPage() {
     </div>
   )
 
-  if (error || !driver || !pricing) return (
+  if (loadError || !driver || !pricing) return (
     <div className="min-h-screen flex items-center justify-center bg-cream text-center px-4">
       <div>
-        <p className="text-navy font-semibold text-lg">{error ?? 'Chauffeur introuvable.'}</p>
+        <p className="text-navy font-semibold text-lg">{loadError ?? 'Chauffeur introuvable.'}</p>
         <p className="text-[#8A94A6] mt-2 text-sm">Vérifiez le lien que vous avez reçu.</p>
       </div>
     </div>
@@ -294,7 +388,7 @@ export default function BookingPage() {
                     <button key={i} type="button"
                       disabled={!cell.day || cell.past}
                       onClick={() => cell.date && setForm(prev => ({
-                        ...prev, date: cell.date!.toISOString().split('T')[0]
+                        ...prev, date: format(cell.date!, 'yyyy-MM-dd')
                       }))}
                       className={[
                         'aspect-square flex items-center justify-center rounded-lg text-[13px] font-medium transition-colors',
@@ -315,10 +409,17 @@ export default function BookingPage() {
               <div className="flex-1 min-w-[200px] flex flex-col gap-[18px]">
                 <label className="block">
                   <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">Heure de prise en charge</span>
-                  <select className="input-field" value={form.time}
-                    onChange={e => setForm(prev => ({ ...prev, time: e.target.value }))}>
-                    {TIME_SLOTS.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
+                  <input
+                    type="time"
+                    className="input-field"
+                    value={form.time}
+                    min={minTime}
+                    list="time-slots-list"
+                    onChange={e => setForm(prev => ({ ...prev, time: e.target.value }))}
+                  />
+                  <datalist id="time-slots-list">
+                    {availableSlots.map(t => <option key={t} value={t} />)}
+                  </datalist>
                 </label>
                 <div>
                   <span className="text-[12px] font-medium text-[#5A6477] block mb-2">Passagers</span>
@@ -384,15 +485,29 @@ export default function BookingPage() {
                   </div>
                 </label>
                 <div className="flex items-center gap-2.5 bg-[#EDF3FC] border border-[#D5E2F7] rounded-xl px-[14px] py-3">
-                  <Route className="text-blue flex-shrink-0" size={18} />
+                  {distanceLoading
+                    ? <Loader2 className="text-blue flex-shrink-0 animate-spin" size={18} />
+                    : <Route className="text-blue flex-shrink-0" size={18} />
+                  }
                   <div className="flex-1">
-                    <div className="text-[12px] text-[#5A6477]">Distance estimée (km)</div>
-                    <input
-                      className="text-[15px] font-bold text-navy w-full bg-transparent outline-none placeholder:text-[#A7B0BF] mt-0.5"
-                      type="number" min="1" step="0.5" placeholder="Ex: 15"
-                      value={form.distanceKm}
-                      onChange={e => setForm(prev => ({ ...prev, distanceKm: e.target.value }))}
-                    />
+                    <div className="text-[12px] text-[#5A6477]">
+                      {distanceLoading ? 'Calcul de la distance…' : 'Distance estimée (km)'}
+                    </div>
+                    {distanceError
+                      ? <input
+                          className="text-[15px] font-bold text-navy w-full bg-transparent outline-none placeholder:text-[#A7B0BF] mt-0.5"
+                          type="number" min="1" step="0.5" placeholder="Ex: 15"
+                          value={form.distanceKm}
+                          onChange={e => setForm(prev => ({ ...prev, distanceKm: e.target.value }))}
+                        />
+                      : <input
+                          className="text-[15px] font-bold text-navy w-full bg-transparent outline-none placeholder:text-[#A7B0BF] mt-0.5"
+                          type="number" min="1" step="0.5" placeholder="Remplissez les adresses"
+                          value={form.distanceKm}
+                          onChange={e => setForm(prev => ({ ...prev, distanceKm: e.target.value }))}
+                        />
+                    }
+                    {distanceError && <div className="text-[11px] text-red-400 mt-0.5">{distanceError}</div>}
                   </div>
                 </div>
               </div>
@@ -495,16 +610,20 @@ export default function BookingPage() {
                   ? 'bg-navy text-white hover:bg-navy-light cursor-pointer'
                   : 'bg-[#E8EDF5] text-[#A7B0BF] cursor-not-allowed',
               ].join(' ')}>
-              {submitting
-                ? 'Envoi en cours…'
-                : missingCount > 0
-                  ? `${missingCount} champ${missingCount > 1 ? 's' : ''} manquant${missingCount > 1 ? 's' : ''}`
-                  : 'Envoyer ma réservation →'}
+              {submitting ? 'Envoi en cours…' : 'Envoyer ma réservation →'}
             </button>
+            {!submitting && missingCount > 0 && (
+              <div className="mt-3 text-[12px] text-[#8A94A6] leading-[1.6]">
+                {missingCount <= 3
+                  ? <>Manquant : <span className="font-semibold text-[#5A6477]">{missingFields.join(', ')}</span></>
+                  : <>{missingCount} informations manquantes à compléter.</>
+                }
+              </div>
+            )}
             {canSubmit && !submitting && (
               <div className="text-center text-[12px] text-green-500 mt-2.5 font-medium">Prêt à envoyer</div>
             )}
-            {error && <div className="text-center text-[12px] text-red-500 mt-2.5">{error}</div>}
+            {submitError && <div className="text-[12px] text-red-500 mt-2.5 leading-[1.5]">{submitError}</div>}
           </div>
         </div>
       </section>

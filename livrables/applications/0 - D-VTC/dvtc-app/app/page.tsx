@@ -58,7 +58,7 @@ export default function LandingPage() {
           <a
             href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
             className="bg-[#C9A84C] text-[#0A1628] px-4 py-2 rounded-[8px] text-[13px] font-bold hover:opacity-90 transition-opacity">
-            Demander ma page
+            Démarrer — 60€/mois
           </a>
         </div>
       </nav>
@@ -80,14 +80,14 @@ export default function LandingPage() {
             <a
               href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
               className="bg-[#C9A84C] text-[#0A1628] px-8 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">
-              Je veux ma page — Gratuit
+              Demander ma page
             </a>
             <Link href="/r/patrick-vtc"
               className="bg-white/10 text-white px-8 py-4 rounded-[10px] text-[15px] font-semibold hover:bg-white/20 transition-colors border border-white/20">
-              Voir un exemple
+              Réserver une course
             </Link>
           </div>
-          <p className="text-[12px] text-white/40 mt-5">Setup en 5 minutes · Aucune carte bancaire requise</p>
+          <p className="text-[12px] text-white/40 mt-5">Setup en 5 minutes · À partir de 60€/mois · Réponse sous 24h</p>
         </div>
       </section>
 
@@ -163,9 +163,9 @@ export default function LandingPage() {
           <a
             href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
             className="inline-block bg-[#C9A84C] text-[#0A1628] px-10 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">
-            Demander ma page gratuitement
+            Demander ma page
           </a>
-          <p className="text-[12px] text-white/30 mt-4">Réponse sous 24h · damiendambassador@gmail.com</p>
+          <p className="text-[12px] text-white/30 mt-4">À partir de 60€/mois · Réponse sous 24h · damiendambassador@gmail.com</p>
         </div>
       </section>
 

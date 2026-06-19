@@ -85,7 +85,7 @@ export default function CalendarPage() {
     return result
   }, [viewDate, reservations, unavails])
 
-  async function updateStatus(id: string, status: 'accepted' | 'refused' | 'pending') {
+  async function updateStatus(id: string, status: 'accepted' | 'refused' | 'pending' | 'completed') {
     await supabase.from('reservations').update({ status }).eq('id', id)
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status } : r))
     setDetail(prev => prev?.id === id ? { ...prev, status } : prev)

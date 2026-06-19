@@ -6,7 +6,7 @@ import { useDriver } from '../_context'
 import { formatPrice } from '@/lib/pricing'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { Calendar, MapPin, ClipboardList, Loader2 } from 'lucide-react'
+import { Calendar, MapPin, ClipboardList, Loader2, Trash2 } from 'lucide-react'
 
 type Tab = 'all' | 'pending' | 'accepted' | 'refused' | 'completed'
 
@@ -49,7 +49,11 @@ export default function ReservationsPage() {
   async function updateStatus(id: string, status: 'accepted' | 'refused') {
     await supabase.from('reservations').update({ status }).eq('id', id)
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status } : r))
-    // L'email est déclenché automatiquement via le webhook Supabase
+  }
+
+  async function deleteReservation(id: string) {
+    await supabase.from('reservations').delete().eq('id', id)
+    setReservations(prev => prev.filter(r => r.id !== id))
   }
 
   const filtered = tab === 'all' ? reservations : reservations.filter(r => r.status === tab)
@@ -102,6 +106,7 @@ export default function ReservationsPage() {
             <ResCard key={r.id} r={r}
               onAccept={r.status === 'pending' ? () => updateStatus(r.id, 'accepted') : undefined}
               onRefuse={r.status === 'pending' ? () => updateStatus(r.id, 'refused') : undefined}
+              onDelete={() => deleteReservation(r.id)}
             />
           ))}
         </div>
@@ -110,11 +115,13 @@ export default function ReservationsPage() {
   )
 }
 
-function ResCard({ r, onAccept, onRefuse }: {
+function ResCard({ r, onAccept, onRefuse, onDelete }: {
   r: Reservation
   onAccept?: () => void
   onRefuse?: () => void
+  onDelete: () => void
 }) {
+  const [confirm, setConfirm] = useState(false)
   const dateLabel = format(new Date(r.scheduled_at), "EEE d MMM yyyy 'à' HH'h'mm", { locale: fr })
   const route = r.dropoff_address ? `${r.pickup_address} → ${r.dropoff_address}` : r.pickup_address
   const typeStyle = r.ride_type === 'standard'
@@ -155,18 +162,39 @@ function ResCard({ r, onAccept, onRefuse }: {
           </div>
           <div className="text-[12px] text-[#A7B0BF]">{r.passengers} pax</div>
         </div>
-        {onAccept && onRefuse && (
-          <div className="flex gap-2.5">
-            <button onClick={onRefuse}
-              className="border border-[#F0C0BA] bg-white text-red-500 px-4 py-2 rounded-[9px] text-[13px] font-semibold hover:bg-red-50 transition-colors">
-              Refuser
+        <div className="flex gap-2.5 items-center">
+          {onAccept && onRefuse && (
+            <>
+              <button onClick={onRefuse}
+                className="border border-[#F0C0BA] bg-white text-red-500 px-4 py-2 rounded-[9px] text-[13px] font-semibold hover:bg-red-50 transition-colors">
+                Refuser
+              </button>
+              <button onClick={onAccept}
+                className="border-none bg-navy text-white px-[18px] py-2 rounded-[9px] text-[13px] font-semibold hover:bg-navy-light transition-colors">
+                Accepter
+              </button>
+            </>
+          )}
+          {!confirm ? (
+            <button onClick={() => setConfirm(true)}
+              title="Supprimer"
+              className="p-2 rounded-[8px] text-[#C4CDDB] hover:text-red-400 hover:bg-red-50 transition-colors">
+              <Trash2 size={15} />
             </button>
-            <button onClick={onAccept}
-              className="border-none bg-navy text-white px-[18px] py-2 rounded-[9px] text-[13px] font-semibold hover:bg-navy-light transition-colors">
-              Accepter
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <span className="text-[12px] text-[#8A94A6]">Supprimer ?</span>
+              <button onClick={onDelete}
+                className="text-[12px] font-bold text-red-500 hover:text-red-700 transition-colors">
+                Oui
+              </button>
+              <button onClick={() => setConfirm(false)}
+                className="text-[12px] text-[#8A94A6] hover:text-navy transition-colors">
+                Non
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

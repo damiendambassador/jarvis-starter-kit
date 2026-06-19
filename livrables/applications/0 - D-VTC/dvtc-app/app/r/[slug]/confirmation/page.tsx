@@ -7,6 +7,7 @@ import { formatPrice } from '@/lib/pricing'
 import { CheckCircle, Copy, Check, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import ViewSwitcher from '@/components/ViewSwitcher'
 
 export default function ConfirmationPage() {
   const params = useParams()
@@ -148,6 +149,8 @@ export default function ConfirmationPage() {
       <footer className="bg-navy text-white/40 text-center py-[18px] text-[12px]">
         Service propulsé par D Embassy
       </footer>
+
+      <ViewSwitcher current="client" driverSlug={slug} variant="float" />
     </div>
   )
 }

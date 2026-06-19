@@ -191,7 +191,7 @@ export default function SettingsPage() {
           </Section>
         )}
 
-        {/* Lien de réservation */}
+        {/* Lien de réservation + QR Code */}
         <Section title="Mon lien de réservation">
           <div className="flex gap-2.5 flex-wrap items-center">
             <div className="flex-1 min-w-[240px] bg-[#F8F9FA] border border-blue-gray rounded-[9px] px-[14px] py-3 text-[14px] text-[#3A4456] font-mono truncate">
@@ -206,6 +206,34 @@ export default function SettingsPage() {
           <p className="text-[12px] text-[#8A94A6] mt-3 leading-[1.5]">
             Partagez ce lien à vos clients pour qu'ils réservent directement chez vous.
           </p>
+
+          {/* QR Code */}
+          <div className="mt-5 pt-5 border-t border-blue-gray flex gap-6 items-start flex-wrap">
+            <div className="flex flex-col items-center gap-3">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(bookingLink)}&bgcolor=ffffff&color=0a1628&margin=10`}
+                alt="QR Code réservation"
+                width={160}
+                height={160}
+                className="rounded-xl border border-blue-gray"
+              />
+              <a
+                href={`https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(bookingLink)}&bgcolor=ffffff&color=0a1628&margin=20`}
+                download="qr-code-dvtc.png"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 text-[12px] font-semibold text-blue hover:opacity-75 transition-opacity"
+              >
+                Télécharger en HD
+              </a>
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <div className="text-[13px] font-bold text-navy mb-2">À imprimer pour votre véhicule</div>
+              <div className="text-[12px] text-[#5A6477] leading-[1.6]">
+                Plastifiez ce QR code et posez-le dans votre voiture. Vos clients scannent, réservent en 30 secondes, sans chercher votre lien.
+              </div>
+            </div>
+          </div>
         </Section>
 
       </div>

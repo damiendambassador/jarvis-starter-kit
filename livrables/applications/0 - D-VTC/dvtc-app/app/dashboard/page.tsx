@@ -39,27 +39,17 @@ export default function DashboardPage() {
   async function updateStatus(id: string, status: 'accepted' | 'refused') {
     await supabase.from('reservations').update({ status }).eq('id', id)
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status } : r))
-    const reservation = reservations.find(r => r.id === id)
-    if (reservation) {
-      fetch('/api/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: status === 'accepted' ? 'reservation_accepted' : 'reservation_refused',
-          reservation: { ...reservation, status },
-          driverEmail: driver.email,
-          driverName: driver.name,
-        }),
-      })
-    }
+    // L'email est déclenché automatiquement via le webhook Supabase
   }
 
   const pending   = reservations.filter(r => r.status === 'pending')
   const completed = reservations.filter(r => r.status === 'completed')
   const totalRevenue = completed.reduce((s, r) => s + (r.price_estimate ?? 0), 0)
+  const uberSaved = Math.round(totalRevenue * 0.28)
 
   const stats = [
     { label: 'CA ce mois', value: formatPrice(totalRevenue), valueStyle: 'text-[22px] font-bold text-gold mt-2' },
+    { label: 'Économisé vs Uber', value: formatPrice(uberSaved), valueStyle: 'text-[22px] font-bold text-green-600 mt-2', tooltip: 'Commission Uber/Bolt moyenne : 28%' },
     { label: 'Courses terminées', value: completed.length, valueStyle: 'text-[22px] font-bold text-navy mt-2' },
     { label: 'En attente', value: pending.length, valueStyle: 'text-[22px] font-bold text-navy mt-2', badge: pending.length > 0 ? 'URGENT' : null },
     { label: 'Total ce mois', value: reservations.length, valueStyle: 'text-[22px] font-bold text-navy mt-2' },
@@ -97,6 +87,9 @@ export default function DashboardPage() {
                 <span className="text-[10px] font-bold text-[#9A7B2E] bg-[#FBF7EC] border border-[#EAD9A8] px-1.5 py-0.5 rounded">
                   {s.badge}
                 </span>
+              )}
+              {'tooltip' in s && s.tooltip && (
+                <span title={s.tooltip} className="text-[10px] text-[#A7B0BF] cursor-help">ⓘ</span>
               )}
             </div>
             <div className={s.valueStyle}>{s.value}</div>

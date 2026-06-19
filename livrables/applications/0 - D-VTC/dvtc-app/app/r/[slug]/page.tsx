@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { supabase, type Driver, type Pricing } from '@/lib/supabase'
+import { supabase, type Driver, type Pricing, type Unavailability } from '@/lib/supabase'
 import { calculateStandardPrice, formatPrice } from '@/lib/pricing'
 import {
   Car, Clock, Star, MapPin, Route, ChevronLeft, ChevronRight, Loader2,
@@ -66,6 +66,8 @@ export default function BookingPage() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
+  const [returningUser, setReturningUser] = useState<string | null>(null)
+  const [dateUnavails, setDateUnavails] = useState<Unavailability[]>([])
 
   const [form, setForm] = useState({
     firstName: '', lastName: '', phone: '', email: '',
@@ -135,6 +137,28 @@ export default function BookingPage() {
     distanceKm: 'Distance',
   }
 
+  // Chargement des indisponibilités à chaque changement de date
+  useEffect(() => {
+    if (!form.date || !driver) { setDateUnavails([]); return }
+    supabase.from('unavailabilities')
+      .select('*')
+      .eq('driver_id', driver.id)
+      .eq('date', form.date)
+      .then(({ data }) => setDateUnavails(data ?? []))
+  }, [form.date, driver?.id])
+
+  // Conflit : l'heure choisie tombe dans un créneau bloqué
+  const timeConflict = useMemo(() => {
+    if (!form.time) return null
+    const [h, m] = form.time.split(':').map(Number)
+    const t = h * 60 + m
+    return dateUnavails.find(u => {
+      const [sh, sm] = u.start_time.split(':').map(Number)
+      const [eh, em] = u.end_time.split(':').map(Number)
+      return t >= sh * 60 + sm && t < eh * 60 + em
+    }) ?? null
+  }, [form.time, dateUnavails])
+
   const requiredFields: (keyof typeof form)[] = [
     'firstName', 'lastName', 'phone', 'email', 'date', 'pickupAddress',
     ...(form.rideType === 'standard' ? ['dropoffAddress', 'distanceKm'] as const : []),
@@ -144,7 +168,18 @@ export default function BookingPage() {
     ...(!form.acceptPrivacy ? ['Politique de confidentialité'] : []),
   ]
   const missingCount = missingFields.length
-  const canSubmit = missingCount === 0 && !submitting
+  const canSubmit = missingCount === 0 && !submitting && !timeConflict
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('dvtc_client_info')
+      if (saved) {
+        const { firstName, lastName, phone, email } = JSON.parse(saved)
+        setForm(prev => ({ ...prev, firstName, lastName, phone, email }))
+        setReturningUser(firstName)
+      }
+    } catch {}
+  }, [])
 
   useEffect(() => {
     supabase.from('drivers').select('*').eq('slug', slug).eq('is_active', true).single()
@@ -224,16 +259,15 @@ export default function BookingPage() {
       setSubmitting(false)
       return
     }
-    await fetch('/api/email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'new_reservation',
-        reservation: { ...payload, id: reservationId },
-        driverEmail: driver.email,
-        driverName: driver.name,
-      }),
-    })
+    // L'email est déclenché automatiquement via le webhook Supabase
+    // Mémoriser les infos client pour la prochaine visite
+    try {
+      localStorage.setItem('dvtc_client_info', JSON.stringify({
+        firstName: form.firstName, lastName: form.lastName,
+        phone: form.phone, email: form.email,
+      }))
+    } catch {}
+
     // Créer/mettre à jour le client automatiquement
     supabase.rpc('upsert_client_on_reservation', {
       p_driver_id: payload.driver_id,
@@ -335,6 +369,27 @@ export default function BookingPage() {
         {/* Left: Form */}
         <div className="flex-1 basis-[540px] min-w-[300px] flex flex-col gap-[18px]">
 
+          {/* Returning user greeting */}
+          {returningUser && (
+            <div className="flex items-center justify-between gap-3 bg-[#FBF7EC] border border-[#EAD9A8] rounded-2xl px-5 py-4">
+              <div>
+                <div className="text-[15px] font-bold text-[#9A7B2E]">Bonjour {returningUser} !</div>
+                <div className="text-[12px] text-[#9A7B2E]/80 mt-0.5">Vos informations ont été pré-remplies.</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setReturningUser(null)
+                  setForm(prev => ({ ...prev, firstName: '', lastName: '', phone: '', email: '' }))
+                  localStorage.removeItem('dvtc_client_info')
+                }}
+                className="text-[12px] text-[#9A7B2E] underline underline-offset-2 hover:opacity-70 transition-opacity flex-shrink-0"
+              >
+                Ce n'est pas moi
+              </button>
+            </div>
+          )}
+
           {/* Coordonnées */}
           <div className="card px-[22px] py-[22px]">
             <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">Vos coordonnées</div>
@@ -420,6 +475,24 @@ export default function BookingPage() {
                   <datalist id="time-slots-list">
                     {availableSlots.map(t => <option key={t} value={t} />)}
                   </datalist>
+                  {timeConflict && (
+                    <div className="mt-2 flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
+                      <span className="text-red-400 text-[15px] flex-shrink-0 mt-[1px]">⊘</span>
+                      <div>
+                        <div className="text-[12px] font-semibold text-red-600">Créneau indisponible</div>
+                        <div className="text-[11px] text-red-400 mt-0.5">
+                          Le chauffeur est indisponible de {timeConflict.start_time.slice(0,5)} à {timeConflict.end_time.slice(0,5)}
+                          {timeConflict.label !== 'Indisponible' ? ` (${timeConflict.label})` : ''}.
+                          Choisissez une autre heure.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {!timeConflict && dateUnavails.length > 0 && (
+                    <div className="mt-2 text-[11px] text-[#8A94A6] leading-[1.5]">
+                      Créneaux bloqués ce jour : {dateUnavails.map(u => `${u.start_time.slice(0,5)}–${u.end_time.slice(0,5)}`).join(', ')}
+                    </div>
+                  )}
                 </label>
                 <div>
                   <span className="text-[12px] font-medium text-[#5A6477] block mb-2">Passagers</span>
@@ -612,7 +685,12 @@ export default function BookingPage() {
               ].join(' ')}>
               {submitting ? 'Envoi en cours…' : 'Envoyer ma réservation →'}
             </button>
-            {!submitting && missingCount > 0 && (
+            {!submitting && timeConflict && (
+              <div className="mt-3 text-[12px] text-red-500 font-medium">
+                Créneau indisponible — choisissez une autre heure.
+              </div>
+            )}
+            {!submitting && !timeConflict && missingCount > 0 && (
               <div className="mt-3 text-[12px] text-[#8A94A6] leading-[1.6]">
                 {missingCount <= 3
                   ? <>Manquant : <span className="font-semibold text-[#5A6477]">{missingFields.join(', ')}</span></>

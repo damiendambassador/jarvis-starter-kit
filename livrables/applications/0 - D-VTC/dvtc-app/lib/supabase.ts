@@ -32,6 +32,16 @@ export type Pricing = {
   loyalty_discount: number
 }
 
+export type Unavailability = {
+  id: string
+  driver_id: string
+  date: string
+  start_time: string
+  end_time: string
+  label: string
+  created_at: string
+}
+
 export type Client = {
   id: string
   driver_id: string

@@ -6,7 +6,6 @@ import { generateInvoicePDF } from '@/lib/invoice-pdf'
 
 export const runtime = 'nodejs'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM   = process.env.EMAIL_FROM ?? 'onboarding@resend.dev'
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL!
@@ -32,9 +31,11 @@ export async function POST(req: NextRequest) {
   const rawBody = Buffer.from(await req.arrayBuffer())
   const sig     = req.headers.get('stripe-signature')
 
-  if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.json({ error: 'Missing signature' }, { status: 400 })
+  if (!sig || !process.env.STRIPE_WEBHOOK_SECRET || !process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json({ error: 'Missing signature or Stripe config' }, { status: 400 })
   }
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
   let event: Stripe.Event
   try {

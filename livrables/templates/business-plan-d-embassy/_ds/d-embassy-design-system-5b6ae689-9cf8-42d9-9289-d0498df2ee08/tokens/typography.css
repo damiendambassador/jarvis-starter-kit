@@ -1,0 +1,50 @@
+/* ============================================================
+   D EMBASSY — TYPOGRAPHY TOKENS
+   Display: Cormorant Garamond (elegant high-contrast serif)
+   Titling: Marcellus (refined roman caps — eyebrows / labels)
+   UI/Body: Mulish (warm, legible humanist sans · FR/EN/ES)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Marcellus&family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root {
+  /* ---- Families ---- */
+  --font-display: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
+  --font-eyebrow: 'Marcellus', 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Mulish', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
+
+  /* ---- Weights ---- */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-extra:    800;
+
+  /* ---- Type scale (modular, refined) ---- */
+  --text-display-1: 4.5rem;    /* 72 — hero serif */
+  --text-display-2: 3.5rem;    /* 56 */
+  --text-h1:        2.75rem;   /* 44 */
+  --text-h2:        2.125rem;  /* 34 */
+  --text-h3:        1.5rem;    /* 24 */
+  --text-h4:        1.25rem;   /* 20 */
+  --text-body-lg:   1.125rem;  /* 18 */
+  --text-body:      1rem;      /* 16 */
+  --text-body-sm:   0.875rem;  /* 14 */
+  --text-caption:   0.75rem;   /* 12 */
+  --text-eyebrow:   0.8125rem; /* 13 — letterspaced caps */
+
+  /* ---- Line heights ---- */
+  --leading-none:    1;
+  --leading-tight:   1.1;
+  --leading-snug:    1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  /* ---- Letter spacing ---- */
+  --tracking-tight:  -0.015em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.06em;
+  --tracking-wider:  0.14em;  /* eyebrows / titling caps */
+  --tracking-widest: 0.22em;
+}

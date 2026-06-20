@@ -1,0 +1,57 @@
+/* ============================================================
+   D EMBASSY — BASE / RESET
+   Light, global defaults. Sets the warm canvas + body type.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 0.4em;
+  text-wrap: balance;
+}
+
+p { margin: 0 0 1em; text-wrap: pretty; }
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: var(--transition-colors);
+}
+a:hover { color: var(--accent-strong); }
+
+::selection { background: var(--selection-bg); color: var(--navy-800); }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Decorative gold hairline used throughout the brand */
+.ds-rule {
+  height: 1px;
+  border: 0;
+  background: var(--hairline-gold);
+  opacity: 0.7;
+}
+.ds-rule--center {
+  width: 56px;
+  margin-inline: auto;
+}

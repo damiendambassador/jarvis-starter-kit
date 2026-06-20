@@ -1,0 +1,107 @@
+/* ============================================================
+   D EMBASSY — COLOR TOKENS
+   Warm, elegant, épuré. Navy-dominant with antique-gold accent
+   on a warm ivory canvas. Derived from the column emblem.
+   ============================================================ */
+
+:root {
+  /* ---- Base palette: Petrol Navy (primary) ---- */
+  --navy-900: #131c20;  /* deepest ink panel */
+  --navy-800: #1a2227;  /* logo dark panel */
+  --navy-700: #1e323a;
+  --navy-600: #224049;
+  --navy-500: #274852;  /* ★ brand navy */
+  --navy-400: #355b66;
+  --navy-300: #4d7681;
+  --navy-200: #8aa6ae;
+  --navy-100: #c5d4d8;
+  --navy-50:  #eaf0f1;
+
+  /* ---- Base palette: Antique Gold (accent) ---- */
+  --gold-700: #8a5f10;
+  --gold-600: #c28a1c;
+  --gold-500: #d7942c;  /* ★ antique gold — primary accent */
+  --gold-400: #f7a105;  /* bright highlight (logo pediment) */
+  --gold-300: #f8b948;
+  --gold-200: #f8d08a;
+  --gold-100: #f6e4be;
+  --gold-50:  #faf2df;
+
+  /* ---- Base palette: Warm Ivory (surfaces / neutrals) ---- */
+  --ivory-50:  #fbfaf6;  /* page canvas */
+  --ivory-100: #f7f6f2;  /* logo cream / card */
+  --ivory-200: #efede5;
+  --ivory-300: #e4e1d6;  /* hairline borders */
+  --ivory-400: #d2cdbe;
+
+  /* ---- Base palette: Slate (ink / text) ---- */
+  --slate-900: #23292e;
+  --slate-700: #3f464b;  /* logo serif ink */
+  --slate-600: #565e64;
+  --slate-500: #6e767c;
+  --slate-400: #98a0a6;
+
+  --white: #ffffff;
+  --black: #0e1316;
+
+  /* ---- Semantic status colors (warm-tuned) ---- */
+  --success-600: #2f6a4f;
+  --success-500: #3f7a5e;
+  --success-100: #e2efe8;
+  --warning-600: #b07d16;
+  --warning-500: #c28a1c;
+  --warning-100: #f8ecd0;
+  --danger-600:  #9c372f;
+  --danger-500:  #b0413a;
+  --danger-100:  #f4e1de;
+  --info-600:    #2c4f59;
+  --info-500:    #355b66;
+  --info-100:    #e2ebed;
+
+  /* ============================================================
+     SEMANTIC ALIASES — reference these in components
+     ============================================================ */
+
+  /* Brand */
+  --primary:        var(--navy-500);
+  --primary-deep:   var(--navy-700);
+  --primary-soft:   var(--navy-50);
+  --accent:         var(--gold-500);
+  --accent-bright:  var(--gold-400);
+  --accent-strong:  var(--gold-600);
+  --accent-soft:    var(--gold-50);
+
+  /* Text */
+  --text-strong:  var(--slate-900);
+  --text-body:    var(--slate-700);
+  --text-muted:   var(--slate-500);
+  --text-faint:   var(--slate-400);
+  --text-on-navy: var(--ivory-100);
+  --text-on-navy-muted: var(--navy-200);
+  --text-on-gold: var(--navy-800);
+  --text-accent:  var(--gold-700);
+  --text-link:    var(--navy-500);
+
+  /* Surfaces */
+  --surface-page:        var(--ivory-50);
+  --surface-card:        var(--white);
+  --surface-raised:      var(--white);
+  --surface-sunken:      var(--ivory-200);
+  --surface-subtle:      var(--ivory-100);
+  --surface-inverse:     var(--navy-500);
+  --surface-inverse-deep:var(--navy-800);
+  --surface-accent:      var(--gold-50);
+
+  /* Borders & lines */
+  --border-subtle:  var(--ivory-200);
+  --border-default: var(--ivory-300);
+  --border-strong:  var(--ivory-400);
+  --border-ink:     var(--slate-400);
+  --border-accent:  var(--gold-500);
+  --hairline-gold:  var(--gold-500);   /* thin decorative gold rule */
+
+  /* Interaction */
+  --focus-ring:     var(--gold-400);
+  --overlay-scrim:  color-mix(in srgb, var(--navy-900) 55%, transparent);
+  --selection-bg:   var(--gold-100);
+}

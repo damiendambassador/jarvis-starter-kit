@@ -330,6 +330,15 @@ export default function BookingPage() {
         <p className="mt-4 max-w-[480px] mx-auto text-white/60 text-base leading-[1.55]">
           Un service ponctuel et discret. Réservation en quelques secondes, confirmation par votre chauffeur.
         </p>
+        {driver.vehicle_model && (
+          <div className="mt-5 inline-flex items-center gap-2.5 bg-white/10 border border-white/15 px-4 py-2 rounded-full text-[13px] text-white/75">
+            <Car size={13} className="text-gold flex-shrink-0" />
+            <span>{driver.vehicle_model}</span>
+            {driver.vehicle_capacity && (
+              <span className="text-white/40">· {driver.vehicle_capacity} passager{driver.vehicle_capacity > 1 ? 's' : ''}</span>
+            )}
+          </div>
+        )}
       </section>
 
       {/* Tariff cards */}

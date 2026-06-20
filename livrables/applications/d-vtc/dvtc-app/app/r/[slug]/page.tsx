@@ -268,12 +268,16 @@ export default function BookingPage() {
       }))
     } catch {}
 
-    // Envoyer les emails + enregistrer le client côté serveur
-    fetch('/api/booking/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reservationId }),
-    }).catch(err => console.error('[notify]', err))
+    // Envoyer les emails + enregistrer le client côté serveur (awaité pour éviter l'annulation)
+    try {
+      await fetch('/api/booking/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservationId }),
+      })
+    } catch (err) {
+      console.error('[notify]', err)
+    }
 
     router.push(`/r/${slug}/confirmation?id=${reservationId}`)
   }

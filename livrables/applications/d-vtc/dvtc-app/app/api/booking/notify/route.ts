@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM   = process.env.EMAIL_FROM ?? 'onboarding@resend.dev'
+const FROM   = process.env.EMAIL_FROM ?? 'D-VTC <reservations@d-vtc.fr>'
 
 const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: `D-VTC <${FROM}>`,
+      from: FROM,
       to: driver.email,
       subject: `Nouvelle réservation — ${esc(r.client_name)}`,
       html: `
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     })
 
     await resend.emails.send({
-      from: `D-VTC <${FROM}>`,
+      from: FROM,
       to: r.client_email,
       subject: 'Réservation reçue — confirmation sous peu',
       html: `

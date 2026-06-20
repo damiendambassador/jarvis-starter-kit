@@ -62,7 +62,14 @@ export default function ReservationsPage() {
   }
 
   async function deleteReservation(id: string) {
-    await supabase.from('reservations').delete().eq('id', id)
+    const adminEmail    = localStorage.getItem('admin_email') ?? ''
+    const adminPassword = localStorage.getItem('admin_password') ?? ''
+    const res = await fetch('/api/admin/delete-reservation', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminEmail, adminPassword, reservationId: id }),
+    })
+    if (!res.ok) { alert('Suppression non autorisée.'); return }
     setReservations(prev => prev.filter(r => r.id !== id))
   }
 

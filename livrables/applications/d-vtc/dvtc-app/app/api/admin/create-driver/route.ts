@@ -127,6 +127,15 @@ export async function POST(req: NextRequest) {
 
           ${checkoutSection}
 
+          <div style="background:#F8F9FB;border:1px solid #E8EDF5;border-radius:8px;padding:18px;margin:0 0 20px">
+            <p style="margin:0 0 10px;font-size:11px;font-weight:700;color:#8A94A6;text-transform:uppercase;letter-spacing:.08em">Conditions Générales de Vente — Résumé</p>
+            <p style="margin:0 0 6px;font-size:12px;color:#3A4456;line-height:1.6"><strong>Art. 1 — Objet :</strong> D-VTC est une plateforme SaaS de gestion de réservations pour chauffeurs VTC indépendants (D Embassy, micro-entrepreneur, SIRET 10073363300018).</p>
+            <p style="margin:0 0 6px;font-size:12px;color:#3A4456;line-height:1.6"><strong>Art. 3 — Prix :</strong> Abonnement mensuel de <strong>74,00 €</strong>. TVA non applicable (art. 293B CGI). Facture émise automatiquement à chaque paiement.</p>
+            <p style="margin:0 0 6px;font-size:12px;color:#3A4456;line-height:1.6"><strong>Art. 4 — Paiement :</strong> Prélèvement automatique mensuel par carte bancaire via Stripe. En cas d'échec répété (3 tentatives), l'accès est suspendu.</p>
+            <p style="margin:0 0 10px;font-size:12px;color:#3A4456;line-height:1.6"><strong>Art. 5 — Résiliation :</strong> Sans engagement. Résiliation par email à damiendambassador@gmail.com. Prise d'effet en fin de période mensuelle, sans remboursement au prorata.</p>
+            <a href="https://d-vtc.fr/cgv" style="display:inline-block;font-size:12px;font-weight:600;color:#0A1628;text-decoration:underline">Lire les CGV complètes sur d-vtc.fr/cgv →</a>
+          </div>
+
           <div style="background:#F4F6FA;border-radius:8px;padding:18px;margin:0 0 20px">
             <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#8A94A6;text-transform:uppercase;letter-spacing:.08em">Votre page de réservation</p>
             <a href="${BASE}/r/${finalSlug}" style="font-size:15px;font-weight:700;color:#0A1628;word-break:break-all">${BASE}/r/${finalSlug}</a>

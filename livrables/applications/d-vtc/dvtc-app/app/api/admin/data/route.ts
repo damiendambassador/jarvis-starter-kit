@@ -18,7 +18,10 @@ export async function POST(req: NextRequest) {
   }
 
   // Essaie d'abord avec les colonnes Stripe (après migration), sinon fallback colonnes de base
-  let { data: drivers, error: driversError } = await admin
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let drivers: any[] | null = null
+
+  const { data: fullDrivers, error: driversError } = await admin
     .from('drivers')
     .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at')
     .order('created_at', { ascending: false })
@@ -29,6 +32,8 @@ export async function POST(req: NextRequest) {
       .select('id, user_id, name, email, phone, slug, created_at')
       .order('created_at', { ascending: false })
     drivers = basicDrivers
+  } else {
+    drivers = fullDrivers
   }
 
   const driversWithStats = await Promise.all(
@@ -58,9 +63,10 @@ export async function POST(req: NextRequest) {
       const accepted  = all.filter((r: any) => r.status === 'accepted').length
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const completed = all.filter((r: any) => r.status === 'completed').length
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const revenue   = all
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((r: any) => r.status === 'completed')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .reduce((sum: number, r: any) => sum + (r.price_estimate ?? 0), 0)
 
       return { ...driver, stats: { total: all.length, pending, accepted, completed, revenue }, last_invoice: lastInvoice ?? null }

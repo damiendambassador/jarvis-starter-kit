@@ -6,7 +6,7 @@ const BENEFITS = [
   { icon: '💶', title: 'Zéro commission', desc: 'Ce que vous facturez, vous le gardez. Entièrement.' },
   { icon: '📲', title: 'Notification immédiate', desc: 'Chaque demande arrive en temps réel. Vous acceptez ou refusez en un clic.' },
   { icon: '📊', title: 'Vos stats en un coup d\'œil', desc: 'CA, économies réalisées, courses — tout en temps réel sur votre dashboard.' },
-  { icon: '🤝', title: 'Prêt en 5 minutes', desc: 'On configure tout pour vous. Vous n\'avez rien à coder, rien à gérer.' },
+  { icon: '🤝', title: 'Prêt en 5 minutes', desc: 'Votre espace est opérationnel le jour même. On configure tout.' },
 ]
 
 const STEPS = [
@@ -58,7 +58,7 @@ export default function LandingPage() {
             <span className="text-[#C9A84C]">Votre liberté.</span>
           </h1>
           <p className="text-[16px] text-white/65 leading-[1.7] mb-8 max-w-[460px] mx-auto">
-            Votre page de réservation privée. Vos clients réservent directement. Vous gardez 100% — et vous choisissez quand vous travaillez.
+            Une page de réservation à votre nom. Vos clients réservent sans intermédiaire, vous gardez 100%.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
@@ -71,23 +71,6 @@ export default function LandingPage() {
             </Link>
           </div>
           <p className="text-[12px] text-white/35 mt-5">74€/mois · Rentable dès 20 courses directes · Réponse sous 24h</p>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="bg-[#F8F3E8] px-8 py-10">
-        <div className="max-w-[800px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { value: '22%', label: 'Commission des plateformes' },
-            { value: '3,74€', label: 'Perdus par course' },
-            { value: '20', label: 'Courses pour être rentable' },
-            { value: '0%', label: 'Commission avec D-VTC' },
-          ].map(s => (
-            <div key={s.label}>
-              <div className="font-serif text-[36px] font-bold text-[#0A1628]">{s.value}</div>
-              <div className="text-[13px] text-[#6B7280] mt-1">{s.label}</div>
-            </div>
-          ))}
         </div>
       </section>
 
@@ -124,7 +107,7 @@ export default function LandingPage() {
 
             <div className="border-2 border-[#C9A84C] rounded-2xl overflow-hidden">
               <div className="bg-[#C9A84C] px-6 py-4 flex items-center justify-between">
-                <span className="font-bold text-[#0A1628] text-[15px]">Avec D-VTC (30% en direct)</span>
+                <span className="font-bold text-[#0A1628] text-[15px]">Avec D-VTC</span>
                 <span className="text-[11px] text-[#0A1628] bg-white/50 px-3 py-1 rounded-full font-semibold">Liberté</span>
               </div>
               <div className="px-6 py-5 flex flex-col gap-4">
@@ -148,11 +131,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="bg-[#0A1628] rounded-2xl px-8 py-6 text-center">
-            <p className="text-white/60 text-[14px] mb-1">Gain mensuel — 30% de vos courses en direct</p>
-            <p className="text-[#C9A84C] font-serif text-[42px] font-bold">+ 150€ / mois</p>
-            <p className="text-white/40 text-[12px] mt-1">soit + 1 800€ sur l'année. En conservant vos plateformes habituelles.</p>
-          </div>
         </div>
       </section>
 
@@ -163,7 +141,7 @@ export default function LandingPage() {
             À partir de quand<br />êtes-vous rentable ?
           </h2>
           <p className="text-[14px] text-[#6B7280] text-center mb-10">
-            Panier moyen 17€ · Commission plateforme 22% · Économie par course directe : <strong className="text-[#0A1628]">3,74€</strong>
+            Économie par course directe : <strong className="text-[#0A1628]">3,74€</strong>
           </p>
 
           <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
@@ -191,9 +169,14 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <p className="text-[12px] text-[#8A94A6] text-center mt-5">
-            20 courses directes = <strong className="text-[#0A1628]">10% de votre activité</strong>. Le reste continue normalement.
-          </p>
+          <div className="mt-6 text-center">
+            <p className="text-[13px] text-[#6B7280]">
+              20 courses directes = <strong className="text-[#0A1628]">10% de votre activité</strong>. Le reste continue normalement.
+            </p>
+            <p className="text-[13px] text-[#6B7280] mt-1">
+              Au-delà du seuil, chaque course directe vous rapporte <strong className="text-[#0A1628]">3,74€ de plus</strong> — sans rien changer à votre façon de travailler.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -201,7 +184,7 @@ export default function LandingPage() {
       <section className="px-8 py-20">
         <div className="max-w-[1000px] mx-auto">
           <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-3">Tout ce qu'il vous faut</h2>
-          <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[340px] mx-auto">Rien à coder. Rien à gérer. Prêt en 5 minutes.</p>
+          <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[340px] mx-auto">Tout ce dont vous avez besoin, sans la complexité.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {BENEFITS.map(b => (
               <div key={b.title} className="bg-white border border-[#E8EDF5] rounded-2xl px-6 py-6 hover:shadow-md transition-shadow">

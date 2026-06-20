@@ -260,7 +260,6 @@ export default function BookingPage() {
       setSubmitting(false)
       return
     }
-    // L'email est déclenché automatiquement via le webhook Supabase
     // Mémoriser les infos client pour la prochaine visite
     try {
       localStorage.setItem('dvtc_client_info', JSON.stringify({
@@ -269,13 +268,12 @@ export default function BookingPage() {
       }))
     } catch {}
 
-    // Créer/mettre à jour le client automatiquement
-    supabase.rpc('upsert_client_on_reservation', {
-      p_driver_id: payload.driver_id,
-      p_name: payload.client_name,
-      p_phone: payload.client_phone,
-      p_email: payload.client_email,
-    })
+    // Envoyer les emails + enregistrer le client côté serveur
+    fetch('/api/booking/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reservationId }),
+    }).catch(err => console.error('[notify]', err))
 
     router.push(`/r/${slug}/confirmation?id=${reservationId}`)
   }
@@ -374,8 +372,8 @@ export default function BookingPage() {
           {returningUser && (
             <div className="flex items-center justify-between gap-3 bg-[#FBF7EC] border border-[#EAD9A8] rounded-2xl px-5 py-4">
               <div>
-                <div className="text-[15px] font-bold text-[#9A7B2E]">Bonjour {returningUser} !</div>
-                <div className="text-[12px] text-[#9A7B2E]/80 mt-0.5">Vos informations ont été pré-remplies.</div>
+                <div className="text-[15px] font-bold text-[#9A7B2E]">Bon retour, {returningUser} !</div>
+                <div className="text-[12px] text-[#9A7B2E]/80 mt-0.5">Vos coordonnées sont prêtes, il ne reste qu'à choisir votre course.</div>
               </div>
               <button
                 type="button"

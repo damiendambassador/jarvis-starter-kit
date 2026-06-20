@@ -54,6 +54,11 @@ export default function ReservationsPage() {
   async function updateStatus(id: string, status: 'accepted' | 'refused') {
     await supabase.from('reservations').update({ status }).eq('id', id)
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+    fetch('/api/booking/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reservationId: id, status }),
+    }).catch(err => console.error('[status notify]', err))
   }
 
   async function deleteReservation(id: string) {

@@ -3,7 +3,7 @@ import Link from 'next/link'
 const BENEFITS = [
   { icon: '💶', title: 'Zéro commission', desc: 'Ce que vous facturez, vous le gardez entièrement. Aucun pourcentage prélevé.' },
   { icon: '📲', title: 'Notification immédiate', desc: 'Chaque demande arrive en temps réel. Vous acceptez ou refusez en un clic.' },
-  { icon: '🤝', title: 'Opérationnel en 24h', desc: 'Votre lien est actif le jour même. On s'occupe de tout.' },
+  { icon: '🤝', title: 'Opérationnel en 24h', desc: 'Votre lien est actif le jour même. On s\'occupe de tout.' },
 ]
 
 const STEPS = [

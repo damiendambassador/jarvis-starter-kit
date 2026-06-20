@@ -59,6 +59,24 @@ export default function CalendarPage() {
     })
   }, [driver.id, viewDate.getMonth(), viewDate.getFullYear()])
 
+  // Écoute les suppressions en temps réel (admin depuis la vue Réservations)
+  useEffect(() => {
+    const channel = supabase
+      .channel(`calendar-deletes-${driver.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'reservations', filter: `driver_id=eq.${driver.id}` },
+        (payload) => {
+          const deletedId = (payload.old as { id: string }).id
+          setReservations(prev => prev.filter(r => r.id !== deletedId))
+          setDetail(prev => prev?.id === deletedId ? null : prev)
+        }
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [driver.id])
+
   const cells = useMemo(() => {
     const year  = viewDate.getFullYear()
     const month = viewDate.getMonth()
@@ -91,17 +109,12 @@ export default function CalendarPage() {
     setDetail(prev => prev?.id === id ? { ...prev, status } : prev)
     if (status === 'pending') return
     const reservation = reservations.find(r => r.id === id)
-    if (reservation) {
-      fetch('/api/email', {
+    if (reservation && (status === 'accepted' || status === 'refused')) {
+      fetch('/api/booking/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: status === 'accepted' ? 'reservation_accepted' : 'reservation_refused',
-          reservation: { ...reservation, status },
-          driverEmail: driver.email,
-          driverName: driver.name,
-        }),
-      })
+        body: JSON.stringify({ reservationId: id, status }),
+      }).catch(err => console.error('[calendar status notify]', err))
     }
   }
 

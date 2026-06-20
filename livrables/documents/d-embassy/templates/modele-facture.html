@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Facture — D Embassy</title>
+<style>
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 760px; margin: 40px auto; color: #1a1a2e; padding: 0 24px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+  .logo { font-size: 22px; font-weight: 800; letter-spacing: -.01em; color: #0a1628; }
+  .logo span { color: #c9a84c; }
+  .badge { background: #16a34a; color: white; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 4px; letter-spacing: .08em; text-transform: uppercase; }
+  .meta { font-size: 13px; color: #666; margin-top: 4px; text-align: right; }
+  .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+  .partie { background: #f8f8f8; border-radius: 8px; padding: 14px 18px; font-size: 13px; line-height: 1.7; }
+  .partie-label { font-size: 10px; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  thead tr { background: #0a1628; color: white; }
+  thead th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  tbody tr { border-bottom: 1px solid #f0f0f0; }
+  tbody td { padding: 12px 14px; font-size: 13px; color: #3a4456; }
+  .fill { color: #bbb; font-style: italic; }
+  .totals { margin-left: auto; width: 280px; }
+  .total-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+  .total-final { display: flex; justify-content: space-between; background: #0a1628; color: white; padding: 12px 16px; border-radius: 6px; margin-top: 8px; font-weight: 700; font-size: 15px; }
+  .tva-note { font-size: 11px; color: #999; margin-top: 6px; font-style: italic; }
+  .payment-info { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 14px 18px; margin-top: 20px; font-size: 13px; }
+  .payment-info strong { color: #16a34a; }
+  footer { margin-top: 40px; border-top: 1px solid #eee; padding-top: 12px; font-size: 11px; color: #aaa; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">D <span>Embassy</span></div>
+    <div style="font-size:12px;color:#888;margin-top:4px;">Conseil & Coaching — damiendambassador@gmail.com</div>
+  </div>
+  <div style="text-align:right">
+    <div class="badge">FACTURE ACQUITTÉE</div>
+    <div class="meta">
+      N° <strong>DEM-2026-<span class="fill">001</span></strong><br>
+      Date d'émission : <span class="fill">JJ/MM/AAAA</span><br>
+      Date d'échéance : <span class="fill">JJ/MM/AAAA</span>
+    </div>
+  </div>
+</div>
+
+<div class="parties">
+  <div class="partie">
+    <div class="partie-label">Émetteur</div>
+    <strong>D Embassy</strong><br>
+    Micro-entrepreneur<br>
+    SIRET : 10073363300018<br>
+    Code APE : 7022Z<br>
+    Ivry-sur-Seine (94200)
+  </div>
+  <div class="partie">
+    <div class="partie-label">Destinataire</div>
+    <span class="fill">Nom / Société</span><br>
+    <span class="fill">Prénom Nom du contact</span><br>
+    <span class="fill">Email</span><br>
+    <span class="fill">Adresse</span>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:50%">Description</th>
+      <th>Qté</th>
+      <th>Prix unitaire HT</th>
+      <th>Total HT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong><span class="fill">Ex : Accompagnement coaching — 5 séances</span></strong><br>
+        <span style="font-size:12px;color:#888"><span class="fill">Période : du XX au XX</span></span>
+      </td>
+      <td><span class="fill">5</span></td>
+      <td><span class="fill">XXX,XX €</span></td>
+      <td><span class="fill">XXX,XX €</span></td>
+    </tr>
+    <tr>
+      <td><span class="fill">Ligne supplémentaire si besoin</span></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="display:flex;justify-content:flex-end">
+  <div class="totals">
+    <div class="total-row">
+      <span>Total HT</span>
+      <strong><span class="fill">XXX,XX €</span></strong>
+    </div>
+    <div class="total-row">
+      <span>TVA</span>
+      <span style="color:#999">Non applicable</span>
+    </div>
+    <div class="total-final">
+      <span>TOTAL TTC</span>
+      <span><span class="fill">XXX,XX €</span></span>
+    </div>
+    <div class="tva-note">TVA non applicable, art. 293B du CGI</div>
+  </div>
+</div>
+
+<div class="payment-info">
+  <strong>Paiement reçu le <span class="fill">JJ/MM/AAAA</span></strong><br>
+  Mode : <span class="fill">Virement / CB / Lydia</span><br>
+  Référence : <span class="fill">___________________</span>
+</div>
+
+<footer>
+  D Embassy — SIRET : 10073363300018 — Code APE : 7022Z — TVA non applicable, art. 293B du CGI<br>
+  Micro-entrepreneur dispensé d'immatriculation au RCS et au répertoire des métiers
+</footer>
+
+</body>
+</html>

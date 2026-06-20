@@ -37,8 +37,8 @@ export default function LandingPage() {
           <span className="text-white font-bold text-[16px] tracking-[.02em]">D-VTC</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/dashboard/login" className="text-white/60 hover:text-white text-[13px] font-medium transition-colors">
-            Espace chauffeur
+          <Link href="/connexion" className="text-white/60 hover:text-white text-[13px] font-medium transition-colors">
+            Connexion
           </Link>
           <a href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
             className="bg-[#C9A84C] text-[#0A1628] px-4 py-2 rounded-[8px] text-[13px] font-bold hover:opacity-90 transition-opacity">

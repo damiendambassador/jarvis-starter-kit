@@ -19,15 +19,15 @@ export async function POST(req: NextRequest) {
 
   const { data: drivers } = await admin
     .from('drivers')
-    .select('id, name, email, slug, created_at')
+    .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at')
     .order('created_at', { ascending: false })
 
   const driversWithStats = await Promise.all(
     (drivers ?? []).map(async (driver) => {
-      const { data: reservations } = await admin
-        .from('reservations')
-        .select('status, price_estimate')
-        .eq('driver_id', driver.id)
+      const [{ data: reservations }, { data: lastInvoice }] = await Promise.all([
+        admin.from('reservations').select('status, price_estimate').eq('driver_id', driver.id),
+        admin.from('invoices').select('id, invoice_number, amount_cents, status, paid_at').eq('driver_id', driver.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+      ])
 
       const all = reservations ?? []
       const pending   = all.filter(r => r.status === 'pending').length
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         .filter(r => r.status === 'completed')
         .reduce((sum, r) => sum + (r.price_estimate ?? 0), 0)
 
-      return { ...driver, stats: { total: all.length, pending, accepted, completed, revenue } }
+      return { ...driver, stats: { total: all.length, pending, accepted, completed, revenue }, last_invoice: lastInvoice ?? null }
     })
   )
 

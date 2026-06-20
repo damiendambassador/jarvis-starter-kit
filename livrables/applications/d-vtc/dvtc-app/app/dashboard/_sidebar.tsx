@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, ClipboardList, Users, Calendar, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, ClipboardList, Users, Calendar, Settings, LogOut, Receipt } from 'lucide-react'
 import { supabase, type Driver } from '@/lib/supabase'
 import ViewSwitcher from '@/components/ViewSwitcher'
 
@@ -11,6 +11,7 @@ const NAV = [
   { href: '/dashboard/reservations', label: 'Réservations', icon: ClipboardList, exact: false },
   { href: '/dashboard/clients', label: 'Clients', icon: Users, exact: false },
   { href: '/dashboard/calendar', label: 'Calendrier', icon: Calendar, exact: false },
+  { href: '/dashboard/factures', label: 'Mes factures', icon: Receipt, exact: false },
   { href: '/dashboard/settings', label: 'Paramètres', icon: Settings, exact: false },
 ]
 

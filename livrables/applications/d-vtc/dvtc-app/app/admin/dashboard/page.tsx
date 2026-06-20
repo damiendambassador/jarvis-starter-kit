@@ -5,10 +5,19 @@ import { useRouter } from 'next/navigation'
 import {
   Loader2, ExternalLink, TrendingUp, Clock, PiggyBank, BarChart3,
   Target, Plus, Pencil, Trash2, X, Check, Copy, Eye, EyeOff,
+  CreditCard, AlertCircle, CheckCircle2, PauseCircle, XCircle, Receipt, RefreshCw,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import ViewSwitcher from '@/components/ViewSwitcher'
+
+type LastInvoice = {
+  id: string
+  invoice_number: string
+  amount_cents: number
+  status: string
+  paid_at: string | null
+}
 
 type DriverWithStats = {
   id: string
@@ -18,6 +27,12 @@ type DriverWithStats = {
   phone: string | null
   slug: string
   created_at: string
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  subscription_status: string | null
+  cgv_accepted_at: string | null
+  subscription_start_at: string | null
+  last_invoice: LastInvoice | null
   stats: {
     total: number
     pending: number
@@ -25,6 +40,25 @@ type DriverWithStats = {
     completed: number
     revenue: number
   }
+}
+
+function SubStatusBadge({ status }: { status: string | null }) {
+  const map: Record<string, { label: string; cls: string; icon: React.ElementType }> = {
+    active:   { label: 'Actif',      cls: 'bg-green-100 text-green-700',  icon: CheckCircle2 },
+    trialing: { label: 'Essai',      cls: 'bg-blue-100 text-blue-700',    icon: Clock },
+    past_due: { label: 'En retard',  cls: 'bg-red-100 text-red-600',      icon: AlertCircle },
+    paused:   { label: 'En pause',   cls: 'bg-amber-100 text-amber-700',  icon: PauseCircle },
+    cancelled:{ label: 'Résilié',    cls: 'bg-[#F4F6FA] text-[#8A94A6]', icon: XCircle },
+    pending:  { label: 'En attente', cls: 'bg-amber-100 text-amber-700',  icon: Clock },
+  }
+  const s = status ? (map[status] ?? map.pending) : map.pending
+  const Icon = s.icon
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${s.cls}`}>
+      <Icon size={11} />
+      {s.label}
+    </span>
+  )
 }
 
 function fmtPrice(n: number) {
@@ -89,7 +123,7 @@ function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
   const [showPwd, setShowPwd] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [created, setCreated] = useState<{ slug: string; email: string; password: string } | null>(null)
+  const [created, setCreated] = useState<{ slug: string; email: string; password: string; checkoutUrl: string | null } | null>(null)
 
   function handleNameChange(name: string) {
     setForm(f => ({ ...f, name, slug: toSlug(name) }))
@@ -105,7 +139,7 @@ function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error); setLoading(false); return }
-    setCreated({ slug: data.driver.slug, email: form.email, password: form.password })
+    setCreated({ slug: data.driver.slug, email: form.email, password: form.password, checkoutUrl: data.checkoutUrl ?? null })
     setLoading(false)
     onCreated()
   }
@@ -199,6 +233,9 @@ function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
             <CopyField label="Accès tableau de bord" value={`${baseUrl}/dashboard`} />
             <CopyField label="Email de connexion" value={created.email} />
             <CopyField label="Mot de passe temporaire" value={created.password} />
+            {created.checkoutUrl && (
+              <CopyField label="Lien paiement Stripe (à envoyer au chauffeur)" value={created.checkoutUrl} />
+            )}
             <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
               <p className="text-[12px] text-amber-800">Le chauffeur peut changer son mot de passe depuis Paramètres → Sécurité une fois connecté.</p>
             </div>
@@ -286,9 +323,32 @@ export default function AdminDashboard() {
   const [editDriver, setEditDriver] = useState<DriverWithStats | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [activeTab, setActiveTab] = useState<'drivers' | 'billing'>('drivers')
+  const [stripeAction, setStripeAction] = useState<string | null>(null)
 
   const adminEmail    = typeof window !== 'undefined' ? localStorage.getItem('admin_email') ?? '' : ''
   const adminPassword = typeof window !== 'undefined' ? localStorage.getItem('admin_password') ?? '' : ''
+
+  async function handleStripe(action: 'pause' | 'cancel', driverId: string) {
+    setStripeAction(driverId + action)
+    await fetch(`/api/admin/stripe/${action}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminEmail, adminPassword, driverId }),
+    })
+    setStripeAction(null)
+    loadDrivers()
+  }
+
+  async function handleResendInvoice(invoiceId: string) {
+    setStripeAction(invoiceId)
+    await fetch('/api/admin/stripe/resend-invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminEmail, adminPassword, invoiceId }),
+    })
+    setStripeAction(null)
+  }
 
   async function loadDrivers() {
     const email    = localStorage.getItem('admin_email')
@@ -357,7 +417,7 @@ export default function AdminDashboard() {
       </header>
 
       <main className="px-8 py-8 max-w-[1100px] mx-auto">
-        <div className="flex items-end justify-between mb-8 flex-wrap gap-3">
+        <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
           <div>
             <h1 className="font-serif text-[28px] font-bold text-[#0A1628] m-0">Vue globale</h1>
             <p className="text-[14px] text-[#8A94A6] mt-1">{drivers.length} chauffeur{drivers.length > 1 ? 's' : ''} enregistré{drivers.length > 1 ? 's' : ''}</p>
@@ -370,6 +430,20 @@ export default function AdminDashboard() {
           </button>
         </div>
 
+        {/* Onglets */}
+        <div className="flex gap-1 mb-8 bg-[#F4F6FA] rounded-[10px] p-1 w-fit">
+          {([['drivers', 'Chauffeurs'], ['billing', 'Facturation']] as const).map(([tab, label]) => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              className={[
+                'px-4 py-2 rounded-[8px] text-[13px] font-semibold transition-colors',
+                activeTab === tab ? 'bg-white text-[#0A1628] shadow-sm' : 'text-[#8A94A6] hover:text-[#5A6477]',
+              ].join(' ')}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'drivers' && (<>
         {/* KPIs */}
         <div className="grid grid-cols-2 gap-4 mb-4 sm:grid-cols-4">
           {[
@@ -406,6 +480,7 @@ export default function AdminDashboard() {
         <h2 className="text-[16px] font-bold text-[#0A1628] mb-4">Chauffeurs</h2>
         <div className="flex flex-col gap-4">
           {drivers.length === 0 ? (
+
             <div className="bg-white rounded-2xl border border-dashed border-[#D6DEEA] px-12 py-16 text-center">
               <p className="text-[14px] text-[#8A94A6] mb-4">Aucun chauffeur enregistré.</p>
               <button onClick={() => setAddOpen(true)} className="inline-flex items-center gap-2 bg-[#0A1628] text-white px-5 py-2.5 rounded-[9px] text-[13px] font-semibold hover:opacity-90">
@@ -480,6 +555,99 @@ export default function AdminDashboard() {
             )
           })}
         </div>
+        </>)}
+
+        {activeTab === 'billing' && (() => {
+          const activeCount   = drivers.filter(d => d.subscription_status === 'active').length
+          const pastDueCount  = drivers.filter(d => d.subscription_status === 'past_due').length
+          const cancelledCount= drivers.filter(d => d.subscription_status === 'cancelled').length
+          const mrr           = activeCount * 74
+
+          return (
+            <>
+            {/* KPIs Billing */}
+            <div className="grid grid-cols-2 gap-4 mb-8 sm:grid-cols-4">
+              {[
+                { label: 'MRR', value: fmtPrice(mrr), sub: `${activeCount} abonnement${activeCount > 1 ? 's' : ''} actif${activeCount > 1 ? 's' : ''}`, icon: CreditCard, color: 'text-[#C9A84C]', bg: 'bg-[#FBF7EC]' },
+                { label: 'Actifs', value: activeCount, sub: 'Abonnements en cours', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
+                { label: 'En retard', value: pastDueCount, sub: pastDueCount > 0 ? 'Paiement échoué' : 'Aucun retard', icon: AlertCircle, color: pastDueCount > 0 ? 'text-red-600' : 'text-[#8A94A6]', bg: pastDueCount > 0 ? 'bg-red-50' : 'bg-[#F4F6FA]' },
+                { label: 'Résiliés', value: cancelledCount, sub: 'Comptes fermés', icon: XCircle, color: 'text-[#8A94A6]', bg: 'bg-[#F4F6FA]' },
+              ].map(s => (
+                <div key={s.label} className="bg-white rounded-2xl border border-[#E8EDF5] px-5 py-5">
+                  <div className={`w-9 h-9 rounded-[9px] ${s.bg} flex items-center justify-center mb-3`}>
+                    <s.icon size={18} className={s.color} />
+                  </div>
+                  <div className="text-[22px] font-bold text-[#0A1628]">{s.value}</div>
+                  <div className="text-[12px] font-medium text-[#5A6477] mt-0.5">{s.label}</div>
+                  <div className="text-[11px] text-[#A7B0BF] mt-0.5">{s.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Tableau abonnements */}
+            <h2 className="text-[16px] font-bold text-[#0A1628] mb-4">Abonnements chauffeurs</h2>
+            <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
+              <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
+                {['Chauffeur', 'Statut', 'Dernière facture', 'Début abo.', 'Actions'].map(h => (
+                  <span key={h} className="text-[11px] font-semibold text-[#8A94A6] uppercase tracking-wide">{h}</span>
+                ))}
+              </div>
+
+              {drivers.map((driver, i) => (
+                <div key={driver.id} className={['grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center px-6 py-4', i < drivers.length - 1 ? 'border-b border-[#F0F3F8]' : ''].join(' ')}>
+                  <div>
+                    <div className="text-[13px] font-semibold text-[#0A1628]">{driver.name}</div>
+                    <div className="text-[11px] text-[#A7B0BF]">{driver.email}</div>
+                  </div>
+                  <SubStatusBadge status={driver.subscription_status} />
+                  <div className="text-[12px] text-[#5A6477]">
+                    {driver.last_invoice
+                      ? <>{driver.last_invoice.invoice_number}<br />{fmtPrice(driver.last_invoice.amount_cents / 100)}</>
+                      : <span className="text-[#A7B0BF]">—</span>}
+                  </div>
+                  <div className="text-[12px] text-[#5A6477]">
+                    {driver.subscription_start_at
+                      ? format(new Date(driver.subscription_start_at), 'd MMM yyyy', { locale: fr })
+                      : <span className="text-[#A7B0BF]">—</span>}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {driver.subscription_status !== 'paused' && driver.stripe_subscription_id && (
+                      <button
+                        onClick={() => handleStripe('pause', driver.id)}
+                        disabled={stripeAction !== null}
+                        title="Mettre en pause"
+                        className="flex items-center gap-1 text-[11px] font-semibold text-amber-600 border border-amber-200 hover:border-amber-400 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
+                        {stripeAction === driver.id + 'pause' ? <Loader2 size={10} className="animate-spin" /> : <PauseCircle size={10} />}
+                        Pause
+                      </button>
+                    )}
+                    {driver.stripe_subscription_id && driver.subscription_status !== 'cancelled' && (
+                      <button
+                        onClick={() => handleStripe('cancel', driver.id)}
+                        disabled={stripeAction !== null}
+                        title="Résilier"
+                        className="flex items-center gap-1 text-[11px] font-semibold text-red-500 border border-red-100 hover:border-red-300 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
+                        {stripeAction === driver.id + 'cancel' ? <Loader2 size={10} className="animate-spin" /> : <XCircle size={10} />}
+                        Résilier
+                      </button>
+                    )}
+                    {driver.last_invoice && (
+                      <button
+                        onClick={() => handleResendInvoice(driver.last_invoice!.id)}
+                        disabled={stripeAction !== null}
+                        title="Renvoyer la dernière facture"
+                        className="flex items-center gap-1 text-[11px] font-semibold text-[#5A6477] border border-[#E8EDF5] hover:border-[#0A1628] rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
+                        {stripeAction === driver.last_invoice.invoice_number ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
+                        Renvoyer
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            </>
+          )
+        })()}
       </main>
 
       {/* Modal ajout */}

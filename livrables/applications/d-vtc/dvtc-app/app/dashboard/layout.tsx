@@ -6,11 +6,83 @@ import { supabase, type Driver } from '@/lib/supabase'
 import { DashboardContext } from './_context'
 import Sidebar from './_sidebar'
 import RealtimeNotif from './_notif'
-import { Loader2 } from 'lucide-react'
+import { Loader2, FileText } from 'lucide-react'
+
+function CGVModal({ driver, onAccepted }: { driver: Driver; onAccepted: () => void }) {
+  const [checked, setChecked] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  async function accept() {
+    if (!checked) return
+    setLoading(true)
+    await fetch('/api/driver/accept-cgv', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ driverId: driver.id }),
+    })
+    setLoading(false)
+    onAccepted()
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[580px] max-h-[90vh] flex flex-col">
+        <div className="px-6 py-5 border-b border-[#F0F3F8] flex items-center gap-3 flex-shrink-0">
+          <div className="w-9 h-9 rounded-[9px] bg-[#F4F6FA] flex items-center justify-center">
+            <FileText size={18} className="text-[#0A1628]" />
+          </div>
+          <div>
+            <h2 className="text-[17px] font-bold text-[#0A1628]">Conditions Générales de Vente</h2>
+            <p className="text-[12px] text-[#8A94A6]">Veuillez lire et accepter les CGV pour accéder à votre espace</p>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-5 text-[13px] leading-[1.7] text-[#3A4456] space-y-4">
+          <p><strong className="text-[#0A1628]">Art. 1 — Objet :</strong> D-VTC est une plateforme SaaS permettant aux chauffeurs VTC indépendants de gérer leurs réservations directes et leur clientèle.</p>
+          <p><strong className="text-[#0A1628]">Art. 2 — Prestataire :</strong> D Embassy, micro-entrepreneur, SIRET 10073363300018, APE 7022Z, Ivry-sur-Seine (94200).</p>
+          <p><strong className="text-[#0A1628]">Art. 3 — Prix :</strong> Abonnement mensuel de <strong>74,00 €</strong>. TVA non applicable (art. 293B CGI). Facture émise automatiquement à chaque paiement.</p>
+          <p><strong className="text-[#0A1628]">Art. 4 — Paiement :</strong> Prélèvement mensuel automatique par carte bancaire via Stripe. En cas d'échec répété, l'accès est suspendu.</p>
+          <p><strong className="text-[#0A1628]">Art. 5 — Résiliation :</strong> Sans engagement. Résiliation possible à tout moment par email. Prise d'effet en fin de période, sans remboursement au prorata.</p>
+          <p><strong className="text-[#0A1628]">Art. 6 — Service :</strong> Disponibilité cible 99%/mois. Support email sous 48h ouvrées.</p>
+          <p><strong className="text-[#0A1628]">Art. 7 — Obligations :</strong> Utilisation conforme à la loi française. Compte non cessible. Données exactes.</p>
+          <p><strong className="text-[#0A1628]">Art. 8 — RGPD :</strong> Données hébergées dans l'UE (Supabase EU). Droits d'accès, rectification et effacement sur demande.</p>
+          <p><strong className="text-[#0A1628]">Art. 9 — Responsabilité :</strong> Limitée aux 12 derniers mois d'abonnement. Pas de responsabilité sur les revenus du chauffeur.</p>
+          <p><strong className="text-[#0A1628]">Art. 10 — Droit applicable :</strong> Droit français. Tribunal d'Ivry-sur-Seine.</p>
+          <a href="/cgv" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-[#0A1628] font-semibold underline underline-offset-2 text-[13px]">
+            <FileText size={13} />Lire les CGV complètes
+          </a>
+        </div>
+
+        <div className="px-6 py-5 border-t border-[#F0F3F8] flex-shrink-0 space-y-4">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={e => setChecked(e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-[#0A1628] cursor-pointer"
+            />
+            <span className="text-[13px] text-[#3A4456] leading-[1.5]">
+              J'ai lu et j'accepte les Conditions Générales de Vente de D-VTC, ainsi que l'abonnement mensuel de 74 € prélevé automatiquement.
+            </span>
+          </label>
+          <button
+            onClick={accept}
+            disabled={!checked || loading}
+            className="w-full bg-[#0A1628] text-white rounded-[9px] py-3 text-[14px] font-semibold hover:opacity-90 disabled:opacity-40 transition-opacity flex items-center justify-center gap-2">
+            {loading && <Loader2 size={15} className="animate-spin" />}
+            Confirmer et accéder à mon espace
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [driver, setDriver] = useState<Driver | null>(null)
   const [loading, setLoading] = useState(true)
+  const [cgvAccepted, setCgvAccepted] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -22,6 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         .then(({ data }) => {
           if (!data) { router.replace('/dashboard/login'); return }
           setDriver(data)
+          setCgvAccepted(!!data.cgv_accepted_at)
           setLoading(false)
         })
     })
@@ -46,6 +119,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
       <RealtimeNotif driverId={driver.id} />
+      {!cgvAccepted && (
+        <CGVModal driver={driver} onAccepted={() => setCgvAccepted(true)} />
+      )}
     </DashboardContext.Provider>
   )
 }

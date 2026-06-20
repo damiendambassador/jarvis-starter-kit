@@ -17,6 +17,11 @@ export type Driver = {
   slug: string
   is_active: boolean
   created_at: string
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  subscription_status: string | null
+  cgv_accepted_at: string | null
+  subscription_start_at: string | null
 }
 
 export type Pricing = {

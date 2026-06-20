@@ -9,6 +9,18 @@
 
 ## 2026-06-20
 
+### Système de facturation D-VTC + configuration production complète
+- Facturation Stripe intégrée : abonnement 74€/mois, checkout Stripe auto à chaque création de chauffeur
+- Webhook Stripe (5 events) : PDF facture généré via @react-pdf/renderer, stocké Supabase Storage, envoyé par email au chauffeur à chaque paiement mensuel
+- CGV D-VTC (11 articles) publiées sur `/cgv` + modal d'acceptation bloquante à la première connexion chauffeur
+- Onglet "Facturation" dans le panel admin (pause/résiliation/renvoi facture) + page "Mes factures" dans le dashboard chauffeur
+- Connexion unifiée `/connexion` remplace "Espace chauffeur" (auto-détection chauffeur/admin selon les credentials)
+- Templates légaux D Embassy créés : CGV, contrat coaching, contrat conseil, modèle devis, modèle facture (HTML, mentions légales micro-entrepreneur)
+- Email de bienvenue enrichi : résumé CGV (art. 1/3/4/5) + lien d-vtc.fr/cgv envoyé automatiquement à chaque nouveau chauffeur
+- Configuration production finalisée : migration SQL Supabase (colonnes Stripe + table invoices + fonction next_invoice_number), bucket Storage "invoices" (Private), produit Stripe Live 74€/mois, webhook enregistré, 10 variables d'environnement Vercel configurées
+- Guide de référence complet créé : `context/GUIDE-LANCEMENT-DVTC.md` (checklist, flows, debug par symptôme)
+- Audit complet du codebase effectué : TypeScript, routes API, pages frontend, SQL, templates légaux
+
 ### Application D-VTC — Phase 3 complète, mise en production, commercialisation
 
 **Ce qui a été livré :**

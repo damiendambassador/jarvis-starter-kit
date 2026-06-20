@@ -17,25 +17,51 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 
-  const { data: drivers } = await admin
+  // Essaie d'abord avec les colonnes Stripe (après migration), sinon fallback colonnes de base
+  let { data: drivers, error: driversError } = await admin
     .from('drivers')
     .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at')
     .order('created_at', { ascending: false })
 
+  if (driversError) {
+    const { data: basicDrivers } = await admin
+      .from('drivers')
+      .select('id, user_id, name, email, phone, slug, created_at')
+      .order('created_at', { ascending: false })
+    drivers = basicDrivers
+  }
+
   const driversWithStats = await Promise.all(
     (drivers ?? []).map(async (driver) => {
-      const [{ data: reservations }, { data: lastInvoice }] = await Promise.all([
-        admin.from('reservations').select('status, price_estimate').eq('driver_id', driver.id),
-        admin.from('invoices').select('id, invoice_number, amount_cents, status, paid_at').eq('driver_id', driver.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-      ])
+      const { data: reservations } = await admin
+        .from('reservations')
+        .select('status, price_estimate')
+        .eq('driver_id', driver.id)
+
+      // Tente de récupérer la dernière facture — la table peut ne pas encore exister
+      let lastInvoice = null
+      try {
+        const { data } = await admin
+          .from('invoices')
+          .select('id, invoice_number, amount_cents, status, paid_at')
+          .eq('driver_id', driver.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        lastInvoice = data
+      } catch { /* table invoices pas encore créée */ }
 
       const all = reservations ?? []
-      const pending   = all.filter(r => r.status === 'pending').length
-      const accepted  = all.filter(r => r.status === 'accepted').length
-      const completed = all.filter(r => r.status === 'completed').length
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pending   = all.filter((r: any) => r.status === 'pending').length
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const accepted  = all.filter((r: any) => r.status === 'accepted').length
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const completed = all.filter((r: any) => r.status === 'completed').length
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const revenue   = all
-        .filter(r => r.status === 'completed')
-        .reduce((sum, r) => sum + (r.price_estimate ?? 0), 0)
+        .filter((r: any) => r.status === 'completed')
+        .reduce((sum: number, r: any) => sum + (r.price_estimate ?? 0), 0)
 
       return { ...driver, stats: { total: all.length, pending, accepted, completed, revenue }, last_invoice: lastInvoice ?? null }
     })

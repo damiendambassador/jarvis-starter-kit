@@ -18,7 +18,7 @@ export async function GET() {
     stripeInvoiceId: 'in_test_00000000000000',
   })
 
-  return new Response(pdf, {
+  return new Response(new Uint8Array(pdf), {
     headers: {
       'Content-Type':        'application/pdf',
       'Content-Disposition': 'inline; filename="test-invoice.pdf"',

@@ -518,6 +518,10 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <a href={`/dashboard?preview=${driver.id}`}
+                      className="flex items-center gap-1.5 text-[12px] font-semibold text-blue-600 border border-blue-100 hover:border-blue-400 hover:bg-blue-50 rounded-[7px] px-3 py-1.5 transition-colors">
+                      <Eye size={12} />Dashboard
+                    </a>
                     <button onClick={() => setEditDriver(driver)}
                       className="flex items-center gap-1.5 text-[12px] font-semibold text-[#5A6477] border border-[#E8EDF5] hover:border-[#0A1628] hover:text-[#0A1628] rounded-[7px] px-3 py-1.5 transition-colors">
                       <Pencil size={12} />Modifier

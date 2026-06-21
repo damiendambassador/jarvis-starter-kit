@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { supabase, type Client, type Reservation } from '@/lib/supabase'
 import { useDriver } from '../_context'
 import { formatPrice } from '@/lib/pricing'
-import { Search, Users, Phone, X, Loader2, Trash2 } from 'lucide-react'
+import { Search, Users, Phone, X, Loader2 } from 'lucide-react'
 
 export default function ClientsPage() {
   const driver = useDriver()
@@ -38,13 +38,6 @@ export default function ClientsPage() {
       (c.phone ?? '').includes(search)
     ),
   [clients, search])
-
-  async function deleteClient(id: string) {
-    if (!confirm('Supprimer ce client ?')) return
-    await supabase.from('clients').delete().eq('id', id)
-    setClients(prev => prev.filter(c => c.id !== id))
-    if (selected?.id === id) setSelected(null)
-  }
 
   async function toggleVip(client: Client) {
     const next = !client.is_loyal
@@ -89,7 +82,6 @@ export default function ClientsPage() {
             <ClientCard key={c.id} client={c}
               revenue={clientRevenue(c.phone ?? '')}
               onClick={() => setSelected(c)}
-              onDelete={() => deleteClient(c.id)}
             />
           ))}
         </div>
@@ -102,15 +94,14 @@ export default function ClientsPage() {
           revenue={clientRevenue(selected.phone ?? '')}
           onClose={() => setSelected(null)}
           onToggleVip={() => toggleVip(selected)}
-          onDelete={() => deleteClient(selected.id)}
         />
       )}
     </div>
   )
 }
 
-function ClientCard({ client: c, revenue, onClick, onDelete }: {
-  client: Client; revenue: number; onClick: () => void; onDelete: () => void
+function ClientCard({ client: c, revenue, onClick }: {
+  client: Client; revenue: number; onClick: () => void
 }) {
   return (
     <div onClick={onClick}
@@ -132,10 +123,6 @@ function ClientCard({ client: c, revenue, onClick, onDelete }: {
             </div>
           )}
         </div>
-        <button onClick={e => { e.stopPropagation(); onDelete() }}
-          className="text-[#C4CDDB] hover:text-red-400 transition-colors p-1 flex-shrink-0">
-          <Trash2 size={17} />
-        </button>
       </div>
       <div className="flex gap-2.5 mt-4">
         <div className="flex-1 bg-[#F8F9FA] rounded-[9px] px-3 py-2.5">
@@ -151,8 +138,8 @@ function ClientCard({ client: c, revenue, onClick, onDelete }: {
   )
 }
 
-function ClientPanel({ client: c, revenue, onClose, onToggleVip, onDelete }: {
-  client: Client; revenue: number; onClose: () => void; onToggleVip: () => void; onDelete: () => void
+function ClientPanel({ client: c, revenue, onClose, onToggleVip }: {
+  client: Client; revenue: number; onClose: () => void; onToggleVip: () => void
 }) {
   return (
     <div
@@ -220,10 +207,6 @@ function ClientPanel({ client: c, revenue, onClose, onToggleVip, onDelete }: {
             </div>
           </div>
 
-          <button onClick={onDelete}
-            className="w-full text-[13px] text-red-400 hover:text-red-600 transition-colors py-3 text-center">
-            Supprimer ce client
-          </button>
         </div>
       </div>
     </div>

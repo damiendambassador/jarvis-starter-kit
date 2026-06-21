@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, ClipboardList, Users, Calendar, Settings, LogOut, Receipt } from 'lucide-react'
 import { supabase, type Driver } from '@/lib/supabase'
-import ViewSwitcher from '@/components/ViewSwitcher'
 
 const NAV = [
   { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard, exact: true },
@@ -32,7 +31,9 @@ export default function Sidebar({ driver }: { driver: Driver }) {
     <aside className="w-[236px] flex-shrink-0 bg-white border-r border-blue-gray flex flex-col sticky top-0 h-screen">
       {/* Logo */}
       <div className="px-5 py-[22px] flex items-center gap-[11px] border-b border-[#F0F3F8]">
-        <ViewSwitcher current="driver" driverSlug={driver.slug} variant="sidebar" />
+        <div className="w-[34px] h-[34px] rounded-[9px] bg-navy flex items-center justify-center flex-shrink-0">
+          <span className="text-[#C9A84C] font-bold text-[16px] leading-none">D</span>
+        </div>
         <div>
           <div className="text-[14px] font-bold text-navy tracking-[.02em]">D-VTC</div>
           <div className="text-[10px] text-[#A7B0BF] truncate max-w-[140px]">{driver.name}</div>

@@ -7,7 +7,6 @@ import { calculateStandardPrice, formatPrice } from '@/lib/pricing'
 import {
   Car, Clock, Star, MapPin, Route, ChevronLeft, ChevronRight, Loader2,
 } from 'lucide-react'
-import ViewSwitcher from '@/components/ViewSwitcher'
 import {
   format, addMonths, subMonths, getDaysInMonth, startOfMonth, getDay, isSameDay,
 } from 'date-fns'
@@ -696,7 +695,6 @@ export default function BookingPage() {
         Service propulsé par D Embassy
       </footer>
 
-      <ViewSwitcher current="client" driverSlug={driver.slug} variant="float" />
     </div>
   )
 }

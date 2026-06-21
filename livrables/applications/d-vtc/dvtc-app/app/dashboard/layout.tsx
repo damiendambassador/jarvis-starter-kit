@@ -6,7 +6,7 @@ import { supabase, type Driver } from '@/lib/supabase'
 import { DashboardContext } from './_context'
 import Sidebar from './_sidebar'
 import RealtimeNotif from './_notif'
-import { Loader2, FileText, CreditCard } from 'lucide-react'
+import { Loader2, FileText, CreditCard, ShieldCheck } from 'lucide-react'
 
 function PaymentWall({ driver }: { driver: Driver }) {
   return (
@@ -113,11 +113,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(true)
   const [cgvAccepted, setCgvAccepted] = useState(true)
   const [subscriptionPending, setSubscriptionPending] = useState(false)
+  const [adminPreview, setAdminPreview] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
     if (pathname === '/dashboard/login') return
+
+    const previewDriverId = new URLSearchParams(window.location.search).get('preview')
+
+    if (previewDriverId) {
+      const adminEmail    = localStorage.getItem('admin_email')
+      const adminPassword = localStorage.getItem('admin_password')
+      if (!adminEmail || !adminPassword) { router.replace('/dashboard/login'); return }
+
+      fetch('/api/admin/get-driver', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminEmail, adminPassword, driverId: previewDriverId }),
+      })
+        .then(r => r.json())
+        .then(({ driver: data }) => {
+          if (!data) { router.replace('/admin/dashboard'); return }
+          setDriver(data)
+          setAdminPreview(true)
+          setLoading(false)
+        })
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { router.replace('/dashboard/login'); return }
       supabase.from('drivers').select('*').eq('user_id', session.user.id).single()
@@ -141,18 +165,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!driver) return null
 
-  if (subscriptionPending) return <PaymentWall driver={driver} />
+  if (subscriptionPending && !adminPreview) return <PaymentWall driver={driver} />
 
   return (
     <DashboardContext.Provider value={{ driver }}>
+      {adminPreview && (
+        <div className="bg-amber-400 text-[#0A1628] text-center py-2 text-[12px] font-semibold flex items-center justify-center gap-3 sticky top-0 z-50">
+          <ShieldCheck size={13} />
+          Vue admin — Tableau de bord de {driver.name}
+          <a href="/admin/dashboard" className="underline underline-offset-2 hover:opacity-70 transition-opacity">
+            ← Retour admin
+          </a>
+        </div>
+      )}
       <div className="flex min-h-screen animate-fade-in">
         <Sidebar driver={driver} />
         <main className="flex-1 min-w-0 px-[34px] py-[30px] pb-[60px]">
           {children}
         </main>
       </div>
-      <RealtimeNotif driverId={driver.id} />
-      {!cgvAccepted && (
+      {!adminPreview && <RealtimeNotif driverId={driver.id} />}
+      {!cgvAccepted && !adminPreview && (
         <CGVModal driver={driver} onAccepted={() => setCgvAccepted(true)} />
       )}
     </DashboardContext.Provider>

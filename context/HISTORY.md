@@ -7,6 +7,41 @@
 
 ---
 
+## 2026-06-21
+
+### D-VTC — Flow Stripe complet + polish email + UI
+
+**Flow d'activation Stripe opérationnel end-to-end :**
+- Email 1 : lien checkout Stripe automatique à la création du chauffeur (sans mot de passe)
+- Mur de paiement sur le dashboard pour les comptes `pending`
+- Email 2 : magic link Supabase envoyé après confirmation du paiement Stripe (webhook `customer.subscription.created`)
+- `checkout_url` stockée en base (colonne ajoutée via migration SQL manuelle)
+
+**Bugs corrigés :**
+- Resend 422 : champ `from` doublement wrappé (`EMAIL_FROM` contenait déjà le format `Name <email>`)
+- `STRIPE_SECRET_KEY` invalide dans Vercel (clé `npdv-nkt...` au lieu de `sk_live_...`) — corrigé par Damien
+- `consent_collection: terms_of_service` bloquait la création de session Stripe (URL ToS non configurée dans Stripe Dashboard) — supprimé
+- `STRIPE_PRICE_ID` manquant dans les env vars Vercel
+
+**Email onboarding :**
+- Layout reécrit en `<table>` email-safe (suppression `display:flex` / `gap` non supportés par Gmail/Outlook)
+- Bloc fallback "Prochaines étapes" en 3 points numérotés quand le lien Stripe n'est pas disponible
+- Texte : "Je vous l'enverrai directement" au lieu de "vous le recevrez dans les prochaines heures"
+
+**Admin :**
+- Lien Stripe copié dans la modal de création, toujours visible (avec message d'erreur si non généré)
+- Onglet Facturation : `checkout_url` affiché pour les chauffeurs "En attente"
+- `checkout_url` ajouté à l'API `/api/admin/data`
+
+**UI landing + réservation :**
+- Cartes "Comment ça fonctionne" à hauteur égale (`h-full`)
+- Suppression titre redondant dans la section CTA finale
+- Page réservation : champ distance estimée supprimé, Note réduite (`max-w-xs`, `rows=2`)
+
+**Statut :** Premier client (Patrick) va tester le flow de paiement complet en live.
+
+---
+
 ## 2026-06-20
 
 ### Système de facturation D-VTC + configuration production complète

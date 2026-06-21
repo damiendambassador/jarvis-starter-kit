@@ -121,13 +121,18 @@ export default function CalendarPage() {
   async function addUnavail() {
     if (!addDate) return
     setSaving(true)
-    const { data } = await supabase.from('unavailabilities').insert({
-      driver_id:  driver.id,
-      date:       format(addDate, 'yyyy-MM-dd'),
-      start_time: unavailForm.startTime,
-      end_time:   unavailForm.endTime,
-      label:      unavailForm.label || 'Indisponible',
-    }).select().single()
+    const res = await fetch('/api/driver/unavailabilities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        driverId:  driver.id,
+        date:      format(addDate, 'yyyy-MM-dd'),
+        startTime: unavailForm.startTime,
+        endTime:   unavailForm.endTime,
+        label:     unavailForm.label || 'Indisponible',
+      }),
+    })
+    const { data } = await res.json()
     if (data) setUnavails(prev => [...prev, data])
     setSaving(false)
     setAddDate(null)
@@ -135,7 +140,11 @@ export default function CalendarPage() {
   }
 
   async function deleteUnavail(id: string) {
-    await supabase.from('unavailabilities').delete().eq('id', id)
+    await fetch('/api/driver/unavailabilities', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ unavailId: id, driverId: driver.id }),
+    })
     setUnavails(prev => prev.filter(u => u.id !== id))
   }
 

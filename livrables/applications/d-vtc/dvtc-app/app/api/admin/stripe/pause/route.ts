@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+import { validateAdmin } from '@/lib/admin-auth'
 
 const db = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,7 +12,7 @@ const db = createClient(
 export async function POST(req: NextRequest) {
   const { adminEmail, adminPassword, driverId } = await req.json()
 
-  if (adminEmail !== process.env.ADMIN_EMAIL || adminPassword !== process.env.ADMIN_PASSWORD) {
+  if (!await validateAdmin(adminEmail, adminPassword)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 

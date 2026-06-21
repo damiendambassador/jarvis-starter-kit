@@ -7,6 +7,29 @@
 
 ---
 
+## 2026-06-21 (session 2)
+
+### D-VTC — Sécurité admin + droits chauffeur
+
+**Mode preview admin :**
+- Nouveau bouton "Dashboard" sur chaque carte chauffeur dans le panel admin
+- Clic → `/dashboard?preview=DRIVER_ID` : affiche le dashboard du chauffeur avec bannière ambrée "Vue admin"
+- Nouvelle route API `/api/admin/get-driver` (auth admin, service role)
+- PaymentWall et CGV modal désactivés en mode preview
+- Lien "← Retour admin" dans la bannière pour revenir sans se déconnecter
+
+**Droits de suppression côté chauffeur :**
+- Clients : corbeille sur les cartes et bouton "Supprimer ce client" supprimés (admin uniquement)
+- Calendrier : blocs d'indisponibilité restent supprimables par le chauffeur ET l'admin (données de planning, pas données métier)
+- Réservations et tableau de bord : déjà admin-only, aucun changement
+
+**Sécurisation de l'accès admin :**
+- ViewSwitcher retiré de la sidebar chauffeur et de la page de réservation publique
+- Accès admin exclusivement via `d-vtc.fr/admin` (page dédiée, non liée publiquement)
+- La sidebar chauffeur affiche désormais un logo D statique sans menu de navigation inter-vues
+
+---
+
 ## 2026-06-21
 
 ### D-VTC — Flow Stripe complet + polish email + UI

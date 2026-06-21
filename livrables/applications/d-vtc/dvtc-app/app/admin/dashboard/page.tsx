@@ -316,6 +316,120 @@ function EditDriverModal({ driver, onClose, onSaved, adminEmail, adminPassword }
   )
 }
 
+/* ─── Modal changement mot de passe ─── */
+function ChangePwdModal({ adminEmail, adminPassword, onClose }: {
+  adminEmail: string; adminPassword: string; onClose: () => void
+}) {
+  const [current, setCurrent]   = useState('')
+  const [next, setNext]         = useState('')
+  const [confirm, setConfirm]   = useState('')
+  const [showCur, setShowCur]   = useState(false)
+  const [showNew, setShowNew]   = useState(false)
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
+  const [success, setSuccess]   = useState(false)
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    if (next.length < 8) { setError('Le nouveau mot de passe doit faire au moins 8 caractères.'); return }
+    if (next !== confirm) { setError('Les mots de passe ne correspondent pas.'); return }
+    setLoading(true)
+    const res = await fetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminEmail, adminPassword: current, newPassword: next }),
+    })
+    const data = await res.json()
+    setLoading(false)
+    if (!res.ok) { setError(data.error ?? 'Erreur serveur'); return }
+    localStorage.setItem('admin_password', next)
+    setSuccess(true)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[420px]">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#F0F3F8]">
+          <h2 className="text-[17px] font-bold text-[#0A1628]">Changer le mot de passe</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#F4F6FA]"><X size={18} /></button>
+        </div>
+
+        {success ? (
+          <div className="px-6 py-8 text-center">
+            <CheckCircle2 size={40} className="text-green-500 mx-auto mb-3" />
+            <div className="text-[16px] font-bold text-[#0A1628] mb-1">Mot de passe mis à jour</div>
+            <p className="text-[13px] text-[#8A94A6] mb-5">
+              Votre nouveau mot de passe est actif. Utilisez-le à votre prochaine connexion.
+            </p>
+            <button onClick={onClose} className="bg-[#0A1628] text-white rounded-[9px] px-6 py-2.5 text-[13px] font-semibold hover:opacity-90">
+              Fermer
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="px-6 py-5 flex flex-col gap-4">
+            <div>
+              <label className="text-[12px] font-semibold text-[#5A6477] block mb-1.5">Mot de passe actuel</label>
+              <div className="relative">
+                <input
+                  type={showCur ? 'text' : 'password'}
+                  required
+                  value={current}
+                  onChange={e => setCurrent(e.target.value)}
+                  className="w-full border border-[#D6DEEA] rounded-[9px] px-4 py-2.5 pr-10 text-[14px] outline-none focus:border-[#0A1628]"
+                />
+                <button type="button" onClick={() => setShowCur(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A7B0BF] hover:text-[#5A6477]">
+                  {showCur ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="text-[12px] font-semibold text-[#5A6477] block mb-1.5">Nouveau mot de passe</label>
+              <div className="relative">
+                <input
+                  type={showNew ? 'text' : 'password'}
+                  required
+                  value={next}
+                  onChange={e => setNext(e.target.value)}
+                  placeholder="8 caractères minimum"
+                  className="w-full border border-[#D6DEEA] rounded-[9px] px-4 py-2.5 pr-10 text-[14px] outline-none focus:border-[#0A1628]"
+                />
+                <button type="button" onClick={() => setShowNew(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A7B0BF] hover:text-[#5A6477]">
+                  {showNew ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="text-[12px] font-semibold text-[#5A6477] block mb-1.5">Confirmer le nouveau mot de passe</label>
+              <input
+                type="password"
+                required
+                value={confirm}
+                onChange={e => setConfirm(e.target.value)}
+                className="w-full border border-[#D6DEEA] rounded-[9px] px-4 py-2.5 text-[14px] outline-none focus:border-[#0A1628]"
+              />
+            </div>
+            {error && <p className="text-red-500 text-[13px]">{error}</p>}
+            <div className="flex gap-3 pt-1">
+              <button type="button" onClick={onClose}
+                className="flex-1 border border-[#D6DEEA] rounded-[9px] py-2.5 text-[13px] font-semibold text-[#5A6477] hover:bg-[#F4F6FA]">
+                Annuler
+              </button>
+              <button type="submit" disabled={loading}
+                className="flex-1 bg-[#0A1628] text-white rounded-[9px] py-2.5 text-[13px] font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
+                {loading && <Loader2 size={14} className="animate-spin" />}
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /* ─── Page principale ─── */
 export default function AdminDashboard() {
   const router = useRouter()
@@ -327,6 +441,7 @@ export default function AdminDashboard() {
   const [deleting, setDeleting] = useState(false)
   const [activeTab, setActiveTab] = useState<'drivers' | 'billing'>('drivers')
   const [stripeAction, setStripeAction] = useState<string | null>(null)
+  const [changePwdOpen, setChangePwdOpen] = useState(false)
 
   const adminEmail    = typeof window !== 'undefined' ? localStorage.getItem('admin_email') ?? '' : ''
   const adminPassword = typeof window !== 'undefined' ? localStorage.getItem('admin_password') ?? '' : ''
@@ -413,9 +528,14 @@ export default function AdminDashboard() {
             <div className="text-white/60 text-[12px]">Tableau de bord administrateur</div>
           </div>
         </div>
-        <button onClick={logout} className="text-white/50 hover:text-white text-[13px] transition-colors">
-          Déconnexion
-        </button>
+        <div className="flex items-center gap-4">
+          <button onClick={() => setChangePwdOpen(true)} className="text-white/50 hover:text-white text-[13px] transition-colors">
+            Mot de passe
+          </button>
+          <button onClick={logout} className="text-white/50 hover:text-white text-[13px] transition-colors">
+            Déconnexion
+          </button>
+        </div>
       </header>
 
       <main className="px-8 py-8 max-w-[1100px] mx-auto">
@@ -681,6 +801,15 @@ export default function AdminDashboard() {
           onSaved={loadDrivers}
           adminEmail={adminEmail}
           adminPassword={adminPassword}
+        />
+      )}
+
+      {/* Modal changement mot de passe */}
+      {changePwdOpen && (
+        <ChangePwdModal
+          adminEmail={adminEmail}
+          adminPassword={adminPassword}
+          onClose={() => setChangePwdOpen(false)}
         />
       )}
 

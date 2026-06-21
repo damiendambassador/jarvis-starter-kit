@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { validateAdmin } from '@/lib/admin-auth'
 
 const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,10 +11,7 @@ const admin = createClient(
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
 
-  if (
-    email !== process.env.ADMIN_EMAIL ||
-    password !== process.env.ADMIN_PASSWORD
-  ) {
+  if (!await validateAdmin(email, password)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 

@@ -569,32 +569,6 @@ export default function BookingPage() {
                       onChange={e => setForm(prev => ({ ...prev, dropoffAddress: e.target.value }))} />
                   </div>
                 </label>
-                <div className="flex items-center gap-2.5 bg-[#EDF3FC] border border-[#D5E2F7] rounded-xl px-[14px] py-3">
-                  {distanceLoading
-                    ? <Loader2 className="text-blue flex-shrink-0 animate-spin" size={18} />
-                    : <Route className="text-blue flex-shrink-0" size={18} />
-                  }
-                  <div className="flex-1">
-                    <div className="text-[12px] text-[#5A6477]">
-                      {distanceLoading ? 'Calcul de la distance…' : 'Distance estimée (km)'}
-                    </div>
-                    {distanceError
-                      ? <input
-                          className="text-[15px] font-bold text-navy w-full bg-transparent outline-none placeholder:text-[#A7B0BF] mt-0.5"
-                          type="number" min="1" step="0.5" placeholder="Ex: 15"
-                          value={form.distanceKm}
-                          onChange={e => setForm(prev => ({ ...prev, distanceKm: e.target.value }))}
-                        />
-                      : <input
-                          className="text-[15px] font-bold text-navy w-full bg-transparent outline-none placeholder:text-[#A7B0BF] mt-0.5"
-                          type="number" min="1" step="0.5" placeholder="Remplissez les adresses"
-                          value={form.distanceKm}
-                          onChange={e => setForm(prev => ({ ...prev, distanceKm: e.target.value }))}
-                        />
-                    }
-                    {distanceError && <div className="text-[11px] text-red-400 mt-0.5">{distanceError}</div>}
-                  </div>
-                </div>
               </div>
             ) : (
               <div className="flex flex-col gap-[14px]">
@@ -632,11 +606,11 @@ export default function BookingPage() {
           </div>
 
           {/* Note */}
-          <div className="card px-[22px] py-[22px]">
+          <div className="card px-[22px] py-[22px] max-w-xs">
             <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-3.5">
               Note <span className="font-normal normal-case tracking-normal">(optionnel)</span>
             </div>
-            <textarea className="input-field resize-none" rows={3}
+            <textarea className="input-field resize-none" rows={2}
               placeholder="Bagages, animal, demande particulière…"
               value={form.notes}
               onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))} />

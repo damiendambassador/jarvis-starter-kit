@@ -45,7 +45,67 @@ export async function POST(req: NextRequest) {
   }
 
   switch (event.type) {
-    case 'customer.subscription.created':
+    case 'customer.subscription.created': {
+      const sub = event.data.object as Stripe.Subscription
+      await db.from('drivers')
+        .update({
+          stripe_subscription_id: sub.id,
+          subscription_status:    mapStripeStatus(sub.status),
+          subscription_start_at:  new Date(sub.start_date * 1000).toISOString(),
+        })
+        .eq('stripe_customer_id', sub.customer as string)
+
+      if (sub.status === 'active' || sub.status === 'trialing') {
+        const { data: driver } = await db
+          .from('drivers')
+          .select('name, email, slug')
+          .eq('stripe_customer_id', sub.customer as string)
+          .single()
+
+        if (driver) {
+          const { data: linkData } = await db.auth.admin.generateLink({
+            type: 'magiclink',
+            email: driver.email,
+            options: { redirectTo: 'https://d-vtc.fr/dashboard' },
+          })
+          const magicLink = (linkData as { properties?: { action_link?: string } })?.properties?.action_link ?? 'https://d-vtc.fr/dashboard'
+          const firstName = driver.name.split(' ')[0]
+
+          await resend.emails.send({
+            from: FROM,
+            to: driver.email,
+            subject: `Votre accès D-VTC est activé, ${firstName} !`,
+            html: `
+              <div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#0A1628">
+                <div style="background:#0A1628;color:white;padding:28px 24px;border-radius:10px 10px 0 0">
+                  <p style="margin:0 0 6px;font-size:11px;color:#C9A84C;letter-spacing:2px;text-transform:uppercase">D-VTC — Accès activé</p>
+                  <h1 style="margin:0;font-size:24px;font-weight:700">Bienvenue, ${firstName} !</h1>
+                </div>
+                <div style="background:white;border:1px solid #E8EDF5;border-top:none;padding:28px 24px;border-radius:0 0 10px 10px">
+                  <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 24px">
+                    Votre abonnement D-VTC est actif. Cliquez ci-dessous pour accéder à votre tableau de bord en un clic, sans mot de passe.
+                  </p>
+                  <div style="text-align:center;margin:0 0 24px">
+                    <a href="${magicLink}" style="display:inline-block;background:#0A1628;color:white;font-size:15px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none">
+                      Accéder à mon tableau de bord →
+                    </a>
+                    <p style="font-size:11px;color:#A7B0BF;margin:10px 0 0">Ce lien est à usage unique et expire dans 24h.</p>
+                  </div>
+                  <div style="background:#F4F6FA;border-radius:8px;padding:18px;margin:0 0 20px">
+                    <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#8A94A6;text-transform:uppercase;letter-spacing:.08em">Votre page de réservation client</p>
+                    <a href="https://d-vtc.fr/r/${driver.slug}" style="font-size:14px;font-weight:700;color:#0A1628;word-break:break-all">https://d-vtc.fr/r/${driver.slug}</a>
+                  </div>
+                  <p style="font-size:12px;color:#8A94A6;line-height:1.5">
+                    Une fois connecté, rendez-vous dans <strong>Paramètres → Sécurité</strong> pour définir votre mot de passe et sécuriser votre compte.
+                  </p>
+                </div>
+              </div>`,
+          }).catch((err) => console.error('[webhook] Email 2 error:', err))
+        }
+      }
+      break
+    }
+
     case 'customer.subscription.updated': {
       const sub = event.data.object as Stripe.Subscription
       await db.from('drivers')
@@ -144,7 +204,7 @@ export async function POST(req: NextRequest) {
         : ''
 
       await resend.emails.send({
-        from: `D-VTC <${FROM}>`,
+        from: FROM,
         to:   driver.email,
         subject: `Facture ${invoiceNumber} — Abonnement D-VTC`,
         html: `
@@ -188,7 +248,7 @@ export async function POST(req: NextRequest) {
         .single()
 
       await resend.emails.send({
-        from: `D-VTC <${FROM}>`,
+        from: FROM,
         to:   ADMIN_EMAIL,
         subject: `[ALERTE] Échec de paiement — ${driver?.name ?? 'Inconnu'}`,
         html: `<p>Le prélèvement Stripe a échoué pour <strong>${driver?.name}</strong> (${driver?.email}).<br>Montant : ${(inv.amount_due / 100).toFixed(2)} €.<br>Vérifiez le dashboard Stripe.</p>`,

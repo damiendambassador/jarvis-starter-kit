@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useDriver } from '../_context'
 import { supabase } from '@/lib/supabase'
-import { Download, Loader2, Receipt, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { Download, Loader2, Receipt, CheckCircle2, XCircle, Clock, CreditCard } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
@@ -94,6 +94,20 @@ export default function FacturesPage() {
       {loading ? (
         <div className="flex justify-center py-16">
           <Loader2 className="animate-spin text-[#0A1628]" size={28} />
+        </div>
+      ) : !driver.subscription_status || driver.subscription_status === 'pending' ? (
+        <div className="bg-white rounded-2xl border border-dashed border-[#EAD9A8] px-12 py-16 text-center">
+          <div className="w-12 h-12 rounded-[12px] bg-[#FBF7EC] flex items-center justify-center mx-auto mb-4">
+            <CreditCard size={22} className="text-[#C9A84C]" />
+          </div>
+          <p className="text-[14px] font-semibold text-[#0A1628] mb-1">Abonnement non activé</p>
+          <p className="text-[12px] text-[#8A94A6] mb-5">Activez votre abonnement pour accéder à D-VTC. Vos factures apparaîtront ici après chaque paiement.</p>
+          {driver.checkout_url && (
+            <a href={driver.checkout_url} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#0A1628] text-white rounded-[9px] px-5 py-2.5 text-[13px] font-semibold hover:opacity-90 transition-opacity">
+              Activer mon abonnement — 74€/mois →
+            </a>
+          )}
         </div>
       ) : invoices.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#D6DEEA] px-12 py-16 text-center">

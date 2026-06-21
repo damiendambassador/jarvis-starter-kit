@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   const { data: fullDrivers, error: driversError } = await admin
     .from('drivers')
-    .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at')
+    .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at, checkout_url')
     .order('created_at', { ascending: false })
 
   if (driversError) {

@@ -6,7 +6,36 @@ import { supabase, type Driver } from '@/lib/supabase'
 import { DashboardContext } from './_context'
 import Sidebar from './_sidebar'
 import RealtimeNotif from './_notif'
-import { Loader2, FileText } from 'lucide-react'
+import { Loader2, FileText, CreditCard } from 'lucide-react'
+
+function PaymentWall({ driver }: { driver: Driver }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FB] p-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-[#E8EDF5] w-full max-w-[460px] p-10 text-center">
+        <div className="w-14 h-14 rounded-[14px] bg-[#FBF7EC] border border-[#EAD9A8] flex items-center justify-center mx-auto mb-6">
+          <CreditCard size={24} className="text-[#C9A84C]" />
+        </div>
+        <h2 className="text-[20px] font-bold text-[#0A1628] mb-2">Abonnement non activé</h2>
+        <p className="text-[13px] text-[#5A6477] leading-[1.6] mb-7">
+          Votre espace D-VTC est prêt. Pour y accéder, activez votre abonnement mensuel via le lien reçu dans votre email de bienvenue.
+        </p>
+        {driver.checkout_url && (
+          <a
+            href={driver.checkout_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 w-full bg-[#0A1628] text-white rounded-[10px] py-3.5 text-[14px] font-semibold hover:opacity-90 transition-opacity mb-4">
+            Activer mon abonnement — 74€/mois →
+          </a>
+        )}
+        <p className="text-[11px] text-[#A7B0BF]">
+          Vous recevrez un email d'accès dès votre paiement confirmé.
+          <br />Une question ? <a href="mailto:damiendambassador@gmail.com" className="underline">damiendambassador@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  )
+}
 
 function CGVModal({ driver, onAccepted }: { driver: Driver; onAccepted: () => void }) {
   const [checked, setChecked] = useState(false)
@@ -83,6 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [driver, setDriver] = useState<Driver | null>(null)
   const [loading, setLoading] = useState(true)
   const [cgvAccepted, setCgvAccepted] = useState(true)
+  const [subscriptionPending, setSubscriptionPending] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -95,6 +125,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (!data) { router.replace('/dashboard/login'); return }
           setDriver(data)
           setCgvAccepted(!!data.cgv_accepted_at)
+          setSubscriptionPending(!data.subscription_status || data.subscription_status === 'pending')
           setLoading(false)
         })
     })
@@ -109,6 +140,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   )
 
   if (!driver) return null
+
+  if (subscriptionPending) return <PaymentWall driver={driver} />
 
   return (
     <DashboardContext.Provider value={{ driver }}>

@@ -150,7 +150,7 @@ export default function LandingPage() {
                 {i < STEPS.length - 1 && (
                   <div className="hidden md:block absolute top-6 left-[calc(100%+12px)] w-6 border-t-2 border-dashed border-[#C9A84C]/40" />
                 )}
-                <div className="bg-white rounded-2xl border border-[#E8EDF5] px-6 py-6">
+                <div className="bg-white rounded-2xl border border-[#E8EDF5] px-6 py-6 h-full">
                   <div className="font-serif text-[28px] font-bold text-[#C9A84C] mb-3">{s.num}</div>
                   <h3 className="text-[15px] font-bold text-[#0A1628] mb-2">{s.title}</h3>
                   <p className="text-[13px] text-[#6B7280] leading-[1.6]">{s.desc}</p>
@@ -164,13 +164,6 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="bg-[#0A1628] px-8 py-20 text-center">
         <div className="max-w-[540px] mx-auto">
-          <h2 className="font-serif text-[38px] font-bold text-white mb-4">
-            Vos clients fidèles.<br />
-            <span className="text-[#C9A84C]">Votre agenda libre.</span>
-          </h2>
-          <p className="text-[15px] text-white/55 mb-10 leading-[1.6]">
-            20 courses directes par mois suffisent. Au-delà, chaque course est du gain pur — sans rendre de comptes à personne.
-          </p>
           <a href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
             className="inline-block bg-[#C9A84C] text-[#0A1628] px-10 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">
             Je veux ma page — 74€/mois

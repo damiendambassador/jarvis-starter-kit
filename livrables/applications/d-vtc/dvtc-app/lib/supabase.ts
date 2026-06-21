@@ -22,6 +22,7 @@ export type Driver = {
   subscription_status: string | null
   cgv_accepted_at: string | null
   subscription_start_at: string | null
+  checkout_url: string | null
 }
 
 export type Pricing = {

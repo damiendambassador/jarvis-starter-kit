@@ -32,6 +32,7 @@ type DriverWithStats = {
   subscription_status: string | null
   cgv_accepted_at: string | null
   subscription_start_at: string | null
+  checkout_url: string | null
   last_invoice: LastInvoice | null
   stats: {
     total: number
@@ -233,9 +234,10 @@ function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
             <CopyField label="Accès tableau de bord" value={`${baseUrl}/dashboard`} />
             <CopyField label="Email de connexion" value={created.email} />
             <CopyField label="Mot de passe temporaire" value={created.password} />
-            {created.checkoutUrl && (
-              <CopyField label="Lien paiement Stripe (à envoyer au chauffeur)" value={created.checkoutUrl} />
-            )}
+            <CopyField
+              label="Lien paiement Stripe (à envoyer au chauffeur)"
+              value={created.checkoutUrl ?? '⚠ Non généré — STRIPE_SECRET_KEY invalide dans Vercel'}
+            />
             <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
               <p className="text-[12px] text-amber-800">Le chauffeur peut changer son mot de passe depuis Paramètres → Sécurité une fois connecté.</p>
             </div>
@@ -594,7 +596,8 @@ export default function AdminDashboard() {
               </div>
 
               {drivers.map((driver, i) => (
-                <div key={driver.id} className={['grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center px-6 py-4', i < drivers.length - 1 ? 'border-b border-[#F0F3F8]' : ''].join(' ')}>
+                <div key={driver.id} className={[i < drivers.length - 1 ? 'border-b border-[#F0F3F8]' : ''].join(' ')}>
+                <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center px-6 py-4">
                   <div>
                     <div className="text-[13px] font-semibold text-[#0A1628]">{driver.name}</div>
                     <div className="text-[11px] text-[#A7B0BF]">{driver.email}</div>
@@ -642,6 +645,12 @@ export default function AdminDashboard() {
                       </button>
                     )}
                   </div>
+                </div>
+                {(!driver.subscription_status || driver.subscription_status === 'pending') && driver.checkout_url && (
+                  <div className="px-6 pb-4">
+                    <CopyField label="Lien paiement Stripe — à envoyer au chauffeur" value={driver.checkout_url} />
+                  </div>
+                )}
                 </div>
               ))}
             </div>

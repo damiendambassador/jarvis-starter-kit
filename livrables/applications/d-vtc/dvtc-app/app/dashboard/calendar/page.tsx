@@ -36,6 +36,7 @@ export default function CalendarPage() {
   const [addDate, setAddDate]           = useState<Date | null>(null)
   const [unavailForm, setUnavailForm]   = useState({ startTime: '09:00', endTime: '17:00', label: 'Indisponible' })
   const [saving, setSaving]             = useState(false)
+  const [errMsg, setErrMsg]             = useState<string | null>(null)
 
   useEffect(() => {
     const year  = viewDate.getFullYear()
@@ -48,13 +49,13 @@ export default function CalendarPage() {
     Promise.all([
       supabase.from('reservations')
         .select('*').eq('driver_id', driver.id)
-        .gte('scheduled_at', from).lte('scheduled_at', to),
-      supabase.from('unavailabilities')
-        .select('*').eq('driver_id', driver.id)
-        .gte('date', dFrom).lte('date', dTo),
-    ]).then(([{ data: res }, { data: u }]) => {
-      setReservations(res ?? [])
-      setUnavails(u ?? [])
+        .gte('scheduled_at', from).lte('scheduled_at', to)
+        .then(({ data: res }) => res ?? []),
+      fetch(`/api/driver/unavailabilities?driverId=${driver.id}&from=${dFrom}&to=${dTo}`)
+        .then(r => r.json()).then(({ data: u }) => u ?? []),
+    ]).then(([res, u]) => {
+      setReservations(res)
+      setUnavails(u)
       setLoading(false)
     })
   }, [driver.id, viewDate.getMonth(), viewDate.getFullYear()])
@@ -121,7 +122,7 @@ export default function CalendarPage() {
   async function addUnavail() {
     if (!addDate) return
     setSaving(true)
-    const res = await fetch('/api/driver/unavailabilities', {
+    const res  = await fetch('/api/driver/unavailabilities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -132,10 +133,12 @@ export default function CalendarPage() {
         label:     unavailForm.label || 'Indisponible',
       }),
     })
-    const { data } = await res.json()
-    if (data) setUnavails(prev => [...prev, data])
+    const json = await res.json()
+    if (!res.ok) { setSaving(false); setErrMsg(json.error ?? 'Erreur lors de la sauvegarde'); return }
+    if (json.data) setUnavails(prev => [...prev, json.data])
     setSaving(false)
     setAddDate(null)
+    setErrMsg(null)
     setUnavailForm({ startTime: '09:00', endTime: '17:00', label: 'Indisponible' })
   }
 
@@ -199,6 +202,7 @@ export default function CalendarPage() {
                       <button
                         onClick={() => {
                           setAddDate(cell.date!)
+                          setErrMsg(null)
                           setUnavailForm({ startTime: '09:00', endTime: '17:00', label: 'Indisponible' })
                         }}
                         title="Bloquer un créneau"
@@ -365,6 +369,9 @@ export default function CalendarPage() {
                   value={unavailForm.label}
                   onChange={e => setUnavailForm(f => ({ ...f, label: e.target.value }))} />
               </label>
+              {errMsg && (
+                <p className="text-[12px] text-red-500 text-center -mt-1">{errMsg}</p>
+              )}
               <button onClick={addUnavail} disabled={saving}
                 className="w-full bg-navy text-white border-none rounded-[9px] py-[11px] text-[13px] font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                 {saving ? <Loader2 className="animate-spin mx-auto" size={16} /> : 'Enregistrer'}

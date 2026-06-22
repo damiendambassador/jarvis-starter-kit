@@ -40,20 +40,26 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event
   try {
     event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET)
-  } catch {
+  } catch (err) {
+    console.error('[webhook] Signature invalide:', err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
+
+  console.log('[webhook] Event reçu:', event.type, event.id)
 
   switch (event.type) {
     case 'customer.subscription.created': {
       const sub = event.data.object as Stripe.Subscription
-      await db.from('drivers')
+      console.log('[webhook] subscription.created — customer:', sub.customer, 'status:', sub.status)
+      const { error: updateError } = await db.from('drivers')
         .update({
           stripe_subscription_id: sub.id,
           subscription_status:    mapStripeStatus(sub.status),
           subscription_start_at:  new Date(sub.start_date * 1000).toISOString(),
         })
         .eq('stripe_customer_id', sub.customer as string)
+      if (updateError) console.error('[webhook] Erreur UPDATE drivers:', updateError)
+      else console.log('[webhook] drivers mis à jour → status:', mapStripeStatus(sub.status))
 
       if (sub.status === 'active' || sub.status === 'trialing') {
         const { data: driver } = await db

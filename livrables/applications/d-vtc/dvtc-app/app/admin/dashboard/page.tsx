@@ -446,7 +446,7 @@ export default function AdminDashboard() {
   const adminEmail    = typeof window !== 'undefined' ? localStorage.getItem('admin_email') ?? '' : ''
   const adminPassword = typeof window !== 'undefined' ? localStorage.getItem('admin_password') ?? '' : ''
 
-  async function handleStripe(action: 'pause' | 'cancel', driverId: string) {
+  async function handleStripe(action: 'pause' | 'cancel' | 'activate', driverId: string) {
     setStripeAction(driverId + action)
     await fetch(`/api/admin/stripe/${action}`, {
       method: 'POST',
@@ -738,6 +738,16 @@ export default function AdminDashboard() {
                       : <span className="text-[#A7B0BF]">—</span>}
                   </div>
                   <div className="flex items-center gap-1.5">
+                    {(!driver.subscription_status || driver.subscription_status === 'pending') && (
+                      <button
+                        onClick={() => handleStripe('activate', driver.id)}
+                        disabled={stripeAction !== null}
+                        title="Activer manuellement"
+                        className="flex items-center gap-1 text-[11px] font-semibold text-green-600 border border-green-200 hover:border-green-400 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
+                        {stripeAction === driver.id + 'activate' ? <Loader2 size={10} className="animate-spin" /> : <CheckCircle2 size={10} />}
+                        Activer
+                      </button>
+                    )}
                     {driver.subscription_status !== 'paused' && driver.stripe_subscription_id && (
                       <button
                         onClick={() => handleStripe('pause', driver.id)}

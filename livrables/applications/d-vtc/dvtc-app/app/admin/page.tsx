@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
     setError('')
     setLoading(true)
 
-    const res = await fetch('/api/admin/data', {
+    const res = await fetch('/api/admin/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -28,8 +28,9 @@ export default function AdminLoginPage() {
       return
     }
 
-    localStorage.setItem('admin_email', email)
-    localStorage.setItem('admin_password', password)
+    const { token } = await res.json()
+    /* Stocker uniquement un token temporaire (24h), jamais le mot de passe */
+    localStorage.setItem('admin_token', token)
     router.push('/admin/dashboard')
   }
 

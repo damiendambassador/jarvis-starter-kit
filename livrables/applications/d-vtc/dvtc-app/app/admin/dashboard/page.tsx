@@ -114,11 +114,10 @@ function CopyField({ label, value }: { label: string; value: string }) {
 }
 
 /* ─── Modal Ajouter chauffeur ─── */
-function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
+function AddDriverModal({ onClose, onCreated, adminToken }: {
   onClose: () => void
   onCreated: () => void
-  adminEmail: string
-  adminPassword: string
+  adminToken: string
 }) {
   const [form, setForm] = useState({ name: '', email: '', slug: '', password: genPassword() })
   const [showPwd, setShowPwd] = useState(false)
@@ -136,7 +135,7 @@ function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
     const res = await fetch('/api/admin/create-driver', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, name: form.name, email: form.email, slug: form.slug, password: form.password }),
+      body: JSON.stringify({ adminToken, name: form.name, email: form.email, slug: form.slug, password: form.password }),
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error); setLoading(false); return }
@@ -252,12 +251,11 @@ function AddDriverModal({ onClose, onCreated, adminEmail, adminPassword }: {
 }
 
 /* ─── Modal Modifier chauffeur ─── */
-function EditDriverModal({ driver, onClose, onSaved, adminEmail, adminPassword }: {
+function EditDriverModal({ driver, onClose, onSaved, adminToken }: {
   driver: DriverWithStats
   onClose: () => void
   onSaved: () => void
-  adminEmail: string
-  adminPassword: string
+  adminToken: string
 }) {
   const [form, setForm] = useState({ name: driver.name, email: driver.email, phone: driver.phone ?? '' })
   const [loading, setLoading] = useState(false)
@@ -268,7 +266,7 @@ function EditDriverModal({ driver, onClose, onSaved, adminEmail, adminPassword }
     const res = await fetch('/api/admin/update-driver', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, driverId: driver.id, userId: driver.user_id, ...form }),
+      body: JSON.stringify({ adminToken, driverId: driver.id, userId: driver.user_id, ...form }),
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error); setLoading(false); return }
@@ -317,17 +315,16 @@ function EditDriverModal({ driver, onClose, onSaved, adminEmail, adminPassword }
 }
 
 /* ─── Modal changement mot de passe ─── */
-function ChangePwdModal({ adminEmail, adminPassword, onClose }: {
-  adminEmail: string; adminPassword: string; onClose: () => void
+function ChangePwdModal({ adminToken, onClose }: {
+  adminToken: string; onClose: () => void
 }) {
-  const [current, setCurrent]   = useState('')
-  const [next, setNext]         = useState('')
-  const [confirm, setConfirm]   = useState('')
-  const [showCur, setShowCur]   = useState(false)
-  const [showNew, setShowNew]   = useState(false)
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState('')
-  const [success, setSuccess]   = useState(false)
+  const router = useRouter()
+  const [next, setNext]       = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [showNew, setShowNew] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError]     = useState('')
+  const [success, setSuccess] = useState(false)
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -338,12 +335,13 @@ function ChangePwdModal({ adminEmail, adminPassword, onClose }: {
     const res = await fetch('/api/admin/change-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword: current, newPassword: next }),
+      body: JSON.stringify({ adminToken, newPassword: next }),
     })
     const data = await res.json()
     setLoading(false)
     if (!res.ok) { setError(data.error ?? 'Erreur serveur'); return }
-    localStorage.setItem('admin_password', next)
+    /* Invalider la session locale après changement de mot de passe */
+    localStorage.removeItem('admin_token')
     setSuccess(true)
   }
 
@@ -360,30 +358,14 @@ function ChangePwdModal({ adminEmail, adminPassword, onClose }: {
             <CheckCircle2 size={40} className="text-green-500 mx-auto mb-3" />
             <div className="text-[16px] font-bold text-[#0A1628] mb-1">Mot de passe mis à jour</div>
             <p className="text-[13px] text-[#8A94A6] mb-5">
-              Votre nouveau mot de passe est actif. Utilisez-le à votre prochaine connexion.
+              Reconnectez-vous avec votre nouveau mot de passe.
             </p>
-            <button onClick={onClose} className="bg-[#0A1628] text-white rounded-[9px] px-6 py-2.5 text-[13px] font-semibold hover:opacity-90">
-              Fermer
+            <button onClick={() => router.replace('/admin')} className="bg-[#0A1628] text-white rounded-[9px] px-6 py-2.5 text-[13px] font-semibold hover:opacity-90">
+              Se reconnecter
             </button>
           </div>
         ) : (
           <form onSubmit={submit} className="px-6 py-5 flex flex-col gap-4">
-            <div>
-              <label className="text-[12px] font-semibold text-[#5A6477] block mb-1.5">Mot de passe actuel</label>
-              <div className="relative">
-                <input
-                  type={showCur ? 'text' : 'password'}
-                  required
-                  value={current}
-                  onChange={e => setCurrent(e.target.value)}
-                  className="w-full border border-[#D6DEEA] rounded-[9px] px-4 py-2.5 pr-10 text-[14px] outline-none focus:border-[#0A1628]"
-                />
-                <button type="button" onClick={() => setShowCur(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A7B0BF] hover:text-[#5A6477]">
-                  {showCur ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
-            </div>
             <div>
               <label className="text-[12px] font-semibold text-[#5A6477] block mb-1.5">Nouveau mot de passe</label>
               <div className="relative">
@@ -443,15 +425,14 @@ export default function AdminDashboard() {
   const [stripeAction, setStripeAction] = useState<string | null>(null)
   const [changePwdOpen, setChangePwdOpen] = useState(false)
 
-  const adminEmail    = typeof window !== 'undefined' ? localStorage.getItem('admin_email') ?? '' : ''
-  const adminPassword = typeof window !== 'undefined' ? localStorage.getItem('admin_password') ?? '' : ''
+  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') ?? '' : ''
 
   async function handleStripe(action: 'pause' | 'cancel' | 'activate', driverId: string) {
     setStripeAction(driverId + action)
     await fetch(`/api/admin/stripe/${action}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, driverId }),
+      body: JSON.stringify({ adminToken, driverId }),
     })
     setStripeAction(null)
     loadDrivers()
@@ -462,7 +443,7 @@ export default function AdminDashboard() {
     await fetch('/api/admin/stripe/resend-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, invoiceId }),
+      body: JSON.stringify({ adminToken, invoiceId }),
     })
     setStripeAction(null)
   }
@@ -472,7 +453,7 @@ export default function AdminDashboard() {
     const res = await fetch('/api/admin/stripe/resync-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, driverId }),
+      body: JSON.stringify({ adminToken, driverId }),
     })
     const data = await res.json()
     setStripeAction(null)
@@ -481,15 +462,14 @@ export default function AdminDashboard() {
   }
 
   async function loadDrivers() {
-    const email    = localStorage.getItem('admin_email')
-    const password = localStorage.getItem('admin_password')
-    if (!email || !password) { router.replace('/admin'); return }
-    const res  = await fetch('/api/admin/data', {
+    const token = localStorage.getItem('admin_token')
+    if (!token) { router.replace('/admin'); return }
+    const res = await fetch('/api/admin/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ adminToken: token }),
     })
-    if (!res.ok) { router.replace('/admin'); return }
+    if (!res.ok) { localStorage.removeItem('admin_token'); router.replace('/admin'); return }
     const data = await res.json()
     setDrivers(data.drivers)
     setLoading(false)
@@ -502,7 +482,7 @@ export default function AdminDashboard() {
     await fetch('/api/admin/delete-driver', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, driverId: driver.id, userId: driver.user_id }),
+      body: JSON.stringify({ adminToken, driverId: driver.id, userId: driver.user_id }),
     })
     setDeleteId(null)
     setDeleting(false)
@@ -510,8 +490,7 @@ export default function AdminDashboard() {
   }
 
   function logout() {
-    localStorage.removeItem('admin_email')
-    localStorage.removeItem('admin_password')
+    localStorage.removeItem('admin_token')
     router.replace('/admin')
   }
 
@@ -821,8 +800,7 @@ export default function AdminDashboard() {
         <AddDriverModal
           onClose={() => setAddOpen(false)}
           onCreated={loadDrivers}
-          adminEmail={adminEmail}
-          adminPassword={adminPassword}
+          adminToken={adminToken}
         />
       )}
 
@@ -832,16 +810,14 @@ export default function AdminDashboard() {
           driver={editDriver}
           onClose={() => setEditDriver(null)}
           onSaved={loadDrivers}
-          adminEmail={adminEmail}
-          adminPassword={adminPassword}
+          adminToken={adminToken}
         />
       )}
 
       {/* Modal changement mot de passe */}
       {changePwdOpen && (
         <ChangePwdModal
-          adminEmail={adminEmail}
-          adminPassword={adminPassword}
+          adminToken={adminToken}
           onClose={() => setChangePwdOpen(false)}
         />
       )}

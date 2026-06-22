@@ -53,7 +53,7 @@ export default function DashboardPage() {
   const [sortByTicket, setSortByTicket] = useState(false)
   const [isAdmin, setIsAdmin]   = useState(false)
 
-  useEffect(() => { setIsAdmin(!!localStorage.getItem('admin_email')) }, [])
+  useEffect(() => { setIsAdmin(!!localStorage.getItem('admin_token')) }, [])
 
   async function loadData() {
     const { data } = await supabase
@@ -78,12 +78,11 @@ export default function DashboardPage() {
   }
 
   async function deleteReservation(id: string) {
-    const adminEmail    = localStorage.getItem('admin_email') ?? ''
-    const adminPassword = localStorage.getItem('admin_password') ?? ''
+    const adminToken = localStorage.getItem('admin_token') ?? ''
     const res = await fetch('/api/admin/delete-reservation', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword, reservationId: id }),
+      body: JSON.stringify({ adminToken, reservationId: id }),
     })
     if (!res.ok) { alert('Suppression non autorisée.'); return }
     setAll(prev => prev.filter(r => r.id !== id))

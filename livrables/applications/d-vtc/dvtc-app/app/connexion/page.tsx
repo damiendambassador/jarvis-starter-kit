@@ -20,8 +20,8 @@ export default function ConnexionPage() {
       if (session) {
         router.replace('/dashboard')
       } else {
-        const adminEmail = typeof window !== 'undefined' ? localStorage.getItem('admin_email') : null
-        if (adminEmail) router.replace('/admin/dashboard')
+        const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
+        if (adminToken) router.replace('/admin/dashboard')
         else setChecking(false)
       }
     })
@@ -41,15 +41,15 @@ export default function ConnexionPage() {
     }
 
     /* 2. Essai connexion admin via l'API */
-    const res = await fetch('/api/admin/data', {
+    const res = await fetch('/api/admin/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     })
 
     if (res.ok) {
-      localStorage.setItem('admin_email',    email)
-      localStorage.setItem('admin_password', password)
+      const { token } = await res.json()
+      localStorage.setItem('admin_token', token)
       router.replace('/admin/dashboard')
       return
     }

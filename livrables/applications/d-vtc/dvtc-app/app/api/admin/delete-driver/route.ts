@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { validateAdmin } from '@/lib/admin-auth'
+import { validateAdminRequest } from '@/lib/admin-auth'
 
 const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,9 +9,10 @@ const admin = createClient(
 )
 
 export async function DELETE(req: NextRequest) {
-  const { adminEmail, adminPassword, driverId, userId } = await req.json()
+  const body = await req.json()
+  const { driverId, userId } = body
 
-  if (!await validateAdmin(adminEmail, adminPassword)) {
+  if (!await validateAdminRequest(body)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 

@@ -123,14 +123,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const previewDriverId = new URLSearchParams(window.location.search).get('preview')
 
     if (previewDriverId) {
-      const adminEmail    = localStorage.getItem('admin_email')
-      const adminPassword = localStorage.getItem('admin_password')
-      if (!adminEmail || !adminPassword) { router.replace('/dashboard/login'); return }
+      const adminToken = localStorage.getItem('admin_token')
+      if (!adminToken) { router.replace('/dashboard/login'); return }
 
       fetch('/api/admin/get-driver', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminEmail, adminPassword, driverId: previewDriverId }),
+        body: JSON.stringify({ adminToken, driverId: previewDriverId }),
       })
         .then(r => r.json())
         .then(({ driver: data }) => {

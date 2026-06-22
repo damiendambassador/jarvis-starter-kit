@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
           const { data: linkData } = await db.auth.admin.generateLink({
             type: 'magiclink',
             email: driver.email,
-            options: { redirectTo: 'https://d-vtc.fr/dashboard' },
+            options: { redirectTo: 'https://www.d-vtc.fr/dashboard' },
           })
           const magicLink = (linkData as { properties?: { action_link?: string } })?.properties?.action_link ?? 'https://d-vtc.fr/dashboard'
           const firstName = driver.name.split(' ')[0]

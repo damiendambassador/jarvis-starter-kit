@@ -7,6 +7,28 @@
 
 ---
 
+## 2026-06-22 (session 2)
+
+### D-VTC — Fonctionnalités + audit de sécurité complet
+
+**Fonctionnalités livrées :**
+- Majoration nuit configurable par chauffeur (toggle on/off, horaires personnalisés) dynamiques sur la page de réservation publique
+- Plaque d'immatriculation affichée dans la pastille véhicule sur `/r/[slug]`
+- Endpoint `/api/admin/stripe/resync-invoice` + bouton "Resync" dans le panel admin (rattrapage des factures Stripe manquantes avec génération PDF)
+- Fusion de la page "Réservations" dans le "Tableau de bord" : 5 onglets de statut, 4 périodes (+ semaine prochaine), tri par ticket €, suppression admin
+
+**Audit de sécurité :**
+- Remplacement du stockage email+mot de passe admin en localStorage par un système de session tokens UUID (24h, révocables, stockés en `admin_config`)
+- Nouveau endpoint `/api/admin/auth` pour la création de session
+- Toutes les routes admin (x12) migrent vers `validateAdminRequest()`
+- Comparaison hash en timing constant (`timingSafeEqual`) contre les timing attacks
+- Headers de sécurité HTTP ajoutés (HSTS, X-Frame-Options, X-Content-Type-Options, XSS-Protection, Referrer-Policy, Permissions-Policy)
+- Changement de mot de passe invalide automatiquement la session active
+
+**Statut :** Prêt à lancer la commercialisation.
+
+---
+
 ## 2026-06-22
 
 ### D-VTC — Activation Patrick + correction infrastructure webhooks Stripe

@@ -7,6 +7,33 @@
 
 ---
 
+## 2026-06-22 (session 3)
+
+### D-VTC — Fix facture + i18n page de réservation + prospection VTC
+
+**Fix facture manquante (Patrick) :**
+- Bug identifié : garde `if (!inv.subscription) break` dans le webhook `invoice.payment_succeeded` bloquait silencieusement la génération de facture au premier paiement Stripe
+- Fix : remplacé par `if (!inv.customer) break` (seule vérification utile)
+- Solution immédiate Patrick : bouton "Resync" dans le panel admin (endpoint `/api/admin/stripe/resync-invoice` existant)
+- Déployé en production
+
+**Traduction FR / EN / ES — page de réservation publique :**
+- Dictionnaires complets dans `lib/i18n/` (fr.ts, en.ts, es.ts, index.ts) — 120+ clés
+- Hook `useLanguage()` avec persistance localStorage
+- Composant `LanguageSwitcher` (FR · EN · ES) discret dans le header, langue active en doré
+- Page de réservation et page de confirmation entièrement traduites
+- Calendrier localisé via date-fns locale dynamique
+- Langue persistée entre la réservation et la confirmation
+- Déployé en production
+
+**Prospection chauffeurs VTC :**
+- 2 prospects rencontrés lors de courses Uber (numéros obtenus)
+- Stratégie définie : WhatsApp d'abord, pas d'appel non sollicité
+- Message envoyé à un prospect avec rappel du trajet (Carré Sénat → Ivry) et accroche personnalisée
+- Prochain pas : envoyer le lien d-vtc.fr en second message, attendre 24-48h
+
+---
+
 ## 2026-06-22 (session 2)
 
 ### D-VTC — Fonctionnalités + audit de sécurité complet

@@ -73,7 +73,7 @@ export default function BookingPage() {
     firstName: '', lastName: '', phone: '', email: '',
     date: '', time: '10:00', passengers: 1,
     rideType: 'standard' as 'standard' | 'dispo',
-    pickupAddress: '', dropoffAddress: '', distanceKm: '',
+    pickupAddress: '', dropoffAddress: '', distanceKm: '', distanceDurationSec: 0,
     dispoDuration: '2',
     notes: '', acceptPrivacy: false,
   })
@@ -122,8 +122,12 @@ export default function BookingPage() {
     ? (form.distanceKm ? `${form.distanceKm} km` : '—')
     : (selectedTier?.label ?? '—')
 
-  const recapDur = form.rideType === 'standard' && form.distanceKm
-    ? `~${Math.round(parseFloat(form.distanceKm) * 1.5)} min`
+  const recapDur = form.rideType === 'standard' && form.distanceDurationSec
+    ? (() => {
+        const min = Math.ceil(form.distanceDurationSec / 60 / 5) * 5
+        const max = Math.ceil((form.distanceDurationSec * 1.8) / 60 / 5) * 5
+        return `~${min}-${max} min`
+      })()
     : null
 
   const FIELD_LABELS: Partial<Record<keyof typeof form, string>> = {
@@ -212,7 +216,8 @@ export default function BookingPage() {
         const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`)
         const data = await res.json()
         const km = Math.round(data.routes[0].distance / 100) / 10
-        setForm(prev => ({ ...prev, distanceKm: String(km) }))
+        const durationSec = data.routes[0].duration
+        setForm(prev => ({ ...prev, distanceKm: String(km), distanceDurationSec: durationSec }))
       } catch {
         setDistanceError('Distance non trouvée. Entrez-la manuellement.')
       } finally {
@@ -650,8 +655,11 @@ export default function BookingPage() {
                 <span className="text-[14px] font-semibold text-navy">{recapKm}</span>
               </div>
               {recapDur && (
-                <div className="flex justify-between items-center">
-                  <span className="text-[13px] text-[#5A6477]">Durée estimée</span>
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col">
+                    <span className="text-[13px] text-[#5A6477]">Durée estimée</span>
+                    <span className="text-[11px] text-[#9AA3B0]">Selon trafic et heure</span>
+                  </div>
                   <span className="text-[14px] font-semibold text-navy">{recapDur}</span>
                 </div>
               )}

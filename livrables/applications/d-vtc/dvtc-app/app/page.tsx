@@ -53,7 +53,7 @@ export default function LandingPage() {
               className="bg-[#C9A84C] text-[#0A1628] px-8 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">
               Je veux ma page
             </a>
-            <Link href="/r/patrick-vtc"
+            <Link href="/r/patrick-defoe"
               className="bg-white/10 text-white px-8 py-4 rounded-[10px] text-[15px] font-semibold hover:bg-white/20 transition-colors border border-white/20">
               Voir un exemple live
             </Link>

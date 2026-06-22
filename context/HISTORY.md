@@ -7,6 +7,38 @@
 
 ---
 
+## 2026-06-22
+
+### D-VTC — Fix calendrier + admin password + templates Instagram
+
+**Bug calendrier indisponibilités corrigé :**
+- Cause : INSERT/SELECT sur `unavailabilities` via client anon bloqués par RLS (silence total, aucune erreur visible)
+- Fix : nouvelle route API `/api/driver/unavailabilities` (GET, POST, DELETE) avec service role key
+- La lecture (GET) et l'écriture (POST/DELETE) passent maintenant toutes par cette route
+- Ajout d'un message d'erreur rouge visible dans le modal si la sauvegarde échoue
+- Fonctionne aussi en mode admin preview (pas de session Supabase Auth active dans ce mode)
+
+**Changement de mot de passe admin depuis le panel :**
+- Bouton "Mot de passe" dans le header du panel admin
+- Modal avec champ actuel / nouveau / confirmation, validation min 8 caractères
+- Nouveau mot de passe stocké en SHA-256 dans la table Supabase `admin_config`
+- Nouveau fichier `lib/admin-auth.ts` avec `validateAdmin()` centralisé (vérifie d'abord la table, fallback sur env var)
+- Toutes les routes admin (`/api/admin/*`) migrent vers `validateAdmin()`
+
+**Stratégie acquisition 27 chauffeurs via @d_embassy_ :**
+- Calcul du seuil de rentabilité D-VTC : 27 chauffeurs pour couvrir les charges mensuelles
+- Patrick en prospection (pas encore signé)
+- Plan 12 semaines d'acquisition chauffeurs discuté
+- Stratégie de contenu Instagram @d_embassy_ pour cibler les chauffeurs VTC via le prisme de l'indépendance, performance, liberté (thème D Embassy)
+
+**Templates Instagram D Embassy créés :**
+- Projet Claude Design importé (`686ed111-8a2d-4392-b1c5-a890b8ab566d`)
+- 3 templates 1080x1080px : Conseil du jour, Question du jour, Concept du jour
+- Fichiers locaux dans `livrables/templates-instagram/d-embassy/` : HTML standalone + assets PNG
+- Export PPTX généré (3 slides carrées) pour import dans Canva
+
+---
+
 ## 2026-06-21 (session 2)
 
 ### D-VTC — Sécurité admin + droits chauffeur

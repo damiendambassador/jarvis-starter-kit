@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
   const { error: pricingError } = await admin.from('pricing').insert({
     driver_id: driver.id,
     base_fare: 8.00, price_per_km: 1.80, night_surcharge: 0.20,
+    night_surcharge_enabled: true, night_start_hour: 20, night_end_hour: 8,
     dispo_2h: 80.00, dispo_day: 280.00, km_included_dispo: 50,
     loyalty_threshold: 5, loyalty_discount: 0.10,
   })

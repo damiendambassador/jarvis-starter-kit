@@ -350,7 +350,11 @@ export default function BookingPage() {
               À partir de {formatPrice(pricing.base_fare)}&thinsp;
               <span className="text-[14px] font-medium text-[#8A94A6]">+ {formatPrice(pricing.price_per_km)}/km</span>
             </div>
-            <div className="text-[12px] text-[#8A94A6] mt-2">Majoration nuit +{nightPct}% (20h–8h)</div>
+            {pricing.night_surcharge_enabled !== false && (
+              <div className="text-[12px] text-[#8A94A6] mt-2">
+                Majoration nuit +{nightPct}% ({String(pricing.night_start_hour ?? 20).padStart(2, '0')}h–{String(pricing.night_end_hour ?? 8).padStart(2, '0')}h)
+              </div>
+            )}
           </div>
           <div className="flex-1 basis-[230px] card px-[22px] py-[22px]">
             <Clock className="text-blue mb-3" size={22} />

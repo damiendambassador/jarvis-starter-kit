@@ -467,6 +467,19 @@ export default function AdminDashboard() {
     setStripeAction(null)
   }
 
+  async function handleResyncInvoice(driverId: string) {
+    setStripeAction(driverId + 'resync')
+    const res = await fetch('/api/admin/stripe/resync-invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminEmail, adminPassword, driverId }),
+    })
+    const data = await res.json()
+    setStripeAction(null)
+    if (data.inserted > 0) { loadDrivers() }
+    else if (data.inserted === 0) { alert('Aucune facture manquante trouvée dans Stripe.') }
+  }
+
   async function loadDrivers() {
     const email    = localStorage.getItem('admin_email')
     const password = localStorage.getItem('admin_password')
@@ -776,6 +789,16 @@ export default function AdminDashboard() {
                         className="flex items-center gap-1 text-[11px] font-semibold text-[#5A6477] border border-[#E8EDF5] hover:border-[#0A1628] rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
                         {stripeAction === driver.last_invoice.invoice_number ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
                         Renvoyer
+                      </button>
+                    )}
+                    {driver.stripe_customer_id && (
+                      <button
+                        onClick={() => handleResyncInvoice(driver.id)}
+                        disabled={stripeAction !== null}
+                        title="Synchroniser les factures depuis Stripe"
+                        className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 border border-blue-100 hover:border-blue-400 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
+                        {stripeAction === driver.id + 'resync' ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
+                        Resync
                       </button>
                     )}
                   </div>

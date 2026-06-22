@@ -2,12 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, ClipboardList, Users, Calendar, Settings, LogOut, Receipt } from 'lucide-react'
+import { LayoutDashboard, Users, Calendar, Settings, LogOut, Receipt } from 'lucide-react'
 import { supabase, type Driver } from '@/lib/supabase'
 
 const NAV = [
   { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard, exact: true },
-  { href: '/dashboard/reservations', label: 'Réservations', icon: ClipboardList, exact: false },
   { href: '/dashboard/clients', label: 'Clients', icon: Users, exact: false },
   { href: '/dashboard/calendar', label: 'Calendrier', icon: Calendar, exact: false },
   { href: '/dashboard/factures', label: 'Mes factures', icon: Receipt, exact: false },

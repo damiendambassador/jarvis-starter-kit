@@ -10,9 +10,8 @@ import {
 import {
   format, addMonths, subMonths, getDaysInMonth, startOfMonth, getDay, isSameDay,
 } from 'date-fns'
-import { fr } from 'date-fns/locale'
-
-const WEEKDAYS = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di']
+import { useLanguage } from '@/lib/i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {
   const h = String(Math.floor(i / 2)).padStart(2, '0')
@@ -42,27 +41,18 @@ function buildCalCells(viewDate: Date, selectedDate: Date | null) {
   return cells
 }
 
-function buildDispoTiers(p: Pricing) {
-  return [
-    { value: '2', label: '2 heures', price: p.dispo_2h },
-    { value: '3', label: '3 heures', price: Math.round(p.dispo_2h * 1.40) },
-    { value: '4', label: '4 heures', price: Math.round(p.dispo_2h * 1.70) },
-    { value: '6', label: '6 heures', price: Math.round(p.dispo_day * 0.70) },
-    { value: '8', label: '8 heures', price: Math.round(p.dispo_day * 0.88) },
-    { value: 'day', label: 'Journée complète', price: p.dispo_day },
-  ]
-}
-
 export default function BookingPage() {
   const params = useParams()
   const router = useRouter()
   const slug = params.slug as string
 
+  const { lang, setLang, t, dateFnsLocale } = useLanguage()
+
   const [driver, setDriver] = useState<Driver | null>(null)
   const [pricing, setPricing] = useState<Pricing | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [loadError, setLoadError] = useState<string | null>(null)
+  const [hasLoadError, setHasLoadError] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
@@ -84,7 +74,7 @@ export default function BookingPage() {
 
   const selectedDate = form.date ? new Date(form.date + 'T12:00:00') : null
   const calCells = useMemo(() => buildCalCells(viewDate, selectedDate), [viewDate, form.date])
-  const pickerLabel = format(viewDate, 'MMMM yyyy', { locale: fr })
+  const pickerLabel = format(viewDate, 'MMMM yyyy', { locale: dateFnsLocale })
 
   const todayStr = format(new Date(), 'yyyy-MM-dd')
   const isToday = form.date === todayStr
@@ -101,8 +91,19 @@ export default function BookingPage() {
     }
   }, [form.date])
 
-  const dispoTiers = useMemo(() => pricing ? buildDispoTiers(pricing) : [], [pricing])
-  const selectedTier = dispoTiers.find(t => t.value === form.dispoDuration) ?? dispoTiers[0]
+  const dispoTiers = useMemo(() => {
+    if (!pricing) return []
+    return [
+      { value: '2',   label: t.dispo_2h,       price: pricing.dispo_2h },
+      { value: '3',   label: t.dispo_3h,       price: Math.round(pricing.dispo_2h * 1.40) },
+      { value: '4',   label: t.dispo_4h,       price: Math.round(pricing.dispo_2h * 1.70) },
+      { value: '6',   label: t.dispo_6h,       price: Math.round(pricing.dispo_day * 0.70) },
+      { value: '8',   label: t.dispo_8h,       price: Math.round(pricing.dispo_day * 0.88) },
+      { value: 'day', label: t.dispo_full_day, price: pricing.dispo_day },
+    ]
+  }, [pricing, lang])
+
+  const selectedTier = dispoTiers.find(tier => tier.value === form.dispoDuration) ?? dispoTiers[0]
 
   const hour = parseInt(form.time.split(':')[0])
   const isNight = pricing ? isNightHour(pricing, hour) : (hour < 8 || hour >= 20)
@@ -131,17 +132,16 @@ export default function BookingPage() {
     : null
 
   const FIELD_LABELS: Partial<Record<keyof typeof form, string>> = {
-    firstName: 'Prénom',
-    lastName: 'Nom',
-    phone: 'Téléphone',
-    email: 'Email',
-    date: 'Date',
-    pickupAddress: form.rideType === 'standard' ? 'Adresse de départ' : 'Lieu de prise en charge',
-    dropoffAddress: 'Adresse d\'arrivée',
-    distanceKm: 'Distance',
+    firstName:    t.field_firstname,
+    lastName:     t.field_lastname,
+    phone:        t.field_phone,
+    email:        t.field_email,
+    date:         t.field_date,
+    pickupAddress: form.rideType === 'standard' ? t.field_pickup_address : t.field_pickup_location,
+    dropoffAddress: t.field_dropoff_address,
+    distanceKm:   t.recap_distance,
   }
 
-  // Chargement des indisponibilités à chaque changement de date
   useEffect(() => {
     if (!form.date || !driver) { setDateUnavails([]); return }
     supabase.from('unavailabilities')
@@ -151,15 +151,14 @@ export default function BookingPage() {
       .then(({ data }) => setDateUnavails(data ?? []))
   }, [form.date, driver?.id])
 
-  // Conflit : l'heure choisie tombe dans un créneau bloqué
   const timeConflict = useMemo(() => {
     if (!form.time) return null
     const [h, m] = form.time.split(':').map(Number)
-    const t = h * 60 + m
+    const time = h * 60 + m
     return dateUnavails.find(u => {
       const [sh, sm] = u.start_time.split(':').map(Number)
       const [eh, em] = u.end_time.split(':').map(Number)
-      return t >= sh * 60 + sm && t < eh * 60 + em
+      return time >= sh * 60 + sm && time < eh * 60 + em
     }) ?? null
   }, [form.time, dateUnavails])
 
@@ -169,7 +168,7 @@ export default function BookingPage() {
   ]
   const missingFields = [
     ...requiredFields.filter(f => !form[f]).map(f => FIELD_LABELS[f] ?? f),
-    ...(!form.acceptPrivacy ? ['Politique de confidentialité'] : []),
+    ...(!form.acceptPrivacy ? [t.field_privacy] : []),
   ]
   const missingCount = missingFields.length
   const canSubmit = missingCount === 0 && !submitting && !timeConflict
@@ -188,7 +187,7 @@ export default function BookingPage() {
   useEffect(() => {
     supabase.from('drivers').select('*').eq('slug', slug).eq('is_active', true).single()
       .then(({ data, error: e }) => {
-        if (e || !data) { setLoadError('Chauffeur introuvable.'); setLoading(false); return }
+        if (e || !data) { setHasLoadError(true); setLoading(false); return }
         supabase.from('pricing').select('*').eq('driver_id', data.id).single()
           .then(({ data: p }) => { setDriver(data); setPricing(p); setLoading(false) })
       })
@@ -219,7 +218,7 @@ export default function BookingPage() {
         const durationSec = data.routes[0].duration
         setForm(prev => ({ ...prev, distanceKm: String(km), distanceDurationSec: durationSec }))
       } catch {
-        setDistanceError('Distance non trouvée. Entrez-la manuellement.')
+        setDistanceError('distance_not_found')
       } finally {
         setDistanceLoading(false)
       }
@@ -260,11 +259,10 @@ export default function BookingPage() {
       p_status:         payload.status,
     })
     if (insertError) {
-      setSubmitError(`Erreur : ${insertError.message}`)
+      setSubmitError(`${t.error_prefix} : ${insertError.message}`)
       setSubmitting(false)
       return
     }
-    // Mémoriser les infos client pour la prochaine visite
     try {
       localStorage.setItem('dvtc_client_info', JSON.stringify({
         firstName: form.firstName, lastName: form.lastName,
@@ -272,7 +270,6 @@ export default function BookingPage() {
       }))
     } catch {}
 
-    // Envoyer les emails + enregistrer le client côté serveur (awaité pour éviter l'annulation)
     try {
       await fetch('/api/booking/notify', {
         method: 'POST',
@@ -292,11 +289,11 @@ export default function BookingPage() {
     </div>
   )
 
-  if (loadError || !driver || !pricing) return (
+  if (hasLoadError || !driver || !pricing) return (
     <div className="min-h-screen flex items-center justify-center bg-cream text-center px-4">
       <div>
-        <p className="text-navy font-semibold text-lg">{loadError ?? 'Chauffeur introuvable.'}</p>
-        <p className="text-[#8A94A6] mt-2 text-sm">Vérifiez le lien que vous avez reçu.</p>
+        <p className="text-navy font-semibold text-lg">{t.error_driver_not_found}</p>
+        <p className="text-[#8A94A6] mt-2 text-sm">{t.error_check_link}</p>
       </div>
     </div>
   )
@@ -313,26 +310,29 @@ export default function BookingPage() {
             <span className="text-gold font-bold text-lg leading-none">D</span>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-[.2em] text-gold font-semibold">Service privé VTC</div>
+            <div className="text-[10px] uppercase tracking-[.2em] text-gold font-semibold">{t.header_service}</div>
             <div className="text-[15px] font-semibold text-white mt-0.5">{driver.name}</div>
           </div>
         </div>
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="border border-white/22 text-white/85 px-3.5 py-2 rounded-lg text-[13px] font-medium hover:bg-white/10 transition-colors"
-        >
-          Espace conducteur
-        </button>
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher lang={lang} setLang={setLang} />
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="border border-white/22 text-white/85 px-3.5 py-2 rounded-lg text-[13px] font-medium hover:bg-white/10 transition-colors"
+          >
+            {t.header_driver_space}
+          </button>
+        </div>
       </header>
 
       {/* Hero */}
       <section className="bg-navy text-white px-7 pt-[46px] pb-[60px] text-center">
         <h1 className="font-serif text-[44px] font-bold leading-[1.12] tracking-[-0.01em] m-0">
-          Réservez votre chauffeur,<br />
-          <span className="text-gold">en toute simplicité.</span>
+          {t.hero_title}<br />
+          <span className="text-gold">{t.hero_subtitle}</span>
         </h1>
         <p className="mt-4 max-w-[480px] mx-auto text-white/60 text-base leading-[1.55]">
-          Un service ponctuel et discret. Réservation en quelques secondes, confirmation par votre chauffeur.
+          {t.hero_desc}
         </p>
         {driver.vehicle_model && (
           <div className="mt-5 inline-flex items-center gap-2.5 bg-white/10 border border-white/15 px-4 py-2 rounded-full text-[13px] text-white/75">
@@ -342,7 +342,9 @@ export default function BookingPage() {
               <span className="text-white/50">· {driver.vehicle_plate}</span>
             )}
             {driver.vehicle_capacity && (
-              <span className="text-white/40">· {driver.vehicle_capacity} passager{driver.vehicle_capacity > 1 ? 's' : ''}</span>
+              <span className="text-white/40">
+                · {driver.vehicle_capacity} {driver.vehicle_capacity > 1 ? t.passenger_plural : t.passenger}
+              </span>
             )}
           </div>
         )}
@@ -353,34 +355,34 @@ export default function BookingPage() {
         <div className="flex gap-[18px] flex-wrap">
           <div className="flex-1 basis-[230px] card px-[22px] py-[22px]">
             <Car className="text-blue mb-3" size={22} />
-            <div className="font-serif text-[17px] font-bold text-navy">Trajets standards</div>
+            <div className="font-serif text-[17px] font-bold text-navy">{t.tariff_standard_title}</div>
             <div className="text-[20px] font-bold mt-2 text-navy">
-              À partir de {formatPrice(pricing.base_fare)}&thinsp;
+              {t.tariff_from} {formatPrice(pricing.base_fare)}&thinsp;
               <span className="text-[14px] font-medium text-[#8A94A6]">+ {formatPrice(pricing.price_per_km)}/km</span>
             </div>
             {pricing.night_surcharge_enabled !== false && (
               <div className="text-[12px] text-[#8A94A6] mt-2">
-                Majoration nuit +{nightPct}% ({String(pricing.night_start_hour ?? 20).padStart(2, '0')}h–{String(pricing.night_end_hour ?? 8).padStart(2, '0')}h)
+                {t.tariff_night_surcharge(nightPct, pricing.night_start_hour ?? 20, pricing.night_end_hour ?? 8)}
               </div>
             )}
           </div>
           <div className="flex-1 basis-[230px] card px-[22px] py-[22px]">
             <Clock className="text-blue mb-3" size={22} />
-            <div className="font-serif text-[17px] font-bold text-navy">Mise à disposition</div>
+            <div className="font-serif text-[17px] font-bold text-navy">{t.tariff_dispo_title}</div>
             <div className="text-[20px] font-bold mt-2 text-navy">
-              À partir de {formatPrice(pricing.dispo_2h)}&thinsp;
-              <span className="text-[14px] font-medium text-[#8A94A6]">/ 2h</span>
+              {t.tariff_from} {formatPrice(pricing.dispo_2h)}&thinsp;
+              <span className="text-[14px] font-medium text-[#8A94A6]">{t.tariff_per_2h}</span>
             </div>
-            <div className="text-[12px] text-[#8A94A6] mt-2">Journée complète {formatPrice(pricing.dispo_day)}</div>
+            <div className="text-[12px] text-[#8A94A6] mt-2">{t.tariff_full_day_label} {formatPrice(pricing.dispo_day)}</div>
           </div>
           <div className="flex-1 basis-[230px] bg-[#FBF7EC] border border-[#C9A84C] rounded-2xl px-[22px] py-[22px] shadow-[0_8px_28px_rgba(201,168,76,0.12)]">
             <Star className="text-gold mb-3" size={22} />
-            <div className="font-serif text-[17px] font-bold text-[#9A7B2E]">Programme fidélité</div>
+            <div className="font-serif text-[17px] font-bold text-[#9A7B2E]">{t.tariff_loyalty_title}</div>
             <div className="text-[20px] font-bold mt-2 text-navy">
-              −{Math.round(pricing.loyalty_discount * 100)}% automatique
+              −{Math.round(pricing.loyalty_discount * 100)}% {t.tariff_loyalty_auto}
             </div>
             <div className="text-[12px] text-[#9A7B2E] mt-2">
-              Dès la {pricing.loyalty_threshold}ᵉ course, sur vos 3 prochaines
+              {t.tariff_loyalty_desc(pricing.loyalty_threshold)}
             </div>
           </div>
         </div>
@@ -396,8 +398,8 @@ export default function BookingPage() {
           {returningUser && (
             <div className="flex items-center justify-between gap-3 bg-[#FBF7EC] border border-[#EAD9A8] rounded-2xl px-5 py-4">
               <div>
-                <div className="text-[15px] font-bold text-[#9A7B2E]">Bon retour, {returningUser} !</div>
-                <div className="text-[12px] text-[#9A7B2E]/80 mt-0.5">Vos coordonnées sont prêtes, il ne reste qu'à choisir votre course.</div>
+                <div className="text-[15px] font-bold text-[#9A7B2E]">{t.returning_greeting(returningUser)}</div>
+                <div className="text-[12px] text-[#9A7B2E]/80 mt-0.5">{t.returning_desc}</div>
               </div>
               <button
                 type="button"
@@ -408,20 +410,20 @@ export default function BookingPage() {
                 }}
                 className="text-[12px] text-[#9A7B2E] underline underline-offset-2 hover:opacity-70 transition-opacity flex-shrink-0"
               >
-                Ce n'est pas moi
+                {t.returning_not_me}
               </button>
             </div>
           )}
 
           {/* Coordonnées */}
           <div className="card px-[22px] py-[22px]">
-            <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">Vos coordonnées</div>
+            <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">{t.section_contact}</div>
             <div className="grid grid-cols-2 gap-[14px]">
               {([
-                { name: 'firstName', label: 'Prénom', placeholder: 'Jean' },
-                { name: 'lastName', label: 'Nom', placeholder: 'Dupont' },
-                { name: 'phone', label: 'Téléphone', placeholder: '06 12 34 56 78', type: 'tel' },
-                { name: 'email', label: 'Email', placeholder: 'jean@email.com', type: 'email' },
+                { name: 'firstName', label: t.field_firstname, placeholder: t.placeholder_firstname },
+                { name: 'lastName',  label: t.field_lastname,  placeholder: t.placeholder_lastname },
+                { name: 'phone',     label: t.field_phone,     placeholder: t.placeholder_phone, type: 'tel' },
+                { name: 'email',     label: t.field_email,     placeholder: t.placeholder_email, type: 'email' },
               ] as { name: 'firstName' | 'lastName' | 'phone' | 'email'; label: string; placeholder: string; type?: string }[]).map(f => (
                 <label key={f.name} className="block">
                   <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{f.label}</span>
@@ -439,7 +441,7 @@ export default function BookingPage() {
 
           {/* Date & Heure */}
           <div className="card px-[22px] py-[22px]">
-            <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">Date et heure</div>
+            <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">{t.section_datetime}</div>
             <div className="flex gap-5 flex-wrap">
               {/* Calendar picker */}
               <div className="flex-1 min-w-[280px]">
@@ -457,7 +459,7 @@ export default function BookingPage() {
                   </button>
                 </div>
                 <div className="grid grid-cols-7 gap-[3px] mb-1.5">
-                  {WEEKDAYS.map(wd => (
+                  {t.weekdays.map(wd => (
                     <div key={wd} className="text-center text-[10px] font-semibold text-[#A7B0BF] py-1">{wd}</div>
                   ))}
                 </div>
@@ -486,7 +488,7 @@ export default function BookingPage() {
               {/* Time + Passengers */}
               <div className="flex-1 min-w-[200px] flex flex-col gap-[18px]">
                 <label className="block">
-                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">Heure de prise en charge</span>
+                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{t.field_pickup_time}</span>
                   <input
                     type="time"
                     className="input-field"
@@ -496,29 +498,31 @@ export default function BookingPage() {
                     onChange={e => setForm(prev => ({ ...prev, time: e.target.value }))}
                   />
                   <datalist id="time-slots-list">
-                    {availableSlots.map(t => <option key={t} value={t} />)}
+                    {availableSlots.map(slot => <option key={slot} value={slot} />)}
                   </datalist>
                   {timeConflict && (
                     <div className="mt-2 flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
                       <span className="text-red-400 text-[15px] flex-shrink-0 mt-[1px]">⊘</span>
                       <div>
-                        <div className="text-[12px] font-semibold text-red-600">Créneau indisponible</div>
+                        <div className="text-[12px] font-semibold text-red-600">{t.time_conflict_title}</div>
                         <div className="text-[11px] text-red-400 mt-0.5">
-                          Le chauffeur est indisponible de {timeConflict.start_time.slice(0,5)} à {timeConflict.end_time.slice(0,5)}
-                          {timeConflict.label !== 'Indisponible' ? ` (${timeConflict.label})` : ''}.
-                          Choisissez une autre heure.
+                          {t.time_conflict_detail(
+                            timeConflict.start_time.slice(0, 5),
+                            timeConflict.end_time.slice(0, 5),
+                            timeConflict.label !== 'Indisponible' ? ` (${timeConflict.label})` : '',
+                          )}
                         </div>
                       </div>
                     </div>
                   )}
                   {!timeConflict && dateUnavails.length > 0 && (
                     <div className="mt-2 text-[11px] text-[#8A94A6] leading-[1.5]">
-                      Créneaux bloqués ce jour : {dateUnavails.map(u => `${u.start_time.slice(0,5)}–${u.end_time.slice(0,5)}`).join(', ')}
+                      {t.time_blocked(dateUnavails.map(u => `${u.start_time.slice(0,5)}–${u.end_time.slice(0,5)}`).join(', '))}
                     </div>
                   )}
                 </label>
                 <div>
-                  <span className="text-[12px] font-medium text-[#5A6477] block mb-2">Passagers</span>
+                  <span className="text-[12px] font-medium text-[#5A6477] block mb-2">{t.field_passengers}</span>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4].map(n => (
                       <button key={n} type="button"
@@ -540,11 +544,11 @@ export default function BookingPage() {
 
           {/* Mode de course */}
           <div className="card px-[22px] py-[22px]">
-            <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">Mode de course</div>
+            <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">{t.section_ride_mode}</div>
             <div className="flex gap-3 flex-wrap mb-[18px]">
               {([
-                { v: 'standard', label: 'Trajet simple', desc: 'Du point A au point B' },
-                { v: 'dispo', label: 'Mise à disposition', desc: 'Chauffeur à votre service' },
+                { v: 'standard', label: t.ride_standard, desc: t.ride_standard_desc },
+                { v: 'dispo',    label: t.ride_dispo,    desc: t.ride_dispo_desc },
               ] as const).map(m => (
                 <button key={m.v} type="button"
                   onClick={() => setForm(prev => ({ ...prev, rideType: m.v }))}
@@ -563,19 +567,19 @@ export default function BookingPage() {
             {form.rideType === 'standard' ? (
               <div className="flex flex-col gap-[14px]">
                 <label className="block">
-                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">Adresse de départ</span>
+                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{t.field_pickup_address}</span>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A7B0BF]" size={17} />
-                    <input className="input-field pl-[38px]" placeholder="12 rue de la Paix, Paris"
+                    <input className="input-field pl-[38px]" placeholder={t.placeholder_pickup_address}
                       value={form.pickupAddress}
                       onChange={e => setForm(prev => ({ ...prev, pickupAddress: e.target.value }))} />
                   </div>
                 </label>
                 <label className="block">
-                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">Adresse d'arrivée</span>
+                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{t.field_dropoff_address}</span>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gold" size={17} />
-                    <input className="input-field pl-[38px]" placeholder="Aéroport CDG, Terminal 2"
+                    <input className="input-field pl-[38px]" placeholder={t.placeholder_dropoff_address}
                       value={form.dropoffAddress}
                       onChange={e => setForm(prev => ({ ...prev, dropoffAddress: e.target.value }))} />
                   </div>
@@ -584,31 +588,31 @@ export default function BookingPage() {
             ) : (
               <div className="flex flex-col gap-[14px]">
                 <label className="block">
-                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">Lieu de prise en charge</span>
+                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{t.field_pickup_location}</span>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A7B0BF]" size={17} />
-                    <input className="input-field pl-[38px]" placeholder="Hôtel Le Bristol, Paris"
+                    <input className="input-field pl-[38px]" placeholder={t.placeholder_pickup_location}
                       value={form.pickupAddress}
                       onChange={e => setForm(prev => ({ ...prev, pickupAddress: e.target.value }))} />
                   </div>
                 </label>
                 <label className="block max-w-[260px]">
-                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">Durée de mise à disposition</span>
+                  <span className="text-[12px] font-medium text-[#5A6477] block mb-1.5">{t.field_dispo_duration}</span>
                   <select className="input-field" value={form.dispoDuration}
                     onChange={e => setForm(prev => ({ ...prev, dispoDuration: e.target.value }))}>
-                    {dispoTiers.map(t => (
-                      <option key={t.value} value={t.value}>{t.label}</option>
+                    {dispoTiers.map(tier => (
+                      <option key={tier.value} value={tier.value}>{tier.label}</option>
                     ))}
                   </select>
                 </label>
                 {selectedTier && (
                   <div className="bg-[#FBF7EC] border border-[#EAD9A8] rounded-xl px-[18px] py-4">
                     <div className="flex items-baseline justify-between gap-3">
-                      <span className="text-[14px] font-semibold text-navy">{selectedTier.label} de disponibilité</span>
+                      <span className="text-[14px] font-semibold text-navy">{t.dispo_of_availability(selectedTier.label)}</span>
                       <span className="text-[22px] font-bold text-[#9A7B2E]">{formatPrice(selectedTier.price)}</span>
                     </div>
                     <div className="text-[12px] text-[#9A7B2E] mt-1.5">
-                      Kilomètres et carburant inclus
+                      {t.dispo_km_included}
                     </div>
                   </div>
                 )}
@@ -619,10 +623,10 @@ export default function BookingPage() {
           {/* Note */}
           <div className="card px-[22px] py-[22px] max-w-xs">
             <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-3.5">
-              Note <span className="font-normal normal-case tracking-normal">(optionnel)</span>
+              {t.section_note} <span className="font-normal normal-case tracking-normal">{t.optional}</span>
             </div>
             <textarea className="input-field resize-none" rows={2}
-              placeholder="Bagages, animal, demande particulière…"
+              placeholder={t.placeholder_notes}
               value={form.notes}
               onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))} />
           </div>
@@ -633,7 +637,7 @@ export default function BookingPage() {
               checked={form.acceptPrivacy}
               onChange={e => setForm(prev => ({ ...prev, acceptPrivacy: e.target.checked }))} />
             <span className="text-[11px] text-[#8A94A6] leading-[1.5]">
-              J'accepte que mes informations soient utilisées pour traiter ma réservation, conformément à la politique de confidentialité. Aucune donnée n'est partagée à des tiers.
+              {t.privacy_text}
             </span>
           </label>
         </div>
@@ -641,24 +645,24 @@ export default function BookingPage() {
         {/* Right: Sticky recap */}
         <div className="flex-none basis-[330px] min-w-[290px] sticky top-[22px]">
           <div className="card px-6 py-6 shadow-[0_10px_36px_rgba(10,22,40,0.07)]">
-            <div className="font-serif text-[19px] font-bold text-navy mb-1">Votre course</div>
+            <div className="font-serif text-[19px] font-bold text-navy mb-1">{t.recap_title}</div>
             {isNight && (
               <div className="inline-block text-[11px] font-semibold text-[#9A7B2E] bg-[#FBF7EC] border border-[#EAD9A8] px-2 py-0.5 rounded mb-3.5">
-                Tarif de nuit · +{nightPct}%
+                {t.recap_night_rate(nightPct)}
               </div>
             )}
             <div className="flex flex-col gap-[13px] my-4">
               <div className="flex justify-between items-center">
                 <span className="text-[13px] text-[#5A6477]">
-                  {form.rideType === 'standard' ? 'Distance' : 'Durée'}
+                  {form.rideType === 'standard' ? t.recap_distance : t.recap_duration}
                 </span>
                 <span className="text-[14px] font-semibold text-navy">{recapKm}</span>
               </div>
               {recapDur && (
                 <div className="flex justify-between items-start">
                   <div className="flex flex-col">
-                    <span className="text-[13px] text-[#5A6477]">Durée estimée</span>
-                    <span className="text-[11px] text-[#9AA3B0]">Selon trafic et heure</span>
+                    <span className="text-[13px] text-[#5A6477]">{t.recap_estimated_duration}</span>
+                    <span className="text-[11px] text-[#9AA3B0]">{t.recap_traffic_note}</span>
                   </div>
                   <span className="text-[14px] font-semibold text-navy">{recapDur}</span>
                 </div>
@@ -666,13 +670,13 @@ export default function BookingPage() {
             </div>
             <div className="border-t border-blue-gray mb-4" />
             <div className="flex justify-between items-baseline">
-              <span className="text-[14px] font-semibold text-navy">Total</span>
+              <span className="text-[14px] font-semibold text-navy">{t.recap_total}</span>
               <span className="text-[26px] font-bold text-gold tracking-[-0.01em]">
                 {totalPrice !== null ? formatPrice(totalPrice) : '— €'}
               </span>
             </div>
             <div className="text-[11px] text-[#A7B0BF] mt-1.5 leading-[1.45]">
-              Tarif tout compris — TVA non applicable, art. 293 B du CGI
+              {t.recap_tax_note}
             </div>
             <button
               onClick={doSubmit}
@@ -683,23 +687,23 @@ export default function BookingPage() {
                   ? 'bg-navy text-white hover:bg-navy-light cursor-pointer'
                   : 'bg-[#E8EDF5] text-[#A7B0BF] cursor-not-allowed',
               ].join(' ')}>
-              {submitting ? 'Envoi en cours…' : 'Envoyer ma réservation →'}
+              {submitting ? t.btn_sending : t.btn_send}
             </button>
             {!submitting && timeConflict && (
               <div className="mt-3 text-[12px] text-red-500 font-medium">
-                Créneau indisponible — choisissez une autre heure.
+                {t.recap_conflict}
               </div>
             )}
             {!submitting && !timeConflict && missingCount > 0 && (
               <div className="mt-3 text-[12px] text-[#8A94A6] leading-[1.6]">
                 {missingCount <= 3
-                  ? <>Manquant : <span className="font-semibold text-[#5A6477]">{missingFields.join(', ')}</span></>
-                  : <>{missingCount} informations manquantes à compléter.</>
+                  ? <>{t.recap_missing} <span className="font-semibold text-[#5A6477]">{missingFields.join(', ')}</span></>
+                  : <>{t.recap_missing_count(missingCount)}</>
                 }
               </div>
             )}
             {canSubmit && !submitting && (
-              <div className="text-center text-[12px] text-green-500 mt-2.5 font-medium">Prêt à envoyer</div>
+              <div className="text-center text-[12px] text-green-500 mt-2.5 font-medium">{t.recap_ready}</div>
             )}
             {submitError && <div className="text-[12px] text-red-500 mt-2.5 leading-[1.5]">{submitError}</div>}
           </div>
@@ -707,7 +711,7 @@ export default function BookingPage() {
       </section>
 
       <footer className="bg-navy text-white/40 text-center py-5 text-[12px]">
-        Service propulsé par D Embassy
+        {t.footer}
       </footer>
 
     </div>

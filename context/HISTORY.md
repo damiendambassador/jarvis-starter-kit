@@ -9,6 +9,29 @@
 
 ## 2026-06-22
 
+### D-VTC — Activation Patrick + correction infrastructure webhooks Stripe
+
+**Problème initial :** Patrick avait payé 74€ mais restait bloqué par le PaymentWall.
+
+**Cause 1 — Webhook 308 Redirect :**
+- Le webhook Stripe pointait vers `https://d-vtc.fr/api/stripe/webhook` (sans www)
+- Vercel redirige `d-vtc.fr` → `www.d-vtc.fr` avec un 308 permanent
+- Stripe ne suit pas les redirects → tous les events échouaient silencieusement
+- Fix : URL du webhook modifiée dans Stripe Dashboard vers `https://www.d-vtc.fr/api/stripe/webhook`
+
+**Cause 2 — Magic link vers localhost:3000 :**
+- Le "Site URL" dans Supabase Auth était resté `http://localhost:3000` (config de dev jamais mise à jour)
+- Supabase ignorait le `redirectTo` passé dans `generateLink()` (URL non dans la liste autorisée)
+- Fix : Site URL Supabase → `https://www.d-vtc.fr`, redirect URLs `https://www.d-vtc.fr/**` et `https://d-vtc.fr/**`
+- Fix code : `redirectTo` dans `webhook/route.ts` mis à jour vers `https://www.d-vtc.fr/dashboard`
+
+**Livraisons code :**
+- Nouvelle route `POST /api/admin/stripe/activate` : force `subscription_status = 'active'` manuellement (backup si webhook KO)
+- Bouton "Activer" (vert) dans le tableau Facturation du panel admin pour tout chauffeur `pending`
+- Logs détaillés dans le webhook Stripe (event reçu, customer_id, résultat UPDATE, erreurs)
+
+**Résultat :** Patrick activé et connecté. Infrastructure webhook stable pour les prochains chauffeurs.
+
 ### D-VTC — Fix calendrier + admin password + templates Instagram
 
 **Bug calendrier indisponibilités corrigé :**

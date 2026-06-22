@@ -1,15 +1,9 @@
 import Link from 'next/link'
 
-const BENEFITS = [
-  { icon: '💶', title: 'Zéro commission', desc: 'Ce que vous facturez, vous le gardez entièrement. Aucun pourcentage prélevé.' },
-  { icon: '📲', title: 'Notification immédiate', desc: 'Chaque demande arrive en temps réel. Vous acceptez ou refusez en un clic.' },
-  { icon: '🤝', title: 'Opérationnel en 24h', desc: 'Votre lien est actif le jour même. On s\'occupe de tout.' },
-]
-
 const STEPS = [
-  { num: '01', title: 'Contactez-nous', desc: 'Un email suffit. Votre espace est prêt en quelques minutes.' },
-  { num: '02', title: 'Personnalisez', desc: 'Vos tarifs, votre véhicule, vos disponibilités — depuis votre tableau de bord.' },
-  { num: '03', title: 'Partagez', desc: 'Envoyez votre lien à vos clients. Ils réservent. Vous conduisez.' },
+  { num: '01', title: 'Contactez-nous', desc: 'Un email suffit. Votre espace est prêt en quelques minutes, opérationnel le jour même.' },
+  { num: '02', title: 'Personnalisez', desc: 'Vos tarifs, votre véhicule, vos disponibilités depuis votre tableau de bord. Chaque demande arrive en temps réel — acceptez ou refusez en un clic.' },
+  { num: '03', title: 'Partagez', desc: 'Envoyez votre lien à vos clients. Ils réservent directement. Aucune commission prélevée : ce que vous facturez, vous le gardez entièrement.' },
 ]
 
 export default function LandingPage() {
@@ -125,23 +119,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="px-8 py-16 bg-[#F4F6FA]">
-        <div className="max-w-[860px] mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {BENEFITS.map(b => (
-              <div key={b.title} className="bg-white border border-[#E8EDF5] rounded-2xl px-6 py-6">
-                <div className="text-[28px] mb-3">{b.icon}</div>
-                <h3 className="text-[15px] font-bold text-[#0A1628] mb-2">{b.title}</h3>
-                <p className="text-[13px] text-[#6B7280] leading-[1.6]">{b.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Steps */}
-      <section className="bg-white px-8 py-16">
+      <section className="bg-[#F4F6FA] px-8 py-16">
         <div className="max-w-[800px] mx-auto">
           <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-12">Comment ça fonctionne</h2>
           <div className="flex flex-col md:flex-row gap-6">

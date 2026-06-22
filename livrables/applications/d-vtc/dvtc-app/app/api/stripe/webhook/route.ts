@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
 
     case 'invoice.payment_succeeded': {
       const inv = event.data.object as Stripe.Invoice
-      if (!(inv as { subscription?: unknown }).subscription) break
+      if (!inv.customer) break
 
       /* Idempotence : ne pas traiter deux fois la même facture Stripe */
       const { data: existing } = await db

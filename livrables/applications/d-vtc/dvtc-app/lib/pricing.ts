@@ -10,13 +10,20 @@ export type PriceResult = {
   isLoyal: boolean
 }
 
+export function isNightHour(pricing: Pricing, hour: number): boolean {
+  if (pricing.night_surcharge_enabled === false) return false
+  const start = pricing.night_start_hour ?? 20
+  const end = pricing.night_end_hour ?? 8
+  return hour >= start || hour < end
+}
+
 export function calculateStandardPrice(
   pricing: Pricing,
   distanceKm: number,
   hour: number,
   isLoyal: boolean
 ): PriceResult {
-  const isNight = hour < 8 || hour >= 20
+  const isNight = isNightHour(pricing, hour)
   const base = pricing.base_fare
   const distanceCost = distanceKm * pricing.price_per_km
   const subtotal = base + distanceCost

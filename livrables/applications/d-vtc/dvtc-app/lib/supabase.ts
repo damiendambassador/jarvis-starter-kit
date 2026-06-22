@@ -31,6 +31,9 @@ export type Pricing = {
   base_fare: number
   price_per_km: number
   night_surcharge: number
+  night_surcharge_enabled: boolean
+  night_start_hour: number
+  night_end_hour: number
   dispo_2h: number
   dispo_day: number
   km_included_dispo: number

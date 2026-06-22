@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase, type Driver, type Pricing, type Unavailability } from '@/lib/supabase'
-import { calculateStandardPrice, formatPrice } from '@/lib/pricing'
+import { calculateStandardPrice, formatPrice, isNightHour } from '@/lib/pricing'
 import {
   Car, Clock, Star, MapPin, Route, ChevronLeft, ChevronRight, Loader2,
 } from 'lucide-react'
@@ -105,7 +105,7 @@ export default function BookingPage() {
   const selectedTier = dispoTiers.find(t => t.value === form.dispoDuration) ?? dispoTiers[0]
 
   const hour = parseInt(form.time.split(':')[0])
-  const isNight = hour < 8 || hour >= 20
+  const isNight = pricing ? isNightHour(pricing, hour) : (hour < 8 || hour >= 20)
 
   const standardPrice = useMemo(() => {
     if (!pricing || form.rideType !== 'standard') return null

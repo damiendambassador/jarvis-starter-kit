@@ -25,6 +25,7 @@ export default function SettingsPage() {
   })
   const [tarif, setTarif] = useState({
     base: '', perKm: '', night: '', dispo2h: '', journee: '', remise: '',
+    nightEnabled: true, nightStart: '20', nightEnd: '8',
   })
 
   useEffect(() => {
@@ -39,6 +40,9 @@ export default function SettingsPage() {
             dispo2h: String(data.dispo_2h),
             journee: String(data.dispo_day),
             remise: String(Math.round(data.loyalty_discount * 100)),
+            nightEnabled: data.night_surcharge_enabled ?? true,
+            nightStart: String(data.night_start_hour ?? 20),
+            nightEnd: String(data.night_end_hour ?? 8),
           })
         }
         setLoading(false)
@@ -68,6 +72,9 @@ export default function SettingsPage() {
       base_fare: parseFloat(tarif.base),
       price_per_km: parseFloat(tarif.perKm),
       night_surcharge: parseFloat(tarif.night) / 100,
+      night_surcharge_enabled: tarif.nightEnabled,
+      night_start_hour: parseInt(tarif.nightStart),
+      night_end_hour: parseInt(tarif.nightEnd),
       dispo_2h: parseFloat(tarif.dispo2h),
       dispo_day: parseFloat(tarif.journee),
       loyalty_discount: parseFloat(tarif.remise) / 100,
@@ -171,12 +178,48 @@ export default function SettingsPage() {
                 </Field>
                 <Field label="Majoration nuit (%)">
                   <input className="input-field" type="number" step="1" inputMode="decimal"
-                    value={tarif.night} onChange={e => setTarif(t => ({ ...t, night: e.target.value }))} />
+                    value={tarif.night} onChange={e => setTarif(t => ({ ...t, night: e.target.value }))}
+                    disabled={!tarif.nightEnabled} />
                 </Field>
                 <Field label="Mise à dispo 2h (€)">
                   <input className="input-field" type="number" step="1" inputMode="decimal"
                     value={tarif.dispo2h} onChange={e => setTarif(t => ({ ...t, dispo2h: e.target.value }))} />
                 </Field>
+
+                {/* Horaires de nuit */}
+                <div className="col-span-2 border border-[#D6DEEA] rounded-[10px] px-[14px] py-[12px]">
+                  <label className="flex items-center gap-3 cursor-pointer select-none mb-0">
+                    <div
+                      onClick={() => setTarif(t => ({ ...t, nightEnabled: !t.nightEnabled }))}
+                      className={`relative w-[38px] h-[22px] rounded-full transition-colors cursor-pointer flex-shrink-0 ${tarif.nightEnabled ? 'bg-navy' : 'bg-[#D6DEEA]'}`}
+                    >
+                      <span className={`absolute top-[3px] left-[3px] w-[16px] h-[16px] rounded-full bg-white shadow-sm transition-transform ${tarif.nightEnabled ? 'translate-x-[16px]' : 'translate-x-0'}`} />
+                    </div>
+                    <span className="text-[13px] font-medium text-navy">Appliquer la majoration la nuit</span>
+                  </label>
+
+                  {tarif.nightEnabled && (
+                    <div className="grid grid-cols-2 gap-[10px] mt-[12px]">
+                      <Field label="Début de nuit">
+                        <select className="input-field" value={tarif.nightStart}
+                          onChange={e => setTarif(t => ({ ...t, nightStart: e.target.value }))}>
+                          {Array.from({ length: 24 }, (_, i) => (
+                            <option key={i} value={String(i)}>{String(i).padStart(2, '0')}h00</option>
+                          ))}
+                        </select>
+                      </Field>
+                      <Field label="Fin de nuit">
+                        <select className="input-field" value={tarif.nightEnd}
+                          onChange={e => setTarif(t => ({ ...t, nightEnd: e.target.value }))}>
+                          {Array.from({ length: 24 }, (_, i) => (
+                            <option key={i} value={String(i)}>{String(i).padStart(2, '0')}h00</option>
+                          ))}
+                        </select>
+                      </Field>
+                    </div>
+                  )}
+                </div>
+
                 <Field label="Journée complète (€)">
                   <input className="input-field" type="number" step="1" inputMode="decimal"
                     value={tarif.journee} onChange={e => setTarif(t => ({ ...t, journee: e.target.value }))} />

@@ -48,7 +48,7 @@ Business Development Executive chez Edrington (groupe qui commercialise des spir
 ### Objectifs court terme (3 à 6 mois)
 
 - **Générer des revenus (priorité absolue)**, pour libérer du temps des missions énergivores (Accor Arena) et le réinvestir dans mes activités à fort potentiel, tout en respectant strictement les règles de la micro-entreprise et en faisant transiter ces revenus légalement le plus vite possible
-- Mettre en ligne la première version du site D-VTC (le projet au plus fort potentiel de financement)
+- **Couvrir l'intégralité de mes charges fixes (1 547,99 €/mois) via les abonnements D-VTC** : objectif chiffré central du projet au plus fort potentiel de financement. En net après cotisations micro-BNC (~26 % en 2026), cela représente environ **29 chauffeurs actifs** (74 €/mois brut, soit ~54,70 € net par chauffeur). Le site est déjà en production sur d-vtc.fr, place à la commercialisation pour atteindre ce palier. Un compteur de progression est intégré au panel admin
 - Développer mon activité de coaching (offre, suivi clients, génération de revenus)
 - Réussir ma prise de poste chez Edrington et atteindre mes premiers objectifs chiffrés
 

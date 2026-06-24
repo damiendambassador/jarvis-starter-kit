@@ -501,6 +501,19 @@ export default function AdminDashboard() {
   const totalSaved     = Math.round(totalRevenue * 0.28)
   const convRate       = totalAll > 0 ? Math.round((totalCompleted / totalAll) * 100) : 0
 
+  /* Objectif rentabilité : couvrir les charges fixes en NET, après cotisations micro-BNC */
+  const PRICE_PER_DRIVER = 74        // € brut / mois / chauffeur
+  const COTISATION_RATE  = 0.261     // micro-BNC 2026 (~26 %)
+  const FIXED_COSTS      = 1547.99   // € / mois de charges fixes à couvrir (en net)
+  const NET_PER_DRIVER   = PRICE_PER_DRIVER * (1 - COTISATION_RATE)        // ≈ 54,69 €
+  const GOAL_DRIVERS     = Math.ceil(FIXED_COSTS / NET_PER_DRIVER)         // ≈ 29
+  const activeCount      = drivers.filter(d => d.subscription_status === 'active').length
+  const mrrGross         = activeCount * PRICE_PER_DRIVER
+  const mrrNet           = mrrGross * (1 - COTISATION_RATE)
+  const goalReached      = mrrNet >= FIXED_COSTS
+  const goalPct          = Math.min(100, Math.round((mrrNet / FIXED_COSTS) * 100))
+  const remaining        = Math.max(0, GOAL_DRIVERS - activeCount)
+
   if (loading) return (
     <div className="min-h-screen bg-[#F4F6FA] flex items-center justify-center">
       <Loader2 className="animate-spin text-[#0A1628]" size={32} />
@@ -542,6 +555,48 @@ export default function AdminDashboard() {
             <Plus size={16} />
             Ajouter un chauffeur
           </button>
+        </div>
+
+        {/* Objectif rentabilité — toujours visible */}
+        <div className="bg-white rounded-2xl border border-[#E8EDF5] px-6 py-5 mb-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-[9px] flex items-center justify-center ${goalReached ? 'bg-green-50' : 'bg-[#FBF7EC]'}`}>
+                <Target size={18} className={goalReached ? 'text-green-600' : 'text-[#C9A84C]'} />
+              </div>
+              <div>
+                <div className="text-[14px] font-bold text-[#0A1628]">Objectif rentabilité</div>
+                <div className="text-[12px] text-[#8A94A6]">
+                  {goalReached
+                    ? 'Charges fixes couvertes, objectif atteint'
+                    : `Plus que ${remaining} chauffeur${remaining > 1 ? 's' : ''} actif${remaining > 1 ? 's' : ''} pour couvrir vos charges fixes`}
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-[24px] font-bold text-[#0A1628] leading-none">
+                {activeCount}<span className="text-[#A7B0BF] text-[16px] font-semibold"> / {GOAL_DRIVERS}</span>
+              </div>
+              <div className="text-[11px] text-[#A7B0BF] mt-1">chauffeurs actifs</div>
+            </div>
+          </div>
+          <div className="h-2.5 bg-[#F0F3F8] rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{ width: `${goalPct}%`, backgroundColor: goalReached ? '#16A34A' : '#C9A84C' }}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-[11px] text-[#8A94A6]">
+              Net actuel <span className="font-semibold text-[#0A1628]">{fmtPrice(mrrNet)}</span>
+            </span>
+            <span className="text-[11px] text-[#8A94A6]">
+              Charges fixes <span className="font-semibold text-[#0A1628]">{fmtPrice(FIXED_COSTS)}</span>/mois
+            </span>
+          </div>
+          <p className="text-[10px] text-[#A7B0BF] mt-1.5">
+            {fmtPrice(mrrGross)} brut encaissé/mois, soit {fmtPrice(mrrNet)} net après cotisations micro-BNC (~{Math.round(COTISATION_RATE * 100)} %)
+          </p>
         </div>
 
         {/* Onglets */}
@@ -676,17 +731,15 @@ export default function AdminDashboard() {
         </>)}
 
         {activeTab === 'billing' && (() => {
-          const activeCount   = drivers.filter(d => d.subscription_status === 'active').length
           const pastDueCount  = drivers.filter(d => d.subscription_status === 'past_due').length
           const cancelledCount= drivers.filter(d => d.subscription_status === 'cancelled').length
-          const mrr           = activeCount * 74
 
           return (
             <>
             {/* KPIs Billing */}
             <div className="grid grid-cols-2 gap-4 mb-8 sm:grid-cols-4">
               {[
-                { label: 'MRR', value: fmtPrice(mrr), sub: `${activeCount} abonnement${activeCount > 1 ? 's' : ''} actif${activeCount > 1 ? 's' : ''}`, icon: CreditCard, color: 'text-[#C9A84C]', bg: 'bg-[#FBF7EC]' },
+                { label: 'MRR', value: fmtPrice(mrrGross), sub: `${activeCount} abonnement${activeCount > 1 ? 's' : ''} actif${activeCount > 1 ? 's' : ''}`, icon: CreditCard, color: 'text-[#C9A84C]', bg: 'bg-[#FBF7EC]' },
                 { label: 'Actifs', value: activeCount, sub: 'Abonnements en cours', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
                 { label: 'En retard', value: pastDueCount, sub: pastDueCount > 0 ? 'Paiement échoué' : 'Aucun retard', icon: AlertCircle, color: pastDueCount > 0 ? 'text-red-600' : 'text-[#8A94A6]', bg: pastDueCount > 0 ? 'bg-red-50' : 'bg-[#F4F6FA]' },
                 { label: 'Résiliés', value: cancelledCount, sub: 'Comptes fermés', icon: XCircle, color: 'text-[#8A94A6]', bg: 'bg-[#F4F6FA]' },

@@ -7,6 +7,16 @@
 
 ---
 
+## 2026-06-24
+
+### D-VTC — objectif rentabilité chiffré + compteur dans le panel admin
+
+- Objectif central de D-VTC formalisé : **couvrir l'intégralité des charges fixes (1 547,99 €/mois)** via les abonnements
+- Précision du calcul : en net après cotisations micro-BNC (~26 % en 2026), 74 € brut/chauffeur = ~54,70 € net, donc il faut **~29 chauffeurs actifs** (et non 27, chiffre qui ne couvrait pas tout à fait les charges en net avec les taux 2026)
+- Compteur « Objectif rentabilité » ajouté en haut du panel admin (`app/admin/dashboard/page.tsx`) : jauge X/29 chauffeurs actifs, revenu net actuel vs charges fixes, MRR brut affiché en repère. Calcul paramétré (charges, prix, taux de cotisations) pour rester juste si un chiffre évolue
+
+---
+
 ## 2026-06-23
 
 ### Carte de prospection Edrington — création de l'outil

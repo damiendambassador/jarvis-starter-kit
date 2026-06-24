@@ -184,17 +184,35 @@ export default function HomePage() {
       }
 
       setImportMsg(`Enregistrement de ${ready.length} magasins…`)
+      let inserted = 0
+      let insertError: string | null = null
       for (let i = 0; i < ready.length; i += 500) {
-        await supabase.from('stores').insert(ready.slice(i, i + 500))
+        const slice = ready.slice(i, i + 500)
+        const { error } = await supabase.from('stores').insert(slice)
+        if (error) {
+          insertError = error.message
+          break
+        }
+        inserted += slice.length
       }
 
       await load()
       setImporting(false)
       setImportMsg(null)
-      alert(
-        `${ready.length} magasin(s) importé(s).` +
-          (failed ? `\n${failed} adresse(s) non localisée(s) (à ajouter manuellement).` : ''),
-      )
+      if (insertError) {
+        // Ne jamais annoncer un succès si l'écriture en base a échoué (ex. session expirée → RLS).
+        alert(
+          `L'enregistrement a échoué après ${inserted} magasin(s) sur ${ready.length}.\n` +
+            `Erreur : ${insertError}\n\n` +
+            `Si tu es resté longtemps sur la page, ta session a peut-être expiré : ` +
+            `déconnecte-toi, reconnecte-toi, puis relance l'import.`,
+        )
+      } else {
+        alert(
+          `${inserted} magasin(s) importé(s).` +
+            (failed ? `\n${failed} adresse(s) non localisée(s) (à ajouter manuellement).` : ''),
+        )
+      }
     },
     [load],
   )

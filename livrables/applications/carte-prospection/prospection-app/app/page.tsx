@@ -58,12 +58,22 @@ export default function HomePage() {
   }, [router])
 
   // ── Chargement des magasins + placements ──
+  // Supabase/PostgREST plafonne chaque réponse à 1000 lignes : on pagine pour TOUT charger
+  // (sinon, au-delà de 1000 magasins, les plus récents n'apparaissent jamais sur la carte).
   const load = useCallback(async () => {
-    const { data } = await supabase
-      .from('stores')
-      .select('*, placements(*)')
-      .order('created_at', { ascending: true })
-    setStores((data as StoreWithPlacements[]) ?? [])
+    const PAGE = 1000
+    const all: StoreWithPlacements[] = []
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await supabase
+        .from('stores')
+        .select('*, placements(*)')
+        .order('created_at', { ascending: true })
+        .range(from, from + PAGE - 1)
+      if (error || !data?.length) break
+      all.push(...(data as StoreWithPlacements[]))
+      if (data.length < PAGE) break
+    }
+    setStores(all)
     setLoading(false)
   }, [])
 

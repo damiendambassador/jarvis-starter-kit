@@ -1,0 +1,1330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Cavistes manquants</name>
+    <Folder>
+      <name>Repaire de Bacchus</name>
+      <Placemark>
+        <name>Le Repaire de Bacchus Antony</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3 rue Auguste Mounié</value></Data>
+          <Data name="Code Postal"><value>92160</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.304377,48.753497,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Auteuil</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>58 rue d&apos;Auteuil</value></Data>
+          <Data name="Code Postal"><value>75016</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.262117,48.848027,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Bayen</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>6 rue Bayen</value></Data>
+          <Data name="Code Postal"><value>75017</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.295525,48.878961,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Belleville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>105 rue de Belleville</value></Data>
+          <Data name="Code Postal"><value>75019</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.38659,48.874612,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Boulogne</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>52 avenue Jean-Baptiste Clément</value></Data>
+          <Data name="Code Postal"><value>92100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.235861,48.845462,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Boulogne 2</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>247 Boulevard Jean Jaurès</value></Data>
+          <Data name="Code Postal"><value>92100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.246619,48.828357,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Bretagne</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>40 rue de Bretagne</value></Data>
+          <Data name="Code Postal"><value>75003</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.36228,48.863139,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Cler</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>29 rue Cler</value></Data>
+          <Data name="Code Postal"><value>75007</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.306185,48.857428,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Colombes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>47 Rue Saint-Denis</value></Data>
+          <Data name="Code Postal"><value>92700</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.255459,48.923806,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Convention</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>228 rue de la Convention</value></Data>
+          <Data name="Code Postal"><value>75015</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.299592,48.836139,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus De Maistre</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>1 rue Joseph De Maistre</value></Data>
+          <Data name="Code Postal"><value>75018</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.334534,48.885849,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Fontenay</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>17, rue du Commandant Jean Duhail</value></Data>
+          <Data name="Code Postal"><value>94120</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.46789,48.845912,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Levallois-Perret</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>20 rue Henri Barbusse</value></Data>
+          <Data name="Code Postal"><value>92300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.289325,48.890754,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Levis</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>51 rue de Levis</value></Data>
+          <Data name="Code Postal"><value>75017</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.314172,48.883283,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Losserand</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>104 rue Raymond Losserand</value></Data>
+          <Data name="Code Postal"><value>75014</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.315503,48.832611,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Lourmel</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>4 rue de Lourmel</value></Data>
+          <Data name="Code Postal"><value>75015</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.292032,48.8504,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Martyrs</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>11 rue des Martyrs</value></Data>
+          <Data name="Code Postal"><value>75009</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.339365,48.877636,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Maubert</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>47 ter, boulevard Saint-Germain</value></Data>
+          <Data name="Code Postal"><value>75005</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.348467,48.849796,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Moines</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>30 rue des Moines</value></Data>
+          <Data name="Code Postal"><value>75017</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.319487,48.88882,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Montorgueil</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>88 rue Montorgueil</value></Data>
+          <Data name="Code Postal"><value>75002</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.347163,48.865897,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Morillons</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>75 rue des Morillons</value></Data>
+          <Data name="Code Postal"><value>75015</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.302832,48.832237,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Mouffetard</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>112 rue Mouffetard</value></Data>
+          <Data name="Code Postal"><value>75005</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.349616,48.840685,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Mozart</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>52 avenue Mozart</value></Data>
+          <Data name="Code Postal"><value>75016</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.269655,48.855155,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Ozoir</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>9 Av. du Général Leclerc</value></Data>
+          <Data name="Code Postal"><value>77330</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.672403,48.76358,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Poteau</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>5 rue du Poteau</value></Data>
+          <Data name="Code Postal"><value>75018</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.343294,48.892949,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Printemps</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>64 Boulevard Haussmann</value></Data>
+          <Data name="Code Postal"><value>75009</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.328157,48.873773,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Rambuteau</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>14 rue Rambuteau</value></Data>
+          <Data name="Code Postal"><value>75003</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.355653,48.860562,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Saint-Charles 2</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>159 Rue Saint-Charles</value></Data>
+          <Data name="Code Postal"><value>75015</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.281947,48.842324,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Saint-Dominique</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>122 rue Saint-Dominique</value></Data>
+          <Data name="Code Postal"><value>75007</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.300877,48.857991,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Saint-Germain-en-Laye</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>60 rue de Poissy</value></Data>
+          <Data name="Code Postal"><value>78100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.08946,48.898045,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Saint-Maur</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>14 avenue Charles de Gaulle</value></Data>
+          <Data name="Code Postal"><value>94100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.485355,48.803812,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Tolbiac</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>215 bis rue de Tolbiac</value></Data>
+          <Data name="Code Postal"><value>75013</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.346791,48.8256,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Repaire de Bacchus Vincennes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>50 rue du Midi</value></Data>
+          <Data name="Code Postal"><value>94300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.43494,48.847294,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Nysa</name>
+      <Placemark>
+        <name>Nysa Aligre</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3 Place d’Aligre</value></Data>
+          <Data name="Code Postal"><value>75012</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.377889,48.849364,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Avenue de Versailles</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>205 Avenue de Versailles</value></Data>
+          <Data name="Code Postal"><value>75016</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.259873,48.838514,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Batignolles</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>30 Rue des Batignolles</value></Data>
+          <Data name="Code Postal"><value>75017</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.320727,48.885148,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Belleville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>122 Rue de Belleville</value></Data>
+          <Data name="Code Postal"><value>75020</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.388338,48.874662,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Bourg La Reine</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>1 Bis Rue René Roeckel</value></Data>
+          <Data name="Code Postal"><value>92340</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.314778,48.779458,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Bourguignons</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>66 Rue des Bourguignons</value></Data>
+          <Data name="Code Postal"><value>92600</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.273503,48.913678,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Bretagne</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>33 Rue de Bretagne</value></Data>
+          <Data name="Code Postal"><value>75003</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.362702,48.862678,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Capitaine Ferber</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3 Rue du Capitaine Ferber</value></Data>
+          <Data name="Code Postal"><value>75020</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.404716,48.864894,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Caulaincourt</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>121 Rue Caulaincourt</value></Data>
+          <Data name="Code Postal"><value>75018</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.341646,48.889841,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Clichy</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>72 Rue de Neuilly</value></Data>
+          <Data name="Code Postal"><value>92110</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.303621,48.902595,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Colombes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>63 Rue Saint-Denis</value></Data>
+          <Data name="Code Postal"><value>92700</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.254261,48.923869,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Daumesnil</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>254 Avenue Daumesnil</value></Data>
+          <Data name="Code Postal"><value>75012</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.40288,48.836679,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Faubourg Saint Denis</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>59 Rue du Faubourg Saint Denis</value></Data>
+          <Data name="Code Postal"><value>75010</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.353786,48.872008,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Gambetta</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>216 bis Rue des Pyrénées</value></Data>
+          <Data name="Code Postal"><value>75020</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.39776,48.866035,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Garenne Colombes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>4 Bis Rue Voltaire</value></Data>
+          <Data name="Code Postal"><value>92250</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.247072,48.908454,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Lancry</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>55 Rue de Lancry</value></Data>
+          <Data name="Code Postal"><value>75010</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.362354,48.871837,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Lecourbe</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>108 Rue Lecourbe</value></Data>
+          <Data name="Code Postal"><value>75015</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.303057,48.842833,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Les Lilas</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>70 Rue de Paris</value></Data>
+          <Data name="Code Postal"><value>93260</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.413787,48.879073,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Levis</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>25 Rue de Levis</value></Data>
+          <Data name="Code Postal"><value>75017</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.315258,48.882335,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Martyrs</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>39 Rue des Martyrs</value></Data>
+          <Data name="Code Postal"><value>75009</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.339959,48.879566,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Montorgueil</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>94 Rue Montorgueil</value></Data>
+          <Data name="Code Postal"><value>75002</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.347191,48.866029,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Montrouge</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>61 Avenue de la République</value></Data>
+          <Data name="Code Postal"><value>92120</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.318711,48.816898,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Pyrénées</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>104 Rue des Pyrénées</value></Data>
+          <Data name="Code Postal"><value>75020</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.405197,48.855994,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Rambuteau</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>29 Rue Rambuteau</value></Data>
+          <Data name="Code Postal"><value>75004</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.354146,48.860916,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Rendez Vous</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>24 Rue du Rendez-vous</value></Data>
+          <Data name="Code Postal"><value>75012</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.403991,48.84551,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Rochechouart</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>32 Rue de Rochechouart</value></Data>
+          <Data name="Code Postal"><value>75009</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.345313,48.87861,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Rueil</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>6-8 Place de l&apos;Église</value></Data>
+          <Data name="Code Postal"><value>92500</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.180926,48.876618,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Saint Antoine</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>95 Rue Saint-Antoine</value></Data>
+          <Data name="Code Postal"><value>75004</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.362039,48.854751,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Sceaux</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>86 rue Houdan</value></Data>
+          <Data name="Code Postal"><value>92330</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.293673,48.777966,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Sécrétan</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>17 Avenue Sécrétan</value></Data>
+          <Data name="Code Postal"><value>75019</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.371784,48.881987,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Nysa Tocqueville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>76 Rue de Tocqueville</value></Data>
+          <Data name="Code Postal"><value>75017</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.310331,48.885519,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Le Comptoir Irlandais</name>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Angers</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>30 rue de la Roë</value></Data>
+          <Data name="Code Postal"><value>49100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.552884,47.472337,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Auray</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>1 rue du lait</value></Data>
+          <Data name="Code Postal"><value>56400</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.984886,47.666569,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Bayeux</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>30 rue Saint-Martin</value></Data>
+          <Data name="Code Postal"><value>14400</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.702443,49.27727,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Bayonne</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>21 rue Lormand</value></Data>
+          <Data name="Code Postal"><value>64100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-1.475755,43.492912,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Besançon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>19 Place du 8 Septembre</value></Data>
+          <Data name="Code Postal"><value>25000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.024479,47.238432,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Blois</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>48 rue Denis Papin</value></Data>
+          <Data name="Code Postal"><value>41000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.333265,47.587397,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Bordeaux</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>14 rue du Temple</value></Data>
+          <Data name="Code Postal"><value>33000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.57793,44.841167,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Brest</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>32 quai de la Douane</value></Data>
+          <Data name="Code Postal"><value>29200</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-4.484406,48.382912,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Brive-La-Gaillarde</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>9 rue Lieutenant Colonel Farro</value></Data>
+          <Data name="Code Postal"><value>19100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.533198,45.158004,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Caen</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>48 rue Saint-Jean</value></Data>
+          <Data name="Code Postal"><value>14000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.359396,49.181846,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Chartres</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>12-14 rue de la tonnellerie</value></Data>
+          <Data name="Code Postal"><value>28000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.487184,48.444322,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Cherbourg</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>18 quai de Caligny</value></Data>
+          <Data name="Code Postal"><value>50100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-1.62151,49.640579,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Clermont-Ferrand</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>76 rue Lamartine</value></Data>
+          <Data name="Code Postal"><value>63000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.077755,45.777069,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Deauville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>27 rue Olliffe, Deauville</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.07674,49.360381,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Dieppe</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>95 Grande Rue</value></Data>
+          <Data name="Code Postal"><value>76200</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.076247,49.925711,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Dijon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>7 rue Mably</value></Data>
+          <Data name="Code Postal"><value>21000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.03651,47.323059,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Dunkerque</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>6 rue de la Marine</value></Data>
+          <Data name="Code Postal"><value>59140</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.376256,51.034499,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Granville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>17 rue Georges Clemenceau</value></Data>
+          <Data name="Code Postal"><value>50400</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-1.598233,48.838796,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Grenoble</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>1 rue Jean-François Hache, Grenoble</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.731208,45.191737,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de La Rochelle</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>15 rue Pas du Minage</value></Data>
+          <Data name="Code Postal"><value>17000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-1.149578,46.162297,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de La Trinité-Sur-Mer</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>27 cours des Quais</value></Data>
+          <Data name="Code Postal"><value>56470</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-3.028746,47.588157,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Lannion</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>5 rue Emile Le Taillandier</value></Data>
+          <Data name="Code Postal"><value>22300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-3.459967,48.731537,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Libourne</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>44, rue Gambetta</value></Data>
+          <Data name="Code Postal"><value>33500</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.242654,44.915523,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Lille</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>16 rue de la vieille comédie</value></Data>
+          <Data name="Code Postal"><value>59800</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.063686,50.635159,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Lorient</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>32 avenue de la Perrière, Lorient</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>-3.365045,47.734241,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Lyon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>38 quai Saint-Antoine, Lyon</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>4.831593,45.761402,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Metz</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>4 Place St Nicolas</value></Data>
+          <Data name="Code Postal"><value>57000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.178285,49.113765,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Morlaix</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>10 Place des Otages</value></Data>
+          <Data name="Code Postal"><value>29600</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-3.828457,48.578215,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Nancy</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>111 rue St Dizier</value></Data>
+          <Data name="Code Postal"><value>54000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.18433,48.688459,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Nantes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>12 rue Verdun</value></Data>
+          <Data name="Code Postal"><value>44000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-1.552204,47.217393,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Nice</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>25, avenue Notre Dame</value></Data>
+          <Data name="Code Postal"><value>06000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>7.267292,43.703703,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Orléans</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>31 boulevard Alexandre Martin</value></Data>
+          <Data name="Code Postal"><value>45000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.909316,47.905261,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Paimpol</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>8 rue Huit Patriotes</value></Data>
+          <Data name="Code Postal"><value>22500</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-3.046261,48.779743,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Paris 11e</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>157 boulevard Voltaire, Paris 11e</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.384854,48.855175,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Paris 13e</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>57 rue Tolbiac, Paris 13e</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.369988,48.827389,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Pau</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>5 place de la Libération</value></Data>
+          <Data name="Code Postal"><value>64000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.371299,43.297632,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Périgueux</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>35 rue Limogeanne</value></Data>
+          <Data name="Code Postal"><value>24000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.722045,45.185722,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Poitiers</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3 rue Régratterie</value></Data>
+          <Data name="Code Postal"><value>86000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.342265,46.583636,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Pontivy</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>11 rue Fil</value></Data>
+          <Data name="Code Postal"><value>56300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.964639,48.067732,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Quiberon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>34 rue de Verdun</value></Data>
+          <Data name="Code Postal"><value>56170</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-3.119537,47.483245,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Quimper</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>8 quai de l’Odet</value></Data>
+          <Data name="Code Postal"><value>29000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-4.106271,47.993861,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Rennes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>6 rue de Dinan</value></Data>
+          <Data name="Code Postal"><value>35000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-1.68533,48.113376,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Rouen</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>67 rue Jeanne d&apos;Arc</value></Data>
+          <Data name="Code Postal"><value>76000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.092177,49.444965,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Saint-Brieuc</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>45 rue St Guillaume</value></Data>
+          <Data name="Code Postal"><value>22000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.759596,48.513281,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Saint-Malo</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>38 rue Ville-Pépin, Saint-Malo</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.014506,48.635879,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Saint-Nazaire</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>36 avenue de la République</value></Data>
+          <Data name="Code Postal"><value>44600</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.212621,47.277354,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Saint-Quentin</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>5 rue des Halles, Saint-Quentin</value></Data>
+          <Data name="Code Postal"><value></value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.285902,49.847078,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Toulon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>15 place de la Cathédrale</value></Data>
+          <Data name="Code Postal"><value>83000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.933507,43.121582,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Toulouse</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>19 rue de la Trinité</value></Data>
+          <Data name="Code Postal"><value>31000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.444806,43.599654,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Tours</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>7 rue Marceau</value></Data>
+          <Data name="Code Postal"><value>37000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.684501,47.394544,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais De Valenciennes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>20 rue du Quesnoy</value></Data>
+          <Data name="Code Postal"><value>59300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.525074,50.358087,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais de Vannes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3 rue Porte Prison</value></Data>
+          <Data name="Code Postal"><value>56000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.755245,47.658391,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais du Havre</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>39 Place Halles Centrales</value></Data>
+          <Data name="Code Postal"><value>76600</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.103893,49.49102,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais du Mans</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>6 Place Franklin Roosevelt</value></Data>
+          <Data name="Code Postal"><value>72000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.198026,48.001142,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Le Comptoir Irlandais du Puy en Velay</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>21 boulevard St Louis</value></Data>
+          <Data name="Code Postal"><value>43000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.881091,45.042266,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Intercaves</name>
+      <Placemark>
+        <name>Intercaves Bergerac</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>112 Rue Clairat</value></Data>
+          <Data name="Code Postal"><value>24100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.493111,44.843862,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Besançon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>81 Rue De Belfort</value></Data>
+          <Data name="Code Postal"><value>25000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.032683,47.249912,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Bitschwiller Les Thann</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>53 Faubourg Du Rhin</value></Data>
+          <Data name="Code Postal"><value>68620</value></Data>
+        </ExtendedData>
+        <Point><coordinates>7.083394,47.820397,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Bois Guillaume</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3250 Route De Neufchâtel</value></Data>
+          <Data name="Code Postal"><value>76230</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.11989,49.469704,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Boissy-Saint-Léger</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>13 Rue De Valenton</value></Data>
+          <Data name="Code Postal"><value>94470</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.51116,48.747507,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Bourgoin Jallieu</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>20, Boulevard De Champaret Ccial De Champaret</value></Data>
+          <Data name="Code Postal"><value>38300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.290733,45.585471,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Carnoux En Provence</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>57 Avenue De Cassis</value></Data>
+          <Data name="Code Postal"><value>13470</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.553148,43.249952,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Carvin</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>50 Rue Du Moulin</value></Data>
+          <Data name="Code Postal"><value>62220</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.96507,50.481626,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Castres</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>173 Avenue Du Sidobre</value></Data>
+          <Data name="Code Postal"><value>81100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.268809,43.616312,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Charmeil</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>Centre Commercial, 20 Route De Saint Pourçain</value></Data>
+          <Data name="Code Postal"><value>03110</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.392341,46.158465,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Clairoix</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>248 Rue De La République</value></Data>
+          <Data name="Code Postal"><value>60280</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.838693,49.432135,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Combs La Ville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>Z.A. De L&apos; Ormeau 15 Rue Pierre &amp; Marie Curie</value></Data>
+          <Data name="Code Postal"><value>77380</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.561882,48.65253,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Couilly-Pont-Aux-Dames</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>73 Avenue De L&apos;Ensoleillée</value></Data>
+          <Data name="Code Postal"><value>77860</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.871549,48.871665,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Coulommiers</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>49 Rue De L&apos;Orgeval</value></Data>
+          <Data name="Code Postal"><value>77120</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.099694,48.8027,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Fontainebleau</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>4, Rue Jean Henri Dunant</value></Data>
+          <Data name="Code Postal"><value>77300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.689054,48.40715,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Gargenville</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3, Avenue Du Colonel Fabien</value></Data>
+          <Data name="Code Postal"><value>78440</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.809697,48.987956,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Golbey</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>61, Rue Boulay</value></Data>
+          <Data name="Code Postal"><value>88190</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.441787,48.193244,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Gournay Sur Marne</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>33, Avenue Des Princes</value></Data>
+          <Data name="Code Postal"><value>93460</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.582208,48.857205,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Issoire</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3 Avenue Pierre Mendès France</value></Data>
+          <Data name="Code Postal"><value>63500</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.257789,45.551745,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Joué-Lès-Tours</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>5bis Place Du Général Leclerc</value></Data>
+          <Data name="Code Postal"><value>37300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.662369,47.351755,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Le Port-Marly</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>3, Rue De Paris</value></Data>
+          <Data name="Code Postal"><value>78560</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.111476,48.879602,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Le Versoud</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>143, Route De Grenoble</value></Data>
+          <Data name="Code Postal"><value>38420</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.85726,45.211795,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Lyon</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>28, Rue Nicolaï</value></Data>
+          <Data name="Code Postal"><value>69007</value></Data>
+        </ExtendedData>
+        <Point><coordinates>4.856153,45.748151,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Marly Valenciennes</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>303 Avenue Henri Barbusse</value></Data>
+          <Data name="Code Postal"><value>59770</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.559055,50.343768,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Meung-Sur-Loire</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>51 Route D&apos;Orléans</value></Data>
+          <Data name="Code Postal"><value>45130</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.770872,47.865405,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Millau</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>24 Boulevard De La Capelle</value></Data>
+          <Data name="Code Postal"><value>12100</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.08172,44.098553,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Miribel-Les-Echets</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>874 Route De Strasbourg</value></Data>
+          <Data name="Code Postal"><value>01700</value></Data>
+        </ExtendedData>
+        <Point><coordinates>4.912241,45.871214,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Montbéliard</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>21 Avenue D&apos;Helvétie</value></Data>
+          <Data name="Code Postal"><value>25200</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.805019,47.50847,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Montlouis-Sur-Loire</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>9003 Avenue Victor Laloux</value></Data>
+          <Data name="Code Postal"><value>37270</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.840733,47.3846,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Niort</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>Parc D&apos;Activité Du Petit Chaban 4 Rue Jean Baptiste Berlier</value></Data>
+          <Data name="Code Postal"><value>79000</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-0.415841,46.339122,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Ollioules</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>762 Avenue Jean Monnet</value></Data>
+          <Data name="Code Postal"><value>83190</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.853954,43.127238,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Orchies</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>7, Zone D&apos;Aménagement Concerté Europe, Carrière Dorée Zac</value></Data>
+          <Data name="Code Postal"><value>59310</value></Data>
+        </ExtendedData>
+        <Point><coordinates>3.240832,50.470488,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Orsay</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>5 Rue Du Docteur Ernest Lauriat</value></Data>
+          <Data name="Code Postal"><value>91400</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.187956,48.696911,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Ozoir-La-Ferrière</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>6 Rue De La Verrerie</value></Data>
+          <Data name="Code Postal"><value>77330</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.664551,48.762041,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Pornic</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>4 Rue Du Traité De Paris</value></Data>
+          <Data name="Code Postal"><value>44210</value></Data>
+        </ExtendedData>
+        <Point><coordinates>-2.120665,47.127503,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Saint-Cyr-L&apos;École</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>77 Rue Du Docteur Vaillant</value></Data>
+          <Data name="Code Postal"><value>78210</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.075233,48.806676,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Saint-Donat-Sur-L&apos;Herbasse</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>37 Avenue Du Commandant Corlu</value></Data>
+          <Data name="Code Postal"><value>26260</value></Data>
+        </ExtendedData>
+        <Point><coordinates>4.971212,45.119232,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Sainte-Marie-Des-Champs</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>Zone Industrielle Des Renards 167, Rue Du Commerce</value></Data>
+          <Data name="Code Postal"><value>76190</value></Data>
+        </ExtendedData>
+        <Point><coordinates>0.789042,49.622355,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Sallanches</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>21 Rue Du Colonney</value></Data>
+          <Data name="Code Postal"><value>74700</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.635463,45.946409,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Salon-De-Provence</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>14 Impasse Du Coussoul</value></Data>
+          <Data name="Code Postal"><value>13300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>5.081455,43.635646,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Saran</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>327, Route Nationale 20</value></Data>
+          <Data name="Code Postal"><value>45770</value></Data>
+        </ExtendedData>
+        <Point><coordinates>1.892926,47.940741,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Sollies-Pont</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>8 Avenue Du Lion</value></Data>
+          <Data name="Code Postal"><value>83210</value></Data>
+        </ExtendedData>
+        <Point><coordinates>6.050269,43.201459,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Thiais</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>23, Avenue René Panhard</value></Data>
+          <Data name="Code Postal"><value>94320</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.398379,48.763499,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Vigneux-Sur-Seine</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>80, Avenue Henri Barbusse</value></Data>
+          <Data name="Code Postal"><value>91270</value></Data>
+        </ExtendedData>
+        <Point><coordinates>2.424207,48.701372,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Intercaves Villerest</name>
+        <ExtendedData>
+          <Data name="Adresse"><value>162 Route De Villemontais</value></Data>
+          <Data name="Code Postal"><value>42300</value></Data>
+        </ExtendedData>
+        <Point><coordinates>4.042338,46.018019,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

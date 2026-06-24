@@ -14,6 +14,14 @@
 - Objectif central de D-VTC formalisé : **couvrir l'intégralité des charges fixes (1 547,99 €/mois)** via les abonnements
 - Précision du calcul : en net après cotisations micro-BNC (~26 % en 2026), 74 € brut/chauffeur = ~54,70 € net, donc il faut **~29 chauffeurs actifs** (et non 27, chiffre qui ne couvrait pas tout à fait les charges en net avec les taux 2026)
 - Compteur « Objectif rentabilité » ajouté en haut du panel admin (`app/admin/dashboard/page.tsx`) : jauge X/29 chauffeurs actifs, revenu net actuel vs charges fixes, MRR brut affiché en repère. Calcul paramétré (charges, prix, taux de cotisations) pour rester juste si un chiffre évolue
+- Déployé en production (push sur main, Vercel build OK). Taux de cotisations ~26 % à confirmer avec le comptable (pilote le seuil de 29)
+
+### Sécurisation de l'accès GitHub (token exposé)
+
+- Token GitHub personnel (`gho_`) découvert stocké en clair dans l'URL du remote git (`.git/config`), exposé pendant la session
+- Token révoqué côté GitHub : Git Credential Manager et Visual Studio Code désautorisés dans les OAuth Apps
+- Remote nettoyé (plus de token dans l'URL), ancien identifiant github.com purgé du coffre Windows
+- Reste à faire : reconnexion GitHub au prochain `git push`/`fetch` via Git Credential Manager (`gh` CLI non installé). Le nouveau token sera stocké chiffré dans le Gestionnaire d'identifiants Windows
 
 ---
 

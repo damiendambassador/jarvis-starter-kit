@@ -7,6 +7,20 @@
 
 ---
 
+## 2026-06-23
+
+### Carte de prospection Edrington — création de l'outil
+- Nouvelle web app (Next.js 14 + Supabase + Google Maps + Vercel) pour remplacer le suivi Google My Maps de la prospection off-trade
+- Modèle de données : magasins (enseigne, adresse, statut visite) + placements (marque, référence, statut Présent / En cours / Gagné / Refusé)
+- Design : couleur = état, code 2 lettres = enseigne, étoile verte = nouvelle DN gagnée, panneau légende/stats redimensionnable
+- Fonctions : filtres (focus marque présente/absente, « mes gains »), pénétration par marque, calcul de distances
+- Import KML (géocodage automatique des ~707 adresses sans coordonnées) + import par collage de listes par enseigne
+- Références alignées sur le catalogue Edrington 2026 (Macallan, Glenrothes, Highland Park, Brugal, Gin N°3, Valdespino)
+- Infra créée : Supabase « Edrington Map France » (eu-central-1), Google Cloud « Edrington Map » (Maps JS + Geocoding + Distance Matrix)
+- Commit ciblé 29502af (app uniquement)
+
+---
+
 ## 2026-06-22 (session 3)
 
 ### D-VTC — Fix facture + i18n page de réservation + prospection VTC

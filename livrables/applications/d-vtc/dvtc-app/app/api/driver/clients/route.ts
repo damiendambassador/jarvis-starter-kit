@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { resolveActor } from '@/lib/actor-auth'
+import { resolveActor, type Actor } from '@/lib/actor-auth'
 
 const db = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,20 +8,23 @@ const db = createClient(
   { auth: { persistSession: false } }
 )
 
-export async function POST(req: NextRequest) {
+function targetDriver(actor: Actor, requested: string | null): string | null {
+  return actor.kind === 'admin' ? requested : actor.driverId
+}
+
+export async function GET(req: NextRequest) {
   const actor = await resolveActor(req)
   if (!actor) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
-  const body = await req.json()
-  // Chauffeur : accepte ses propres CGV. Admin : peut cibler un driverId.
-  const driverId = actor.kind === 'admin' ? body.driverId : actor.driverId
+  const driverId = targetDriver(actor, new URL(req.url).searchParams.get('driverId'))
   if (!driverId) return NextResponse.json({ error: 'driverId requis' }, { status: 400 })
 
-  const { error } = await db
-    .from('drivers')
-    .update({ cgv_accepted_at: new Date().toISOString() })
-    .eq('id', driverId)
+  const { data, error } = await db
+    .from('clients')
+    .select('*')
+    .eq('driver_id', driverId)
+    .order('total_rides', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ data })
 }

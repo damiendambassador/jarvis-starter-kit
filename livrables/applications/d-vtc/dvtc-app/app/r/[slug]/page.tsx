@@ -58,6 +58,7 @@ export default function BookingPage() {
   const [distanceError, setDistanceError] = useState<string | null>(null)
   const [returningUser, setReturningUser] = useState<string | null>(null)
   const [dateUnavails, setDateUnavails] = useState<Unavailability[]>([])
+  const [hp, setHp] = useState('')  // honeypot anti-spam
 
   const [form, setForm] = useState({
     firstName: '', lastName: '', phone: '', email: '',
@@ -274,7 +275,7 @@ export default function BookingPage() {
       await fetch('/api/booking/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reservationId }),
+        body: JSON.stringify({ reservationId, website: hp }),
       })
     } catch (err) {
       console.error('[notify]', err)
@@ -630,6 +631,13 @@ export default function BookingPage() {
               value={form.notes}
               onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))} />
           </div>
+
+          {/* Honeypot anti-spam (invisible, ne pas remplir) */}
+          <input
+            type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+            value={hp} onChange={e => setHp(e.target.value)}
+            style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+          />
 
           {/* Privacy */}
           <label className="flex gap-2.5 items-start cursor-pointer px-1">

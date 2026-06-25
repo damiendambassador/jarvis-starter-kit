@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { supabase, type Reservation, type Unavailability } from '@/lib/supabase'
-import { useDriver } from '../_context'
+import { authedFetch } from '@/lib/authed-fetch'
+import { useDashboard } from '../_context'
 import { formatPrice } from '@/lib/pricing'
 import {
   format, addMonths, subMonths, getDaysInMonth, startOfMonth, getDay, isSameDay,
@@ -27,7 +28,7 @@ const EVENT_BG: Record<string, string> = {
 }
 
 export default function CalendarPage() {
-  const driver = useDriver()
+  const { driver, adminPreview } = useDashboard()
   const [viewDate, setViewDate]         = useState(() => new Date())
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [unavails, setUnavails]         = useState<Unavailability[]>([])
@@ -47,11 +48,14 @@ export default function CalendarPage() {
     const dTo   = format(new Date(year, month + 1, 0), 'yyyy-MM-dd')
     setLoading(true)
     Promise.all([
-      supabase.from('reservations')
-        .select('*').eq('driver_id', driver.id)
-        .gte('scheduled_at', from).lte('scheduled_at', to)
-        .then(({ data: res }) => res ?? []),
-      fetch(`/api/driver/unavailabilities?driverId=${driver.id}&from=${dFrom}&to=${dTo}`)
+      adminPreview
+        ? authedFetch(`/api/driver/reservations?driverId=${driver.id}`, {}, { adminPreview })
+            .then(r => r.json()).then(({ data }) => data ?? [])
+        : supabase.from('reservations')
+            .select('*').eq('driver_id', driver.id)
+            .gte('scheduled_at', from).lte('scheduled_at', to)
+            .then(({ data: res }) => res ?? []),
+      authedFetch(`/api/driver/unavailabilities?driverId=${driver.id}&from=${dFrom}&to=${dTo}`, {}, { adminPreview })
         .then(r => r.json()).then(({ data: u }) => u ?? []),
     ]).then(([res, u]) => {
       setReservations(res)
@@ -111,18 +115,18 @@ export default function CalendarPage() {
     if (status === 'pending') return
     const reservation = reservations.find(r => r.id === id)
     if (reservation && (status === 'accepted' || status === 'refused')) {
-      fetch('/api/booking/status', {
+      authedFetch('/api/booking/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reservationId: id, status }),
-      }).catch(err => console.error('[calendar status notify]', err))
+      }, { adminPreview }).catch(err => console.error('[calendar status notify]', err))
     }
   }
 
   async function addUnavail() {
     if (!addDate) return
     setSaving(true)
-    const res  = await fetch('/api/driver/unavailabilities', {
+    const res  = await authedFetch('/api/driver/unavailabilities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -132,7 +136,7 @@ export default function CalendarPage() {
         endTime:   unavailForm.endTime,
         label:     unavailForm.label || 'Indisponible',
       }),
-    })
+    }, { adminPreview })
     const json = await res.json()
     if (!res.ok) { setSaving(false); setErrMsg(json.error ?? 'Erreur lors de la sauvegarde'); return }
     if (json.data) setUnavails(prev => [...prev, json.data])
@@ -143,11 +147,11 @@ export default function CalendarPage() {
   }
 
   async function deleteUnavail(id: string) {
-    await fetch('/api/driver/unavailabilities', {
+    await authedFetch('/api/driver/unavailabilities', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ unavailId: id, driverId: driver.id }),
-    })
+    }, { adminPreview })
     setUnavails(prev => prev.filter(u => u.id !== id))
   }
 

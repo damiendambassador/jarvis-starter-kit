@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { supabase, type Client, type Reservation } from '@/lib/supabase'
-import { useDriver } from '../_context'
+import { authedFetch } from '@/lib/authed-fetch'
+import { useDashboard } from '../_context'
 import { formatPrice } from '@/lib/pricing'
 import { Search, Users, Phone, X, Loader2 } from 'lucide-react'
 
 export default function ClientsPage() {
-  const driver = useDriver()
+  const { driver, adminPreview } = useDashboard()
   const [clients, setClients] = useState<Client[]>([])
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [loading, setLoading] = useState(true)
@@ -15,14 +16,25 @@ export default function ClientsPage() {
   const [selected, setSelected] = useState<Client | null>(null)
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('clients').select('*').eq('driver_id', driver.id).order('total_rides', { ascending: false }),
-      supabase.from('reservations').select('id,client_phone,price_estimate,status').eq('driver_id', driver.id),
-    ]).then(([{ data: c }, { data: r }]) => {
-      setClients(c ?? [])
-      setReservations((r as Reservation[]) ?? [])
+    async function load() {
+      if (adminPreview) {
+        const [cRes, rRes] = await Promise.all([
+          authedFetch(`/api/driver/clients?driverId=${driver.id}`, {}, { adminPreview }).then(r => r.json()),
+          authedFetch(`/api/driver/reservations?driverId=${driver.id}`, {}, { adminPreview }).then(r => r.json()),
+        ])
+        setClients(cRes.data ?? [])
+        setReservations((rRes.data as Reservation[]) ?? [])
+      } else {
+        const [{ data: c }, { data: r }] = await Promise.all([
+          supabase.from('clients').select('*').eq('driver_id', driver.id).order('total_rides', { ascending: false }),
+          supabase.from('reservations').select('id,client_phone,price_estimate,status').eq('driver_id', driver.id),
+        ])
+        setClients(c ?? [])
+        setReservations((r as Reservation[]) ?? [])
+      }
       setLoading(false)
-    })
+    }
+    load()
   }, [driver.id])
 
   function clientRevenue(phone: string) {

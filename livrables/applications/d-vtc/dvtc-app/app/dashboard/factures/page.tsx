@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useDriver } from '../_context'
+import { useDashboard } from '../_context'
 import { supabase } from '@/lib/supabase'
+import { authedFetch } from '@/lib/authed-fetch'
 import { Download, Loader2, Receipt, CheckCircle2, XCircle, Clock, CreditCard } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -47,27 +48,35 @@ function fmtDate(d: string | null) {
 }
 
 export default function FacturesPage() {
-  const driver = useDriver()
+  const { driver, adminPreview } = useDashboard()
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState<string | null>(null)
 
   useEffect(() => {
-    supabase
-      .from('invoices')
-      .select('*')
-      .eq('driver_id', driver.id)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setInvoices((data as Invoice[]) ?? [])
-        setLoading(false)
-      })
+    async function load() {
+      let data: Invoice[] | null = null
+      if (adminPreview) {
+        const res = await authedFetch(`/api/driver/invoices?driverId=${driver.id}`, {}, { adminPreview })
+        data = (await res.json()).data
+      } else {
+        const r = await supabase
+          .from('invoices')
+          .select('*')
+          .eq('driver_id', driver.id)
+          .order('created_at', { ascending: false })
+        data = r.data as Invoice[]
+      }
+      setInvoices(data ?? [])
+      setLoading(false)
+    }
+    load()
   }, [driver.id])
 
   async function downloadPdf(invoice: Invoice) {
     if (!invoice.pdf_storage_path) return
     setDownloading(invoice.id)
-    const res = await fetch(`/api/driver/invoice-url?invoice_id=${invoice.id}`)
+    const res = await authedFetch(`/api/driver/invoice-url?invoice_id=${invoice.id}`, {}, { adminPreview })
     const data = await res.json()
     if (data.url) {
       const a = document.createElement('a')

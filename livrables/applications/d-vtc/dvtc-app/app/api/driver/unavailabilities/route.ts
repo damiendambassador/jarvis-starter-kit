@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { resolveActor, type Actor } from '@/lib/actor-auth'
 
 const db = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,9 +8,17 @@ const db = createClient(
   { auth: { persistSession: false } }
 )
 
+/** driver_id autorisé : celui du chauffeur connecté, ou celui demandé si admin. */
+function targetDriver(actor: Actor, requested: string | null): string | null {
+  return actor.kind === 'admin' ? requested : actor.driverId
+}
+
 export async function GET(req: NextRequest) {
+  const actor = await resolveActor(req)
+  if (!actor) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
   const { searchParams } = new URL(req.url)
-  const driverId = searchParams.get('driverId')
+  const driverId = targetDriver(actor, searchParams.get('driverId'))
   const from     = searchParams.get('from')
   const to       = searchParams.get('to')
   if (!driverId || !from || !to) {
@@ -26,7 +35,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const { driverId, date, startTime, endTime, label } = await req.json()
+  const actor = await resolveActor(req)
+  if (!actor) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
+  const body = await req.json()
+  const driverId = targetDriver(actor, body.driverId)
+  const { date, startTime, endTime, label } = body
   if (!driverId || !date || !startTime || !endTime) {
     return NextResponse.json({ error: 'Champs manquants' }, { status: 400 })
   }
@@ -48,7 +62,12 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const { unavailId, driverId } = await req.json()
+  const actor = await resolveActor(req)
+  if (!actor) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
+  const body = await req.json()
+  const driverId = targetDriver(actor, body.driverId)
+  const { unavailId } = body
   if (!unavailId || !driverId) {
     return NextResponse.json({ error: 'Champs manquants' }, { status: 400 })
   }

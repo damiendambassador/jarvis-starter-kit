@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase, type Driver } from '@/lib/supabase'
+import { authedFetch } from '@/lib/authed-fetch'
 import { DashboardContext } from './_context'
 import Sidebar from './_sidebar'
 import RealtimeNotif from './_notif'
@@ -44,7 +45,7 @@ function CGVModal({ driver, onAccepted }: { driver: Driver; onAccepted: () => vo
   async function accept() {
     if (!checked) return
     setLoading(true)
-    await fetch('/api/driver/accept-cgv', {
+    await authedFetch('/api/driver/accept-cgv', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ driverId: driver.id }),
@@ -167,7 +168,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (subscriptionPending && !adminPreview) return <PaymentWall driver={driver} />
 
   return (
-    <DashboardContext.Provider value={{ driver }}>
+    <DashboardContext.Provider value={{ driver, adminPreview }}>
       {adminPreview && (
         <div className="bg-amber-400 text-[#0A1628] text-center py-2 text-[12px] font-semibold flex items-center justify-center gap-3 sticky top-0 z-50">
           <ShieldCheck size={13} />

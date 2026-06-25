@@ -20,11 +20,32 @@ function esc(s: string | null | undefined): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { reservationId } = await req.json()
+  const { reservationId, website } = await req.json()
+  // Honeypot anti-bot : un humain ne remplit jamais ce champ caché.
+  if (website) return NextResponse.json({ received: true })
   if (!reservationId) return NextResponse.json({ error: 'Missing reservationId' }, { status: 400 })
 
   const { data: r } = await admin.from('reservations').select('*').eq('id', reservationId).single()
   if (!r) return NextResponse.json({ error: 'Reservation not found' }, { status: 404 })
+
+  // Idempotence : ne traiter qu'une seule fois (anti-rejeu + anti double-incrément de total_rides).
+  if (r.notified_at) return NextResponse.json({ skipped: true })
+
+  // Rate limit souple : trop de réservations récentes du même numéro -> on n'envoie pas d'email.
+  const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+  const { count: recentCount } = await admin
+    .from('reservations')
+    .select('id', { count: 'exact', head: true })
+    .eq('driver_id', r.driver_id)
+    .eq('client_phone', r.client_phone)
+    .gte('created_at', since)
+
+  // Marque immédiatement comme traité pour éviter tout rejeu concurrent.
+  await admin.from('reservations').update({ notified_at: new Date().toISOString() }).eq('id', r.id)
+
+  if ((recentCount ?? 0) > 3) {
+    return NextResponse.json({ rateLimited: true })
+  }
 
   const { data: driver } = await admin.from('drivers').select('name, email').eq('id', r.driver_id).single()
   if (!driver) return NextResponse.json({ error: 'Driver not found' }, { status: 404 })

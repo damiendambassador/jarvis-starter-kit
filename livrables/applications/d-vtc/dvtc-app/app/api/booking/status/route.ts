@@ -3,6 +3,7 @@ import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { resolveActor } from '@/lib/actor-auth'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM   = process.env.EMAIL_FROM ?? 'D-VTC <reservations@d-vtc.fr>'
@@ -20,11 +21,19 @@ function esc(s: string | null | undefined): string {
 }
 
 export async function POST(req: NextRequest) {
+  const actor = await resolveActor(req)
+  if (!actor) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
   const { reservationId, status } = await req.json()
   if (!reservationId || !status) return NextResponse.json({ error: 'Missing params' }, { status: 400 })
 
   const { data: r } = await admin.from('reservations').select('*').eq('id', reservationId).single()
   if (!r) return NextResponse.json({ error: 'Reservation not found' }, { status: 404 })
+
+  // Un chauffeur ne peut agir que sur ses propres réservations.
+  if (actor.kind === 'driver' && r.driver_id !== actor.driverId) {
+    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+  }
 
   const { data: driver } = await admin.from('drivers').select('name, email').eq('id', r.driver_id).single()
   if (!driver) return NextResponse.json({ error: 'Driver not found' }, { status: 404 })

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { supabase, type Reservation } from '@/lib/supabase'
-import { useDriver } from './_context'
+import { authedFetch } from '@/lib/authed-fetch'
+import { useDashboard } from './_context'
 import { formatPrice } from '@/lib/pricing'
 import { format, startOfWeek, startOfMonth, addWeeks, endOfWeek } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -45,7 +46,7 @@ function getPeriodBounds(period: Period): { start: Date | null; end: Date | null
 }
 
 export default function DashboardPage() {
-  const driver = useDriver()
+  const { driver, adminPreview } = useDashboard()
   const [all, setAll]           = useState<Reservation[]>([])
   const [loading, setLoading]   = useState(true)
   const [period, setPeriod]     = useState<Period>('month')
@@ -56,11 +57,18 @@ export default function DashboardPage() {
   useEffect(() => { setIsAdmin(!!localStorage.getItem('admin_token')) }, [])
 
   async function loadData() {
-    const { data } = await supabase
-      .from('reservations')
-      .select('*')
-      .eq('driver_id', driver.id)
-      .order('scheduled_at', { ascending: false })
+    let data: Reservation[] | null = null
+    if (adminPreview) {
+      const res = await authedFetch(`/api/driver/reservations?driverId=${driver.id}`, {}, { adminPreview })
+      data = (await res.json()).data
+    } else {
+      const r = await supabase
+        .from('reservations')
+        .select('*')
+        .eq('driver_id', driver.id)
+        .order('scheduled_at', { ascending: false })
+      data = r.data
+    }
     setAll(data ?? [])
     setLoading(false)
   }
@@ -70,11 +78,11 @@ export default function DashboardPage() {
   async function updateStatus(id: string, status: 'accepted' | 'refused') {
     await supabase.from('reservations').update({ status }).eq('id', id)
     setAll(prev => prev.map(r => r.id === id ? { ...r, status } : r))
-    fetch('/api/booking/status', {
+    authedFetch('/api/booking/status', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reservationId: id, status }),
-    }).catch(() => {})
+    }, { adminPreview }).catch(() => {})
   }
 
   async function deleteReservation(id: string) {

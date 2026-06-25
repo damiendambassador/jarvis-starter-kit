@@ -9,6 +9,17 @@
 
 ## 2026-06-25
 
+### Sécurisation D-VTC (revue de sécurité complète + corrections déployées)
+- Revue de sécurité du code D-VTC menée à partir du guide Claude Code (Cas 3 « créer une application »)
+- Constat de départ : panel admin, webhook Stripe et headers HTTP corrects, mais 4 routes utilisaient la clé service_role (qui contourne la RLS) sans authentifier l'appelant → failles IDOR
+- Correctifs code : nouveau helper `lib/actor-auth.ts` (resolveActor : JWT chauffeur ou token admin), 4 routes sécurisées avec vérification de propriété (unavailabilities, accept-cgv, invoice-url, booking/status), helper client `lib/authed-fetch.ts` + contexte `adminPreview`
+- Anti-spam de la réservation publique : honeypot, idempotence via colonne `notified_at` (stoppe le rejeu et la double-incrémentation de total_rides), rate limit souple ; webhook Supabase `reservations_email` désactivé (supprime le doublon d'emails)
+- Durcissement Supabase : verrouillage des fonctions SECURITY DEFINER internes (revoke anon/authenticated + search_path fixé), suppression de la policy INSERT publique sur `reservations`. Security Advisor : 17 → 5 avertissements (les 5 restants sont normaux). `admin_config` déjà protégé (RLS active, aucune policy)
+- Aperçu admin corrigé : 3 routes de lecture (reservations, clients, invoices) + pages du dashboard branchées dessus en mode preview
+- Déployé en production (commit 25c29e9, push main → Vercel). Contrôle de types OK
+- Non fait : protection « mots de passe compromis » (réservée au plan Supabase Pro)
+- Slug réel de Patrick : `patrick-defoe` (https://www.d-vtc.fr/r/patrick-defoe)
+
 ### Mise en place d'une routine cloud de tri d'emails + grand nettoyage Gmail
 - Routine cloud « Tri emails du matin » créée via /schedule (jours ouvrés 8h30) : classe les non-lus en 5 catégories, prépare des brouillons pour les emails à répondre, envoie un récap par email, ne supprime ni n'envoie jamais rien de lui-même
 - Tri complet de la boîte (~60 non-lus) : 29 archivés (Smash, onboarding SaaS, promos), désabonnements identifiés (Malt, OpenAI, Canva). Constat : aucun email personnel en attente de réponse

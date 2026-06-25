@@ -7,6 +7,23 @@
 
 ---
 
+## 2026-06-25
+
+### Mise en place d'une routine cloud de tri d'emails + grand nettoyage Gmail
+- Routine cloud « Tri emails du matin » créée via /schedule (jours ouvrés 8h30) : classe les non-lus en 5 catégories, prépare des brouillons pour les emails à répondre, envoie un récap par email, ne supprime ni n'envoie jamais rien de lui-même
+- Tri complet de la boîte (~60 non-lus) : 29 archivés (Smash, onboarding SaaS, promos), désabonnements identifiés (Malt, OpenAI, Canva). Constat : aucun email personnel en attente de réponse
+- Paiement Stripe de 74 € (« Dem's Revolut ») confirmé et configuration du compte Stripe finalisée : flux d'encaissement D-VTC opérationnel de bout en bout
+
+### Veille du jour (impacts D-VTC et micro-entreprise)
+- Cotisations micro-BNC 2026 confirmées à 25,6 % (libéral non réglementé, régime général) : valide le calcul du seuil de rentabilité D-VTC (29 chauffeurs)
+- Durcissement réglementaire VTC 2026 (auto-déclaration URSSAF par les plateformes, ZFE Grand Paris) : argument commercial pour D-VTC
+- Réforme facturation électronique : première entrée en vigueur le 1er septembre 2026
+
+### Divers
+- Renommage du dossier livrables Copity Beach Club + ajout d'un guide Claude Code (commit 142aba5)
+
+---
+
 ## 2026-06-24
 
 ### D-VTC — objectif rentabilité chiffré + compteur dans le panel admin

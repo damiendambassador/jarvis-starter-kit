@@ -10,13 +10,16 @@ const admin = createClient(
 
 export async function PATCH(req: NextRequest) {
   const body = await req.json()
-  const { driverId, userId, name, email, phone } = body
+  const { driverId, userId, name, email, phone, parraine_par } = body
 
   if (!await validateAdminRequest(body)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 
-  const { error: dbError } = await admin.from('drivers').update({ name, email, phone: phone || null }).eq('id', driverId)
+  const updates: Record<string, unknown> = { name, email, phone: phone || null }
+  if (parraine_par !== undefined) updates.parraine_par = parraine_par || null
+
+  const { error: dbError } = await admin.from('drivers').update(updates).eq('id', driverId)
   if (dbError) return NextResponse.json({ error: dbError.message }, { status: 400 })
 
   const { error: authError } = await admin.auth.admin.updateUserById(userId, { email })

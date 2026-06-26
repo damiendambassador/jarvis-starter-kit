@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const { data: fullDrivers, error: driversError } = await admin
     .from('drivers')
-    .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at, checkout_url')
+    .select('id, user_id, name, email, phone, slug, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, cgv_accepted_at, subscription_start_at, checkout_url, parraine_par, mois_offert_le')
     .order('created_at', { ascending: false })
 
   if (driversError) {
@@ -67,7 +67,8 @@ export async function POST(req: NextRequest) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .reduce((sum: number, r: any) => sum + (r.price_estimate ?? 0), 0)
 
-      return { ...driver, stats: { total: all.length, pending, accepted, completed, revenue }, last_invoice: lastInvoice ?? null }
+      const referral_count = (drivers ?? []).filter(d => d.parraine_par === driver.slug).length
+      return { ...driver, stats: { total: all.length, pending, accepted, completed, revenue }, last_invoice: lastInvoice ?? null, referral_count }
     })
   )
 

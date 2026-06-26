@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   Loader2, ExternalLink, TrendingUp, Clock, PiggyBank, BarChart3,
   Target, Plus, Pencil, Trash2, X, Check, Copy, Eye, EyeOff,
-  CreditCard, AlertCircle, CheckCircle2, PauseCircle, XCircle, Receipt, RefreshCw,
+  CreditCard, AlertCircle, CheckCircle2, PauseCircle, XCircle, Receipt, RefreshCw, Gift, Users,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -33,6 +33,9 @@ type DriverWithStats = {
   cgv_accepted_at: string | null
   subscription_start_at: string | null
   checkout_url: string | null
+  parraine_par: string | null
+  mois_offert_le: string | null
+  referral_count: number
   last_invoice: LastInvoice | null
   stats: {
     total: number
@@ -251,13 +254,14 @@ function AddDriverModal({ onClose, onCreated, adminToken }: {
 }
 
 /* ─── Modal Modifier chauffeur ─── */
-function EditDriverModal({ driver, onClose, onSaved, adminToken }: {
+function EditDriverModal({ driver, onClose, onSaved, adminToken, allDrivers }: {
   driver: DriverWithStats
   onClose: () => void
   onSaved: () => void
   adminToken: string
+  allDrivers: DriverWithStats[]
 }) {
-  const [form, setForm] = useState({ name: driver.name, email: driver.email, phone: driver.phone ?? '' })
+  const [form, setForm] = useState({ name: driver.name, email: driver.email, phone: driver.phone ?? '', parraine_par: driver.parraine_par ?? '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -298,6 +302,20 @@ function EditDriverModal({ driver, onClose, onSaved, adminToken }: {
               />
             </div>
           ))}
+          <div>
+            <label className="text-[12px] font-semibold text-[#5A6477] block mb-1.5">
+              Parrainé par <span className="font-normal text-[#A7B0BF]">(slug du parrain, optionnel)</span>
+            </label>
+            <select
+              className="w-full border border-[#D6DEEA] rounded-[9px] px-4 py-2.5 text-[14px] outline-none focus:border-[#0A1628] bg-white"
+              value={form.parraine_par}
+              onChange={e => setForm(p => ({ ...p, parraine_par: e.target.value }))}>
+              <option value="">— Aucun parrain —</option>
+              {allDrivers.filter(d => d.id !== driver.id).map(d => (
+                <option key={d.id} value={d.slug}>{d.name} ({d.slug})</option>
+              ))}
+            </select>
+          </div>
           {error && <p className="text-red-500 text-[13px]">{error}</p>}
           <div className="flex gap-3 pt-1">
             <button onClick={onClose} className="flex-1 border border-[#D6DEEA] rounded-[9px] py-2.5 text-[13px] font-semibold text-[#5A6477] hover:bg-[#F4F6FA]">
@@ -423,6 +441,7 @@ export default function AdminDashboard() {
   const [deleting, setDeleting] = useState(false)
   const [activeTab, setActiveTab] = useState<'drivers' | 'billing'>('drivers')
   const [stripeAction, setStripeAction] = useState<string | null>(null)
+  const [giftingMonth, setGiftingMonth] = useState<string | null>(null)
   const [changePwdOpen, setChangePwdOpen] = useState(false)
 
   const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') ?? '' : ''
@@ -446,6 +465,19 @@ export default function AdminDashboard() {
       body: JSON.stringify({ adminToken, invoiceId }),
     })
     setStripeAction(null)
+  }
+
+  async function handleGiftMonth(driverId: string) {
+    setGiftingMonth(driverId)
+    const res = await fetch('/api/admin/stripe/gift-month', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminToken, driverId }),
+    })
+    const data = await res.json()
+    setGiftingMonth(null)
+    if (!res.ok) { alert(data.error ?? 'Erreur lors de l\'application du mois gratuit') }
+    else { loadDrivers() }
   }
 
   async function handleResyncInvoice(driverId: string) {
@@ -682,6 +714,25 @@ export default function AdminDashboard() {
                       <div className="text-[11px] text-[#A7B0BF] mt-0.5">
                         Inscrit le {format(new Date(driver.created_at), 'd MMMM yyyy', { locale: fr })}
                       </div>
+                      <div className="flex items-center gap-3 mt-1 flex-wrap">
+                        {driver.parraine_par && (
+                          <span className="text-[11px] text-[#C9A84C] font-medium">
+                            Parrainé par {drivers.find(d => d.slug === driver.parraine_par)?.name ?? driver.parraine_par}
+                          </span>
+                        )}
+                        {driver.referral_count > 0 && (
+                          <span className="inline-flex items-center gap-1 text-[11px] text-blue-600 font-medium">
+                            <Users size={10} />
+                            {driver.referral_count} filleul{driver.referral_count > 1 ? 's' : ''}
+                          </span>
+                        )}
+                        {driver.mois_offert_le && (
+                          <span className="inline-flex items-center gap-1 text-[11px] text-green-600 font-medium">
+                            <Gift size={10} />
+                            1 mois offert le {format(new Date(driver.mois_offert_le), 'd MMM yyyy', { locale: fr })}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -833,6 +884,22 @@ export default function AdminDashboard() {
                         Resync
                       </button>
                     )}
+                    {driver.stripe_subscription_id && !driver.mois_offert_le && (
+                      <button
+                        onClick={() => handleGiftMonth(driver.id)}
+                        disabled={giftingMonth !== null || stripeAction !== null}
+                        title="Offrir 1 mois gratuit (parrainage)"
+                        className="flex items-center gap-1 text-[11px] font-semibold text-purple-600 border border-purple-100 hover:border-purple-400 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
+                        {giftingMonth === driver.id ? <Loader2 size={10} className="animate-spin" /> : <Gift size={10} />}
+                        1 mois offert
+                      </button>
+                    )}
+                    {driver.mois_offert_le && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-green-600 px-2 py-1">
+                        <Gift size={10} />
+                        Mois offert
+                      </span>
+                    )}
                   </div>
                 </div>
                 {(!driver.subscription_status || driver.subscription_status === 'pending') && driver.checkout_url && (
@@ -864,6 +931,7 @@ export default function AdminDashboard() {
           onClose={() => setEditDriver(null)}
           onSaved={loadDrivers}
           adminToken={adminToken}
+          allDrivers={drivers}
         />
       )}
 

@@ -112,14 +112,14 @@ function ClusteredStoreMarkers({
 }) {
   const map = useMap()
 
-  // Rayon de regroupement réduit (défaut 60) + clustering coupé plus tôt (maxZoom 13)
-  // pour afficher davantage de magasins individuels sans avoir à zoomer.
+  // Rayon de regroupement intermédiaire (défaut 60) + clustering coupé un peu plus tôt
+  // (maxZoom 14) : équilibre entre lisibilité dense (Paris) et magasins individuels.
   const clusterer = useMemo(
     () =>
       map
         ? new MarkerClusterer({
             map,
-            algorithm: new SuperClusterAlgorithm({ radius: 32, maxZoom: 13 }),
+            algorithm: new SuperClusterAlgorithm({ radius: 44, maxZoom: 14 }),
           })
         : null,
     [map],

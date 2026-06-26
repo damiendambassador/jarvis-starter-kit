@@ -12,7 +12,7 @@ import {
   chainColor,
 } from '@/lib/constants'
 import type { LatLng } from './MapView'
-import { X, Trash2, Plus, StickyNote, Navigation, Loader2, Star } from 'lucide-react'
+import { X, Trash2, Plus, StickyNote, Navigation, Loader2, Star, Car, Bus } from 'lucide-react'
 
 export default function StorePanel({
   store,
@@ -43,6 +43,7 @@ export default function StorePanel({
 
   const [distance, setDistance] = useState<string | null>(null)
   const [loadingDist, setLoadingDist] = useState(false)
+  const [travelMode, setTravelMode] = useState<'driving' | 'transit'>('driving')
 
   // Réinitialise les champs quand on change de magasin
   useEffect(() => {
@@ -99,12 +100,28 @@ export default function StorePanel({
     const res = await fetch('/api/distance', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ origin: myLocation, destinations: [{ lat: store.lat, lng: store.lng }] }),
+      body: JSON.stringify({
+        origin: myLocation,
+        destinations: [{ lat: store.lat, lng: store.lng }],
+        mode: travelMode,
+      }),
     })
     const data = await res.json()
     const r = data.results?.[0]
-    setDistance(r?.ok ? `${r.distance_text} · ${r.duration_text}` : 'Indisponible')
+    setDistance(
+      r?.ok
+        ? `${r.distance_text} · ${r.duration_text}`
+        : travelMode === 'transit'
+          ? 'Aucun itinéraire en transports'
+          : 'Indisponible',
+    )
     setLoadingDist(false)
+  }
+
+  // Changer de mode efface le résultat précédent (il ne correspond plus).
+  function switchMode(m: 'driving' | 'transit') {
+    setTravelMode(m)
+    setDistance(null)
   }
 
   return (
@@ -165,14 +182,35 @@ export default function StorePanel({
         </button>
 
         {/* Distance */}
-        <button
-          onClick={computeDistance}
-          disabled={loadingDist}
-          className="w-full border border-teal/30 text-teal rounded-lg py-2 text-[12px] font-semibold hover:bg-teal/5 transition-colors flex items-center justify-center gap-2"
-        >
-          {loadingDist ? <Loader2 size={14} className="animate-spin" /> : <Navigation size={14} />}
-          {distance ? `Trajet : ${distance}` : 'Distance depuis ma position'}
-        </button>
+        <div className="space-y-2">
+          {/* Mode de trajet */}
+          <div className="flex rounded-lg border border-teal/20 overflow-hidden text-[12px] font-semibold">
+            <button
+              onClick={() => switchMode('driving')}
+              className={`flex-1 py-1.5 flex items-center justify-center gap-1.5 transition-colors ${
+                travelMode === 'driving' ? 'bg-teal text-cream' : 'text-teal/70 hover:bg-teal/5'
+              }`}
+            >
+              <Car size={14} /> Voiture
+            </button>
+            <button
+              onClick={() => switchMode('transit')}
+              className={`flex-1 py-1.5 flex items-center justify-center gap-1.5 transition-colors ${
+                travelMode === 'transit' ? 'bg-teal text-cream' : 'text-teal/70 hover:bg-teal/5'
+              }`}
+            >
+              <Bus size={14} /> Transports
+            </button>
+          </div>
+          <button
+            onClick={computeDistance}
+            disabled={loadingDist}
+            className="w-full border border-teal/30 text-teal rounded-lg py-2 text-[12px] font-semibold hover:bg-teal/5 transition-colors flex items-center justify-center gap-2"
+          >
+            {loadingDist ? <Loader2 size={14} className="animate-spin" /> : <Navigation size={14} />}
+            {distance ? `Trajet : ${distance}` : 'Distance depuis ma position'}
+          </button>
+        </div>
 
         {/* Placements */}
         <div>

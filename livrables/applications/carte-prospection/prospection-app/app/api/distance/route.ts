@@ -6,16 +6,21 @@ export async function POST(req: Request) {
   const key = process.env.GOOGLE_MAPS_SERVER_KEY
   if (!key) return NextResponse.json({ error: 'GOOGLE_MAPS_SERVER_KEY manquante' }, { status: 500 })
 
-  const { origin, destinations } = await req.json().catch(() => ({}))
+  const { origin, destinations, mode } = await req.json().catch(() => ({}))
   if (!origin || !Array.isArray(destinations) || destinations.length === 0)
     return NextResponse.json({ error: 'origin et destinations[] requis' }, { status: 400 })
+
+  // Modes acceptés ; tout le reste retombe sur la voiture.
+  const travelMode = ['driving', 'transit', 'walking', 'bicycling'].includes(mode) ? mode : 'driving'
 
   const fmt = (p: any) => (typeof p === 'string' ? p : `${p.lat},${p.lng}`)
 
   const url = new URL('https://maps.googleapis.com/maps/api/distancematrix/json')
   url.searchParams.set('origins', fmt(origin))
   url.searchParams.set('destinations', destinations.map(fmt).join('|'))
-  url.searchParams.set('mode', 'driving')
+  url.searchParams.set('mode', travelMode)
+  // Google exige une heure de départ pour le mode transports en commun.
+  if (travelMode === 'transit') url.searchParams.set('departure_time', String(Math.floor(Date.now() / 1000)))
   url.searchParams.set('language', 'fr')
   url.searchParams.set('key', key)
 

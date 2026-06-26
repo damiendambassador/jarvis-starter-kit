@@ -16,8 +16,8 @@
   ALTER TABLE drivers ADD COLUMN IF NOT EXISTS parraine_par TEXT;
   ALTER TABLE drivers ADD COLUMN IF NOT EXISTS mois_offert_le TIMESTAMPTZ;
   ```
-- Nouvelle route `POST /api/admin/stripe/gift-month` : crée un coupon Stripe 100% off usage unique, l'applique à l'abonnement, trace `mois_offert_le` en base. Bloqué si déjà offert.
-- Dashboard admin mis à jour : champ "Parrainé par" (liste déroulante des chauffeurs) dans la modal Modifier, filleuls et parrain visibles sur la carte chauffeur, bouton violet "1 mois offert" dans l'onglet Facturation (visible uniquement si abonnement actif et mois pas encore offert)
+- Nouvelle route `POST /api/admin/stripe/gift-month` : crée un coupon Stripe 100% off usage unique, l'applique à l'abonnement, trace `mois_offert_le` en base. Utilisable sans limite (pas de blocage).
+- Dashboard admin mis à jour : champ "Parrainé par" (liste déroulante des chauffeurs) dans la modal Modifier, filleuls et parrain visibles sur la carte chauffeur, bouton violet "1 mois offert" dans l'onglet Facturation (visible dès qu'un abonnement Stripe existe, tooltip affiche la date du dernier mois offert)
 - Stratégie : canal d'acquisition prioritaire via Patrick (ambassadeur), système activable manuellement pour garder le contrôle
 
 ### Routine cloud de tri d'emails : passage de quotidien à hebdomadaire

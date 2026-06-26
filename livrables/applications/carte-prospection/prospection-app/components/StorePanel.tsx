@@ -12,7 +12,7 @@ import {
   chainColor,
 } from '@/lib/constants'
 import type { LatLng } from './MapView'
-import { X, Trash2, Plus, MapPin, Phone, Mail, StickyNote, Navigation, Loader2, Star } from 'lucide-react'
+import { X, Trash2, Plus, StickyNote, Navigation, Loader2, Star } from 'lucide-react'
 
 export default function StorePanel({
   store,
@@ -27,9 +27,6 @@ export default function StorePanel({
 }) {
   // ── État éditable du magasin ──
   const [status, setStatus] = useState(store.status)
-  const [contactName, setContactName] = useState(store.contact_name ?? '')
-  const [phone, setPhone] = useState(store.phone ?? '')
-  const [email, setEmail] = useState(store.email ?? '')
   const [notes, setNotes] = useState(store.notes ?? '')
   const [savingStore, setSavingStore] = useState(false)
 
@@ -45,9 +42,6 @@ export default function StorePanel({
   // Réinitialise les champs quand on change de magasin
   useEffect(() => {
     setStatus(store.status)
-    setContactName(store.contact_name ?? '')
-    setPhone(store.phone ?? '')
-    setEmail(store.email ?? '')
     setNotes(store.notes ?? '')
     setDistance(null)
   }, [store])
@@ -58,9 +52,6 @@ export default function StorePanel({
       .from('stores')
       .update({
         status,
-        contact_name: contactName || null,
-        phone: phone || null,
-        email: email || null,
         notes: notes || null,
       })
       .eq('id', store.id)
@@ -143,11 +134,8 @@ export default function StorePanel({
           </select>
         </div>
 
-        {/* CRM léger */}
+        {/* Notes de tournée (le reste des contacts vit dans Airtable) */}
         <div className="space-y-2">
-          <Field icon={<MapPin size={14} />} placeholder="Contact" value={contactName} onChange={setContactName} />
-          <Field icon={<Phone size={14} />} placeholder="Téléphone" value={phone} onChange={setPhone} />
-          <Field icon={<Mail size={14} />} placeholder="Email" value={email} onChange={setEmail} />
           <div className="flex items-start gap-2">
             <span className="text-teal/40 mt-2.5">
               <StickyNote size={14} />
@@ -278,30 +266,6 @@ export default function StorePanel({
           <Trash2 size={13} /> Supprimer ce magasin
         </button>
       </div>
-    </div>
-  )
-}
-
-function Field({
-  icon,
-  placeholder,
-  value,
-  onChange,
-}: {
-  icon: React.ReactNode
-  placeholder: string
-  value: string
-  onChange: (v: string) => void
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-teal/40">{icon}</span>
-      <input
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 border border-teal/20 rounded-lg px-3 py-2 text-[13px] text-teal bg-white"
-      />
     </div>
   )
 }

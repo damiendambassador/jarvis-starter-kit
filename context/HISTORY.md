@@ -9,6 +9,12 @@
 
 ## 2026-06-26
 
+### Carte de prospection — correctif import KML, nouvelle enseigne, analyse IDF
+- Correctif KML (commit 6e98776) : un KML sans calque `<Folder>` (ex. My Maps mono-couche) laissait l'enseigne à null → tout atterrissait en "Autre". L'enseigne est désormais déduite du nom du magasin à défaut de calque (`chainFromText(p.chain ?? p.name)`).
+- Nouvelle enseigne **Julien de Savignac** ajoutée (commit 94378fb) : couleur ambre `#B45309`, code JS, détection "savignac". Liste d'import de 11 magasins créée dans `imports/10-julien-de-savignac.tsv` (commit 87fcb90).
+- Import La Vignery réglé : 23 magasins (KML) initialement classés en "Autre" (46 doublons après 2 tentatives), nettoyés via SQL (`DELETE FROM stores WHERE chain='Autre' AND name ILIKE '%vignery%'`) puis réimportés proprement.
+- **Décompte magasins par enseigne en IDF** (départements 75/77/78/91/92/93/94/95, à partir des codes postaux des fichiers `imports/*.tsv`) : Nicolas 296, Repaire de Bacchus 33, Nysa 31, V&B 12, La Vignery 16 (calculé sur les villes, pas de CP en KML), Intercaves 13, Julien de Savignac 6, Cavavin 27, Comptoir des Vignes 2, Comptoir Irlandais 0. Note : V&B = 12 en IDF stricte (Vernon-27 et le sud Oise-60 sont hors IDF même s'ils apparaissent proches sur la carte).
+
 ### Nouveau poste : Business Development Executive - Off Trade
 - Précision du poste chez Edrington : le titre exact est désormais **Business Development Executive - Off Trade** (focus circuit off-trade / cavistes). `CONTEXT.md` mis à jour.
 

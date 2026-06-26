@@ -16,7 +16,11 @@
 | `07-repaire-de-bacchus.tsv`      | Repaire de Bacchus      |  33 |
 | `08-comptoir-irlandais.tsv`      | Le Comptoir Irlandais   |  55 |
 | `09-nysa.tsv`                    | Nysa                    |  31 |
-| **Total**                        |                         | **1145** |
+| `10-julien-de-savignac.tsv`      | Julien de Savignac      |  11 |
+| **Total**                        |                         | **1156** |
+
+> Note : La Vignery (23 magasins) et Julien de Savignac (11) ont été ajoutés le 26/06/2026
+> via KML / `.tsv`. Total base à jour : ~1179 magasins.
 
 Format des `.tsv` : **Nom ⇥ Adresse ⇥ Code postal** (tabulation).
 `cavistes-manquants.kml` regroupe Repaire / Nysa / Comptoir Irlandais / Intercaves avec
@@ -31,8 +35,8 @@ coordonnées GPS (sauvegarde ; la base est déjà à jour).
 
 ## À faire à la main
 
-- **La Vignery** (~21 magasins) : store locator non extractible automatiquement.
-  À saisir depuis https://www.lavignery.fr/magasins
+- ✅ **La Vignery** (23 magasins) : importée le 26/06/2026 via KML.
+- ✅ **Julien de Savignac** (11 magasins) : voir `10-julien-de-savignac.tsv`.
 
 ## Notes
 

@@ -36,6 +36,11 @@ export default function StorePanel({
   const [pStatus, setPStatus] = useState<string>(DEFAULT_BRAND_STATUS)
   const [addingPlacement, setAddingPlacement] = useState(false)
 
+  // Références encore disponibles : on masque celles déjà placées ici pour cette marque
+  const availableRefs = referencesForBrand(brand).filter(
+    (r) => !store.placements.some((p) => p.brand === brand && p.reference === r),
+  )
+
   const [distance, setDistance] = useState<string | null>(null)
   const [loadingDist, setLoadingDist] = useState(false)
 
@@ -238,7 +243,7 @@ export default function StorePanel({
               className="w-full border border-teal/20 rounded-lg px-2.5 py-1.5 text-[12px] text-teal bg-white"
             />
             <datalist id="ref-suggestions">
-              {referencesForBrand(brand).map((r) => (
+              {availableRefs.map((r) => (
                 <option key={r} value={r} />
               ))}
             </datalist>

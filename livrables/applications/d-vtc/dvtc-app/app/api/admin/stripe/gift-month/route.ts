@@ -35,10 +35,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Chauffeur introuvable' }, { status: 404 })
   }
 
-  if (driver.mois_offert_le) {
-    return NextResponse.json({ error: 'Un mois gratuit a déjà été offert à ce chauffeur.' }, { status: 400 })
-  }
-
   if (!driver.stripe_subscription_id) {
     return NextResponse.json({ error: "Ce chauffeur n'a pas d'abonnement Stripe actif." }, { status: 400 })
   }

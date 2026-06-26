@@ -884,21 +884,15 @@ export default function AdminDashboard() {
                         Resync
                       </button>
                     )}
-                    {driver.stripe_subscription_id && !driver.mois_offert_le && (
+                    {driver.stripe_subscription_id && (
                       <button
                         onClick={() => handleGiftMonth(driver.id)}
                         disabled={giftingMonth !== null || stripeAction !== null}
-                        title="Offrir 1 mois gratuit (parrainage)"
+                        title={driver.mois_offert_le ? `Dernier mois offert le ${format(new Date(driver.mois_offert_le), 'd MMM yyyy', { locale: fr })}` : 'Offrir 1 mois gratuit (parrainage)'}
                         className="flex items-center gap-1 text-[11px] font-semibold text-purple-600 border border-purple-100 hover:border-purple-400 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
                         {giftingMonth === driver.id ? <Loader2 size={10} className="animate-spin" /> : <Gift size={10} />}
                         1 mois offert
                       </button>
-                    )}
-                    {driver.mois_offert_le && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-green-600 px-2 py-1">
-                        <Gift size={10} />
-                        Mois offert
-                      </span>
                     )}
                   </div>
                 </div>

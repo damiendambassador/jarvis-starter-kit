@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     })
 
     await stripe.subscriptions.update(driver.stripe_subscription_id, {
-      coupon: coupon.id,
+      discounts: [{ coupon: coupon.id }],
     })
 
     await admin

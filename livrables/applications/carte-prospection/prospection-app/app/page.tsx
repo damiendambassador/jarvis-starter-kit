@@ -242,7 +242,7 @@ export default function HomePage() {
     }
     await importRows(
       placemarks.map((p) => ({
-        chain: chainFromText(p.chain), // enseigne déduite du calque KML
+        chain: chainFromText(p.chain ?? p.name), // enseigne déduite du calque KML, sinon du nom du magasin
         name: p.name,
         lat: p.lat,
         lng: p.lng,

@@ -16,6 +16,7 @@ export const CHAINS = [
   { name: 'Intercaves',            color: '#CA8A04' },
   { name: 'Le Comptoir Irlandais', color: '#15803D' },
   { name: 'Comptoir des Vignes',   color: '#DB2777' },
+  { name: 'Julien de Savignac',    color: '#B45309' },
   { name: 'Autre',                 color: '#6B7280' },
 ] as const
 
@@ -37,6 +38,7 @@ const CHAIN_CODE_MAP: Record<string, string> = {
   Intercaves: 'IN',
   'Le Comptoir Irlandais': 'CI',
   'Comptoir des Vignes': 'CV',
+  'Julien de Savignac': 'JS',
   Autre: '··',
 }
 export function chainCode(chain: string): string {
@@ -56,6 +58,7 @@ const CHAIN_KEYWORDS: Record<string, string[]> = {
   Intercaves: ['intercave'],
   'Le Comptoir Irlandais': ['irlandais'],
   'Comptoir des Vignes': ['des vignes', 'comptoir des vignes'],
+  'Julien de Savignac': ['savignac', 'julien de savignac'],
 }
 export function chainFromText(text: string | null | undefined): string {
   if (!text) return 'Autre'

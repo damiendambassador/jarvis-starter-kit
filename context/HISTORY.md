@@ -9,6 +9,17 @@
 
 ## 2026-06-26
 
+### Nouveau poste : Business Development Executive - Off Trade
+- Précision du poste chez Edrington : le titre exact est désormais **Business Development Executive - Off Trade** (focus circuit off-trade / cavistes). `CONTEXT.md` mis à jour.
+
+### Carte de prospection Edrington — déploiement production + sécurité Google Maps
+- App déployée en prod sur **edringtonmapofftrade.vercel.app** (projet Vercel "Edrington - Map Off Trade", root directory `livrables/applications/carte-prospection/prospection-app` du monorepo jarvis-starter-kit, même repo que D-VTC). ~1146 magasins affichés.
+- 5 variables d'env reportées sur Vercel (Supabase URL + anon, Google client + Map ID + server). `SUPABASE_SERVICE_ROLE_KEY` inutilisée donc omise.
+- Sécurisation Google Maps (la même clé servait au client ET au serveur) : création d'une 2e clé. Clé client "Edrington Client (web)" restreinte par referrer (`edringtonmapofftrade.vercel.app/*` + `localhost:3000/*`) et limitée à Maps JavaScript API. Ancienne clé "Edrington Projet" conservée en clé serveur, restrictions applications = Aucune, API limitées à Geocoding + Distance Matrix. Géocodage serveur testé OK (collage d'un magasin La Vignery près de Melun).
+
+### D-VTC — Colonnes SQL parrainage créées
+- Les 2 colonnes `parraine_par TEXT` et `mois_offert_le TIMESTAMPTZ` ont été créées dans Supabase (table `drivers`). Le système de parrainage (bouton "1 mois offert" dans l'onglet Facturation) est désormais pleinement opérationnel.
+
 ### D-VTC — Système de parrainage (manuel, admin)
 - Deux nouvelles colonnes SQL à créer dans Supabase sur la table `drivers` : `parraine_par TEXT` (slug du parrain) et `mois_offert_le TIMESTAMPTZ` (date du mois gratuit offert)
 - Script SQL (à exécuter une fois dans Supabase SQL Editor) :

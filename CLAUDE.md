@@ -19,7 +19,7 @@ Ce workspace est le Jarvis personnel de Damien. Il a été créé avec le Jarvis
 > Cette section sera remplie automatiquement lors de l'installation initiale via le module `/install module-installs/jarvis-install`.
 > Elle peut ensuite évoluer au fil du temps quand votre situation change.
 
-Je m'appelle Damien et je vis à Ivry-sur-Seine, en région parisienne. J'ai un profil mixte : je suis salarié en tant que Business Development Executive chez Edrington (spiritueux), vendeur en missions ponctuelles à l'Accor Arena, et auto-entrepreneur sous ma marque D Embassy (conseil business et coaching). En parallèle, je développe des sites et applications, dont un site de réservation pour chauffeurs VTC.
+Je m'appelle Damien et je vis à Ivry-sur-Seine, en région parisienne. J'ai un profil mixte : je suis salarié en tant que Business Development Executive - Off Trade chez Edrington (spiritueux), vendeur en missions ponctuelles à l'Accor Arena, et auto-entrepreneur sous ma marque D Embassy (conseil business et coaching). En parallèle, je développe des sites et applications, dont un site de réservation pour chauffeurs VTC.
 
 Mon objectif prioritaire actuel est la génération de revenus, pour libérer du temps des missions énergivores et le réinvestir dans mes activités à fort potentiel (site D-VTC, coaching, conseil), tout en respectant strictement le cadre légal de ma micro-entreprise.
 

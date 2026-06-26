@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   Loader2, ExternalLink, TrendingUp, Clock, PiggyBank, BarChart3,
   Target, Plus, Pencil, Trash2, X, Check, Copy, Eye, EyeOff,
-  CreditCard, AlertCircle, CheckCircle2, PauseCircle, XCircle, Receipt, RefreshCw, Gift, Users,
+  CreditCard, AlertCircle, CheckCircle2, PauseCircle, XCircle, Receipt, RefreshCw, Send, Gift, Users,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -833,7 +833,7 @@ export default function AdminDashboard() {
                       ? format(new Date(driver.subscription_start_at), 'd MMM yyyy', { locale: fr })
                       : <span className="text-[#A7B0BF]">—</span>}
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center flex-wrap gap-1.5">
                     {(!driver.subscription_status || driver.subscription_status === 'pending') && (
                       <button
                         onClick={() => handleStripe('activate', driver.id)}
@@ -868,20 +868,20 @@ export default function AdminDashboard() {
                       <button
                         onClick={() => handleResendInvoice(driver.last_invoice!.id)}
                         disabled={stripeAction !== null}
-                        title="Renvoyer la dernière facture"
+                        title="Renvoyer la dernière facture par email"
                         className="flex items-center gap-1 text-[11px] font-semibold text-[#5A6477] border border-[#E8EDF5] hover:border-[#0A1628] rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
-                        {stripeAction === driver.last_invoice.invoice_number ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
-                        Renvoyer
+                        {stripeAction === driver.last_invoice.invoice_number ? <Loader2 size={10} className="animate-spin" /> : <Send size={10} />}
+                        Email
                       </button>
                     )}
                     {driver.stripe_customer_id && (
                       <button
                         onClick={() => handleResyncInvoice(driver.id)}
                         disabled={stripeAction !== null}
-                        title="Synchroniser les factures depuis Stripe"
+                        title="Importer les factures manquantes depuis Stripe"
                         className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 border border-blue-100 hover:border-blue-400 rounded-[6px] px-2 py-1 transition-colors disabled:opacity-50">
                         {stripeAction === driver.id + 'resync' ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
-                        Resync
+                        Importer
                       </button>
                     )}
                     {driver.stripe_subscription_id && (

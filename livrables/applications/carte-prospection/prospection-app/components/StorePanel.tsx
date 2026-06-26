@@ -116,7 +116,6 @@ export default function StorePanel({
         const parts = [
           d.lines?.length ? d.lines.map((l: { label: string }) => l.label).join(' → ') : null,
           d.duration_text,
-          d.fare_text,
           d.walk_text,
         ].filter(Boolean)
         setDistance(parts.join(' · '))

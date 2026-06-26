@@ -119,7 +119,7 @@ function ClusteredStoreMarkers({
       map
         ? new MarkerClusterer({
             map,
-            algorithm: new SuperClusterAlgorithm({ radius: 44, maxZoom: 14 }),
+            algorithm: new SuperClusterAlgorithm({ radius: 52, maxZoom: 14 }),
           })
         : null,
     [map],

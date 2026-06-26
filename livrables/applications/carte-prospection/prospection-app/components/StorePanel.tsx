@@ -42,6 +42,7 @@ export default function StorePanel({
   )
 
   const [distance, setDistance] = useState<string | null>(null)
+  const [mapsUrl, setMapsUrl] = useState<string | null>(null)
   const [loadingDist, setLoadingDist] = useState(false)
   const [travelMode, setTravelMode] = useState<'driving' | 'transit'>('driving')
 
@@ -50,6 +51,7 @@ export default function StorePanel({
     setStatus(store.status)
     setNotes(store.notes ?? '')
     setDistance(null)
+    setMapsUrl(null)
   }, [store])
 
   async function saveStore() {
@@ -97,6 +99,34 @@ export default function StorePanel({
       return
     }
     setLoadingDist(true)
+    // Lien "Ouvrir dans Google Maps" pour l'itinéraire détaillé complet.
+    setMapsUrl(
+      `https://www.google.com/maps/dir/?api=1&origin=${myLocation.lat},${myLocation.lng}` +
+        `&destination=${store.lat},${store.lng}&travelmode=${travelMode}`,
+    )
+
+    if (travelMode === 'transit') {
+      const res = await fetch('/api/directions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: myLocation, destination: { lat: store.lat, lng: store.lng } }),
+      })
+      const d = await res.json()
+      if (d.ok) {
+        const parts = [
+          d.lines?.length ? d.lines.map((l: { label: string }) => l.label).join(' → ') : null,
+          d.duration_text,
+          d.fare_text,
+          d.walk_text,
+        ].filter(Boolean)
+        setDistance(parts.join(' · '))
+      } else {
+        setDistance('Aucun itinéraire en transports')
+      }
+      setLoadingDist(false)
+      return
+    }
+
     const res = await fetch('/api/distance', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -108,13 +138,7 @@ export default function StorePanel({
     })
     const data = await res.json()
     const r = data.results?.[0]
-    setDistance(
-      r?.ok
-        ? `${r.distance_text} · ${r.duration_text}`
-        : travelMode === 'transit'
-          ? 'Aucun itinéraire en transports'
-          : 'Indisponible',
-    )
+    setDistance(r?.ok ? `${r.distance_text} · ${r.duration_text}` : 'Indisponible')
     setLoadingDist(false)
   }
 
@@ -122,6 +146,7 @@ export default function StorePanel({
   function switchMode(m: 'driving' | 'transit') {
     setTravelMode(m)
     setDistance(null)
+    setMapsUrl(null)
   }
 
   return (
@@ -208,8 +233,23 @@ export default function StorePanel({
             className="w-full border border-teal/30 text-teal rounded-lg py-2 text-[12px] font-semibold hover:bg-teal/5 transition-colors flex items-center justify-center gap-2"
           >
             {loadingDist ? <Loader2 size={14} className="animate-spin" /> : <Navigation size={14} />}
-            {distance ? `Trajet : ${distance}` : 'Distance depuis ma position'}
+            {loadingDist ? 'Calcul…' : 'Calculer le trajet depuis ma position'}
           </button>
+          {distance && (
+            <div className="rounded-lg bg-teal/5 px-3 py-2 text-[12px] text-teal space-y-1">
+              <div className="font-semibold leading-snug">{distance}</div>
+              {mapsUrl && (
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-bronze hover:underline inline-flex items-center gap-1"
+                >
+                  <Navigation size={12} /> Ouvrir dans Google Maps
+                </a>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Placements */}

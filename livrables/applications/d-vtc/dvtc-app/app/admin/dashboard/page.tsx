@@ -833,7 +833,7 @@ export default function AdminDashboard() {
                       ? format(new Date(driver.subscription_start_at), 'd MMM yyyy', { locale: fr })
                       : <span className="text-[#A7B0BF]">—</span>}
                   </div>
-                  <div className="flex items-center flex-wrap gap-1.5">
+                  <div className="flex flex-col items-start gap-1">
                     {(!driver.subscription_status || driver.subscription_status === 'pending') && (
                       <button
                         onClick={() => handleStripe('activate', driver.id)}

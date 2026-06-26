@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps'
-import { MarkerClusterer } from '@googlemaps/markerclusterer'
+import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import type { Marker } from '@googlemaps/markerclusterer'
 import { Star } from 'lucide-react'
 import type { StoreWithPlacements } from '@/lib/supabase'
@@ -112,7 +112,18 @@ function ClusteredStoreMarkers({
 }) {
   const map = useMap()
 
-  const clusterer = useMemo(() => (map ? new MarkerClusterer({ map }) : null), [map])
+  // Rayon de regroupement réduit (défaut 60) + clustering coupé plus tôt (maxZoom 13)
+  // pour afficher davantage de magasins individuels sans avoir à zoomer.
+  const clusterer = useMemo(
+    () =>
+      map
+        ? new MarkerClusterer({
+            map,
+            algorithm: new SuperClusterAlgorithm({ radius: 32, maxZoom: 13 }),
+          })
+        : null,
+    [map],
+  )
 
   // Marqueurs stockés dans une ref (mutation, pas de setState) pour éviter
   // toute boucle de rendu liée aux callbacks ref inline.

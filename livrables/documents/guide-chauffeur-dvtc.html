@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guide chauffeur — D-VTC</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+      color: #1a2438;
+      background: #f5f7fa;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: white;
+      padding: 60px 64px 80px;
+    }
+
+    /* Cover */
+    .cover {
+      text-align: center;
+      padding: 60px 0 50px;
+      border-bottom: 2px solid #E8EDF5;
+      margin-bottom: 52px;
+    }
+
+    .logo-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: #0a1628;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    .logo-box span {
+      color: #C9A84C;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .cover h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: #0a1628;
+      letter-spacing: -0.02em;
+    }
+
+    .cover .subtitle {
+      font-size: 15px;
+      color: #8A94A6;
+      margin-top: 8px;
+    }
+
+    .cover .badge {
+      display: inline-block;
+      margin-top: 18px;
+      background: #F4F6FA;
+      border: 1px solid #E0E5EF;
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 12px;
+      color: #5A6477;
+    }
+
+    /* TOC */
+    .toc {
+      background: #F8F9FB;
+      border: 1px solid #E8EDF5;
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 48px;
+    }
+
+    .toc h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #8A94A6;
+      margin-bottom: 14px;
+    }
+
+    .toc ol {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .toc ol li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #3A4456;
+    }
+
+    .toc-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: #0a1628;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #E8EDF5;
+    }
+
+    .section-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: #0a1628;
+      color: #C9A84C;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0a1628;
+      letter-spacing: -0.01em;
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: #EDF3FC;
+      color: #0a1628;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #0a1628;
+      margin-bottom: 4px;
+    }
+
+    .step-content p {
+      font-size: 13px;
+      color: #5A6477;
+      line-height: 1.6;
+    }
+
+    /* Callout */
+    .callout {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .callout.tip {
+      background: #FBF7EC;
+      border: 1px solid #EAD9A8;
+    }
+
+    .callout.tip .icon { color: #C9A84C; font-size: 18px; }
+    .callout.tip p, .callout.tip strong { color: #7A6020; }
+
+    .callout.info {
+      background: #EDF3FC;
+      border: 1px solid #D5E2F7;
+    }
+
+    .callout.info .icon { color: #3B7FDB; font-size: 18px; }
+    .callout.info p, .callout.info strong { color: #1A4A8A; }
+
+    .callout.warning {
+      background: #FFF4F4;
+      border: 1px solid #F5C6C6;
+    }
+
+    .callout.warning .icon { color: #D94848; font-size: 18px; }
+    .callout.warning p, .callout.warning strong { color: #992020; }
+
+    .callout-body strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .callout-body p {
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    /* Status pills */
+    .pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pill.pending   { background: #FEF3C7; color: #92400E; }
+    .pill.accepted  { background: #D1FAE5; color: #065F46; }
+    .pill.completed { background: #EDF3FC; color: #1A4A8A; }
+    .pill.refused   { background: #FEE2E2; color: #991B1B; }
+
+    /* Summary table */
+    .summary {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 16px 0;
+    }
+
+    .summary th {
+      background: #F4F6FA;
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #8A94A6;
+      border-bottom: 1px solid #E8EDF5;
+    }
+
+    .summary td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #F0F3F8;
+      color: #3A4456;
+      vertical-align: top;
+    }
+
+    .summary tr:last-child td { border-bottom: none; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #E8EDF5;
+      margin: 44px 0;
+    }
+
+    /* FAQ */
+    .faq-item {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #F0F3F8;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .faq-question {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0a1628;
+      margin-bottom: 6px;
+    }
+
+    .faq-answer {
+      font-size: 13px;
+      color: #5A6477;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .doc-footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid #E8EDF5;
+      text-align: center;
+      font-size: 11px;
+      color: #A7B0BF;
+    }
+
+    /* Print */
+    @media print {
+      body { background: white; }
+      .page { padding: 30px 40px 50px; max-width: 100%; }
+      .section { page-break-inside: avoid; }
+      .step { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="logo-box"><span>D</span></div>
+    <h1>Guide du chauffeur</h1>
+    <p class="subtitle">Tout ce qu'il faut savoir pour utiliser D-VTC au quotidien</p>
+    <span class="badge">Version 1.0 &nbsp;·&nbsp; Pour les chauffeurs</span>
+  </div>
+
+  <!-- Intro -->
+  <p style="font-size: 14px; color: #5A6477; margin-bottom: 32px; line-height: 1.7;">
+    Ce guide vous explique comment utiliser D-VTC pas à pas. Pas besoin d'être à l'aise avec les outils numériques : chaque étape est détaillée simplement, dans l'ordre logique où vous en aurez besoin.
+  </p>
+
+  <!-- Table des matières -->
+  <div class="toc">
+    <h2>Sommaire</h2>
+    <ol>
+      <li><span class="toc-num">1</span> Ce qu'est D-VTC et à quoi ça sert</li>
+      <li><span class="toc-num">2</span> Se connecter à votre espace chauffeur</li>
+      <li><span class="toc-num">3</span> Configurer votre profil la première fois</li>
+      <li><span class="toc-num">4</span> Partager votre lien de réservation</li>
+      <li><span class="toc-num">5</span> Gérer vos réservations au quotidien</li>
+      <li><span class="toc-num">6</span> Utiliser le calendrier</li>
+      <li><span class="toc-num">7</span> Consulter vos factures d'abonnement</li>
+      <li><span class="toc-num">8</span> Questions fréquentes</li>
+    </ol>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">Ce qu'est D-VTC et à quoi ça sert</div>
+    </div>
+
+    <p style="color: #5A6477; margin-bottom: 16px;">
+      D-VTC est votre page de réservation personnelle. Vos clients l'utilisent pour demander une course directement chez vous, sans passer par Uber ou Bolt.
+    </p>
+
+    <p style="color: #5A6477; margin-bottom: 20px;">
+      Concrètement, D-VTC c'est deux espaces distincts :
+    </p>
+
+    <table class="summary">
+      <thead>
+        <tr>
+          <th>Espace</th>
+          <th>Qui l'utilise</th>
+          <th>À quoi ça sert</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Page de réservation</strong><br /><span style="font-size:11px; color:#A7B0BF;">d-vtc.fr/r/votre-nom</span></td>
+          <td>Vos clients</td>
+          <td>Remplir un formulaire pour vous demander une course</td>
+        </tr>
+        <tr>
+          <td><strong>Espace chauffeur</strong><br /><span style="font-size:11px; color:#A7B0BF;">d-vtc.fr/connexion</span></td>
+          <td>Vous</td>
+          <td>Voir et gérer toutes les demandes de course reçues</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout tip">
+      <span class="icon">💡</span>
+      <div class="callout-body">
+        <strong>L'avantage principal</strong>
+        <p>Vos clients peuvent vous réserver en autonomie, 24h/24, même quand vous conduisez. Vous recevez une alerte et vous acceptez ou refusez quand vous êtes disponible.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">Se connecter à votre espace chauffeur</div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Ouvrez votre navigateur internet</strong>
+          <p>Depuis votre téléphone ou ordinateur, ouvrez Chrome, Safari ou Firefox.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Allez sur la page de connexion</strong>
+          <p>Dans la barre d'adresse en haut, tapez : <strong style="color:#0a1628;">d-vtc.fr/connexion</strong> et appuyez sur Entrée.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Entrez votre adresse email et votre mot de passe</strong>
+          <p>Ce sont les identifiants que vous avez reçus lors de votre inscription. Si vous les avez oubliés, contactez le service D-VTC.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Cliquez sur "Se connecter"</strong>
+          <p>Vous arrivez directement sur votre tableau de bord. Vous y verrez toutes vos courses.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip" style="margin-top: 20px;">
+      <span class="icon">💡</span>
+      <div class="callout-body">
+        <strong>Astuce : enregistrez la page dans vos favoris</strong>
+        <p>Sur votre téléphone, appuyez sur le bouton "Partager" ou les trois points, puis sur "Ajouter aux favoris" ou "Ajouter à l'écran d'accueil". Vous accéderez à votre espace en un clic chaque jour.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">Configurer votre profil la première fois</div>
+    </div>
+
+    <p style="color: #5A6477; margin-bottom: 20px;">
+      Avant de partager votre lien à vos clients, prenez 5 minutes pour remplir votre profil. Ces informations s'affichent sur votre page de réservation.
+    </p>
+
+    <p style="color: #5A6477; margin-bottom: 16px;">Dans votre espace chauffeur, cliquez sur <strong>Paramètres</strong> dans le menu à gauche.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Mon profil — Vérifiez votre nom et téléphone</strong>
+          <p>Votre nom s'affichera sur la page de réservation. Ajoutez votre numéro de téléphone pour que le service puisse vous contacter en cas de besoin.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Mon véhicule — Renseignez les informations de votre voiture</strong>
+          <p>Indiquez le modèle (ex. : <em>Tesla Model 3</em>), la plaque d'immatriculation, et le nombre de passagers maximum que vous pouvez transporter. Ces infos rassurent vos clients.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Ma tarification — Vérifiez vos prix</strong>
+          <p>Des tarifs ont été configurés pour vous par défaut. Vous pouvez les ajuster à tout moment :</p>
+          <ul style="margin-top: 8px; margin-left: 16px; font-size: 13px; color: #5A6477; line-height: 1.8;">
+            <li><strong>Prix de base</strong> : le montant fixe de départ pour chaque course</li>
+            <li><strong>Prix par km</strong> : ce qui s'ajoute en fonction de la distance</li>
+            <li><strong>Majoration nuit</strong> : un pourcentage en plus pour les courses de nuit</li>
+            <li><strong>Mise à disposition</strong> : le tarif à l'heure si un client vous réserve pour plusieurs heures</li>
+            <li><strong>Remise fidélité</strong> : une réduction automatique pour vos clients réguliers</li>
+          </ul>
+          <p style="margin-top: 8px;">Un aperçu en temps réel (course fictive de 20 km) s'affiche à droite pour vous aider à vous repérer.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Cliquez sur "Enregistrer les modifications" dans chaque section</strong>
+          <p>Chaque section a son propre bouton d'enregistrement. N'oubliez pas de cliquer dessus avant de passer à la suivante.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">Partager votre lien de réservation</div>
+    </div>
+
+    <p style="color: #5A6477; margin-bottom: 20px;">
+      Votre lien de réservation est l'adresse de votre page personnelle. C'est ce que vous envoyez à vos clients pour qu'ils puissent vous réserver directement.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Trouvez votre lien dans les Paramètres</strong>
+          <p>Allez dans <strong>Paramètres</strong>, descendez jusqu'à la section <strong>"Mon lien de réservation"</strong>. Votre lien ressemble à : <strong style="color:#0a1628;">d-vtc.fr/r/votre-nom</strong></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Copiez-le et envoyez-le à vos clients</strong>
+          <p>Cliquez sur le bouton <strong>"Copier"</strong>. Le lien est maintenant dans votre presse-papiers. Collez-le dans un SMS, WhatsApp ou email à vos clients.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Téléchargez votre QR code pour votre véhicule</strong>
+          <p>Sous votre lien, un QR code est généré automatiquement. Cliquez sur <strong>"Télécharger en HD"</strong>, imprimez-le, plastifiez-le et posez-le bien en vue dans votre voiture. Vos passagers scannent le code avec leur téléphone et atterrissent directement sur votre page.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-top: 20px;">
+      <span class="icon">ℹ️</span>
+      <div class="callout-body">
+        <strong>Comment votre client utilise votre page ?</strong>
+        <p>Il arrive sur une page à votre nom, il voit vos tarifs, il remplit un formulaire (prénom, nom, téléphone, email), il choisit une date et une heure, il indique départ et arrivée. Le prix s'affiche automatiquement. Il envoie sa demande. Vous recevez une notification.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">Gérer vos réservations au quotidien</div>
+    </div>
+
+    <p style="color: #5A6477; margin-bottom: 20px;">
+      Le <strong>Tableau de bord</strong> est votre page principale. C'est là que vous verrez toutes les demandes de course et que vous pourrez les accepter ou les refuser.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Repérez les réservations en attente</strong>
+          <p>Quand un client vous envoie une demande, elle apparaît avec le badge <span class="pill pending">En attente</span>. C'est urgent : répondez le plus vite possible.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Lisez les détails de la course</strong>
+          <p>Chaque carte de réservation affiche : le nom du client, son téléphone, la date et l'heure, l'adresse de départ et d'arrivée, le prix estimé, et le nombre de passagers.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Acceptez ou refusez</strong>
+          <p>Cliquez sur <strong>"Accepter"</strong> si vous êtes disponible. Le client reçoit une confirmation automatique par email. Cliquez sur <strong>"Refuser"</strong> si vous n'êtes pas disponible. Le client est également prévenu.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Marquez la course comme terminée</strong>
+          <p>Une fois la course effectuée, retrouvez-la dans vos réservations acceptées et changez son statut en <span class="pill completed">Terminée</span>. Cela met à jour votre chiffre d'affaires dans les statistiques.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <p style="font-size: 13px; font-weight: 700; color: #0a1628; margin-bottom: 12px;">Les 4 statuts possibles d'une réservation :</p>
+      <table class="summary">
+        <thead>
+          <tr>
+            <th>Statut</th>
+            <th>Ce que ça veut dire</th>
+            <th>Ce que vous devez faire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill pending">En attente</span></td>
+            <td>Le client a envoyé une demande, vous n'avez pas encore répondu</td>
+            <td>Accepter ou refuser rapidement</td>
+          </tr>
+          <tr>
+            <td><span class="pill accepted">Acceptée</span></td>
+            <td>Vous avez accepté, la course est confirmée</td>
+            <td>Effectuer la course, puis marquer "Terminée"</td>
+          </tr>
+          <tr>
+            <td><span class="pill completed">Terminée</span></td>
+            <td>La course a eu lieu</td>
+            <td>Rien, elle s'ajoute à vos statistiques</td>
+          </tr>
+          <tr>
+            <td><span class="pill refused">Refusée</span></td>
+            <td>Vous avez refusé la demande</td>
+            <td>Rien, le client a été prévenu automatiquement</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <p style="font-size: 13px; font-weight: 700; color: #0a1628; margin-bottom: 12px;">Filtrer et trier vos réservations :</p>
+      <p style="font-size: 13px; color: #5A6477; margin-bottom: 10px;">En haut du tableau de bord, vous pouvez choisir la période à afficher :</p>
+      <ul style="font-size: 13px; color: #5A6477; line-height: 1.8; margin-left: 16px;">
+        <li><strong>Cette semaine</strong> : les courses de la semaine en cours</li>
+        <li><strong>Ce mois</strong> : toutes les courses du mois</li>
+        <li><strong>Tout</strong> : tout l'historique depuis le début</li>
+        <li><strong>Semaine prochaine</strong> : pratique pour anticiper votre planning</li>
+      </ul>
+    </div>
+
+    <div class="callout tip" style="margin-top: 20px;">
+      <span class="icon">💡</span>
+      <div class="callout-body">
+        <strong>Vos statistiques se mettent à jour automatiquement</strong>
+        <p>En haut de votre tableau de bord, vous voyez en temps réel votre chiffre d'affaires, le ticket moyen par course, et le montant que vous économisez par rapport aux commissions Uber (estimées à 28%).</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-title">Utiliser le calendrier</div>
+    </div>
+
+    <p style="color: #5A6477; margin-bottom: 20px;">
+      Le <strong>Calendrier</strong> affiche toutes vos courses sous forme de vue mensuelle. Il est utile pour visualiser votre planning d'un coup d'oeil et pour bloquer les jours ou créneaux où vous n'êtes pas disponible.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Naviguer dans le calendrier</strong>
+          <p>Cliquez sur les flèches à gauche et à droite du mois pour passer au mois précédent ou suivant. Les petits ronds colorés sur chaque jour indiquent vos courses.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Voir le détail d'une course</strong>
+          <p>Cliquez sur n'importe quelle course dans le calendrier. Une fenêtre s'ouvre avec tous les détails : client, trajet, prix, statut. Vous pouvez accepter, refuser ou marquer comme terminée directement depuis cette fenêtre.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Bloquer un créneau où vous n'êtes pas disponible</strong>
+          <p>Passez votre souris sur un jour du calendrier. Un petit <strong>+</strong> apparaît en haut à droite de la case. Cliquez dessus pour indiquer que vous êtes indisponible sur ce créneau. Indiquez l'heure de début, l'heure de fin, et un motif si vous le souhaitez (ex. : "Rendez-vous perso"). Vos clients ne pourront pas vous réserver pendant ce créneau.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Supprimer un créneau bloqué</strong>
+          <p>Passez votre souris sur le créneau gris dans le calendrier. Une petite croix apparaît. Cliquez dessus pour le supprimer.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-top: 20px;">
+      <span class="icon">ℹ️</span>
+      <div class="callout-body">
+        <strong>Légende des couleurs</strong>
+        <p>Jaune = En attente &nbsp;·&nbsp; Vert = Acceptée &nbsp;·&nbsp; Bleu = Terminée &nbsp;·&nbsp; Rouge = Refusée &nbsp;·&nbsp; Gris = Créneau bloqué (indisponibilité)</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 7 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div class="section-title">Consulter vos factures d'abonnement</div>
+    </div>
+
+    <p style="color: #5A6477; margin-bottom: 20px;">
+      La section <strong>Mes factures</strong> liste toutes vos factures d'abonnement mensuel à D-VTC (74€/mois). Vous pouvez télécharger chaque facture en PDF pour votre comptabilité.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Cliquez sur "Mes factures" dans le menu</strong>
+          <p>Vous verrez la liste de tous vos paiements mensuels, avec la date, le montant et le statut (Payée, En attente, Échouée).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Téléchargez une facture en PDF</strong>
+          <p>À droite de chaque ligne, cliquez sur l'icône de téléchargement. Le PDF s'ouvre dans un nouvel onglet. Vous pouvez ensuite l'enregistrer sur votre ordinateur ou le partager.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warning" style="margin-top: 20px;">
+      <span class="icon">⚠️</span>
+      <div class="callout-body">
+        <strong>Si votre abonnement n'est pas activé</strong>
+        <p>Vous verrez un bouton "Activer mon abonnement". Cliquez dessus et suivez les étapes pour entrer vos informations de paiement. Votre accès sera activé immédiatement.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Section 8 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <div class="section-title">Questions fréquentes</div>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Mon client a envoyé une demande mais je n'ai rien reçu. Que se passe-t-il ?</p>
+      <p class="faq-answer">La demande est visible dans votre tableau de bord. Connectez-vous sur d-vtc.fr/connexion et regardez les réservations avec le statut "En attente". Les notifications email peuvent parfois aller dans les spams : vérifiez ce dossier.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Est-ce que je peux changer mon prix après avoir accepté une course ?</p>
+      <p class="faq-answer">Non. Le prix affiché lors de la réservation est un prix estimé que votre client a vu avant de confirmer. Si le trajet réel est différent (bouchons, changement de destination), discutez directement avec votre client.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Mon client me paie comment ?</p>
+      <p class="faq-answer">D-VTC gère la prise de réservation, pas l'encaissement des courses. Le paiement de la course se règle directement entre vous et votre client (espèces, virement, carte via votre terminal, etc.), comme vous le faites habituellement.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Puis-je avoir plusieurs courses le même jour ?</p>
+      <p class="faq-answer">Oui. Il n'y a pas de limite au nombre de courses. Si vous souhaitez éviter les conflits, utilisez le calendrier pour bloquer les créneaux où vous êtes déjà pris.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Comment un client peut-il annuler sa course ?</p>
+      <p class="faq-answer">Il doit vous contacter directement par téléphone. De votre côté, vous pouvez alors changer le statut de la réservation en "Refusée" pour mettre à jour votre tableau de bord.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Je n'arrive plus à me connecter. Que faire ?</p>
+      <p class="faq-answer">Vérifiez que vous utilisez bien la bonne adresse email. Si vous avez oublié votre mot de passe, vous pouvez le changer dans Paramètres > Sécurité une fois connecté. En cas de problème persistant, contactez le support D-VTC.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-question">Le QR code dans ma voiture, comment ça marche exactement ?</p>
+      <p class="faq-answer">Votre passager pointe simplement son appareil photo vers le QR code (comme pour prendre une photo). L'application appareil photo reconnaît automatiquement le code et propose d'ouvrir votre page de réservation. Le client n'a pas besoin de télécharger d'application.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <p>D-VTC — Guide chauffeur v1.0</p>
+    <p style="margin-top: 4px;">Pour toute question : contactez le support via votre espace chauffeur</p>
+  </div>
+
+</div>
+</body>
+</html>

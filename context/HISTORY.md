@@ -7,6 +7,23 @@
 
 ---
 
+## 2026-06-27
+
+### Stratégie D-VTC : cible chauffeurs établis (Modèle A) + guide chauffeur
+- Patrick non activable à court terme (attente de sa carte VTC, pas de clientèle directe, actif sur Citygo). Ses contacts sont dans la même situation d'attente.
+- Décision stratégique : cibler les chauffeurs VTC déjà établis disposant d'une clientèle directe (Modèle A, vendre l'outil). Modèle B (devenir une agence qui apporte les clients) écarté.
+- Guide chauffeur pédagogique créé (HTML + PDF) dans `livrables/documents/` pour faciliter la prise en main de l'application.
+- Onglet comptabilité repoussé : c'est un outil de rétention, pas d'acquisition, prématuré à ce stade.
+
+### Déblocage de la location du parking (Villeneuve-le-Roi)
+- Actif : place n°43, résidence neuve "Les Rives du Roi", 94290 Villeneuve-le-Roi, acquise 02/2026 (M & S Développement Immobilier). Coût récurrent ~160€/an (taxe foncière + charges de copropriété).
+- Diagnostic corrigé : pas un problème de distribution (déjà présent sur 5 plateformes : LeBonCoin, SeLoger, MonsieurParking, PrendsMaPlace, Facebook Marketplace) mais de conversion. Beaucoup de vues, zéro contact = prix hors marché.
+- Marché local relevé : 65-85€ pour une place (plafond 100€). Prix affichés incohérents (90-115€ selon plateforme). Repricing à un prix unique de 79€ CC, harmonisé partout.
+- Annonces refondues : titre sans "PMR", texte optimisé (RDC, XXL, sécurisé), dépôt de garantie 1 mois conservé.
+- À corriger : surface SeLoger affichée 7 m² au lieu de 16,5 m² (contredit l'argument XXL). Suivi : si 0 contact à 79€ sous 10 jours, descendre à 69€ et revoir les photos.
+
+---
+
 ## 2026-06-26
 
 ### Carte de prospection — correctif import KML, nouvelle enseigne, analyse IDF

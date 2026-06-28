@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audit Digital — Crousti Poulet</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @media print {
+      body { background: white; }
+      .page { box-shadow: none; margin: 0; padding: 32px 40px 40px; }
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #f0f2f5;
+      color: #1a2438;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 32px auto;
+      background: white;
+      padding: 40px 48px 48px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+      border-radius: 4px;
+    }
+
+    /* ---- HEADER ---- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #0a1628;
+      padding-bottom: 18px;
+      margin-bottom: 26px;
+    }
+
+    .logo { font-size: 20px; font-weight: 800; letter-spacing: -.01em; color: #0a1628; }
+    .logo span { color: #c9a84c; }
+    .logo-sub { font-size: 11px; color: #888; margin-top: 3px; letter-spacing: .03em; }
+
+    .badge-wrap { text-align: right; }
+    .badge {
+      display: inline-block;
+      background: #c9a84c;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 3px;
+    }
+    .badge-target {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0a1628;
+      margin-top: 6px;
+    }
+    .badge-sub { font-size: 11px; color: #888; margin-top: 2px; }
+
+    /* ---- INTRO ---- */
+    .intro {
+      background: #f8f9fb;
+      border-left: 3px solid #c9a84c;
+      padding: 12px 16px;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 28px;
+      font-size: 12.5px;
+      color: #3a4456;
+      line-height: 1.6;
+    }
+
+    /* ---- SECTIONS ---- */
+    .section-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 14px;
+    }
+
+    /* ---- PROBLÈMES ---- */
+    .problems { margin-bottom: 28px; }
+
+    .problem {
+      display: flex;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid #eaecf0;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+
+    .problem-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: #0a1628;
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .problem-body { flex: 1; }
+    .problem-title { font-weight: 700; font-size: 13px; color: #0a1628; margin-bottom: 3px; }
+    .problem-desc { font-size: 12px; color: #5a6478; line-height: 1.5; }
+
+    .tag {
+      display: inline-block;
+      background: #fff3cd;
+      color: #7a5c00;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-bottom: 5px;
+      letter-spacing: .04em;
+    }
+    .tag.red { background: #fdecea; color: #9b1c1c; }
+    .tag.orange { background: #fef3e2; color: #92400e; }
+
+    /* ---- SOLUTIONS ---- */
+    .solutions {
+      border-top: 1px solid #eaecf0;
+      padding-top: 22px;
+      margin-bottom: 28px;
+    }
+
+    .solution {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .solution-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: #f0f4ff;
+      border: 1.5px solid #d0d8f0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .solution-body { flex: 1; }
+    .solution-title { font-weight: 700; font-size: 13px; color: #0a1628; margin-bottom: 2px; }
+    .solution-desc { font-size: 12px; color: #5a6478; line-height: 1.5; }
+    .solution-price {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0a1628;
+      background: #f0f4f0;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-top: 4px;
+    }
+
+    /* ---- CTA ---- */
+    .cta {
+      background: #0a1628;
+      color: white;
+      border-radius: 8px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .cta-left .cta-title { font-weight: 800; font-size: 14px; color: #c9a84c; margin-bottom: 4px; }
+    .cta-left .cta-sub { font-size: 11.5px; color: #a0aec0; line-height: 1.5; }
+
+    .cta-right { text-align: right; flex-shrink: 0; }
+    .cta-right .contact-line { font-size: 12px; color: #e2e8f0; margin-bottom: 4px; }
+    .cta-right .contact-line strong { color: white; }
+    .cta-badge {
+      display: inline-block;
+      background: #c9a84c;
+      color: #0a1628;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 3px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 10px;
+      color: #c0c8d0;
+      letter-spacing: .03em;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="logo">D <span>Embassy</span></div>
+      <div class="logo-sub">Conseil & Développement Business — Ivry-sur-Seine</div>
+    </div>
+    <div class="badge-wrap">
+      <div class="badge">Audit Digital</div>
+      <div class="badge-target">Crousti Poulet</div>
+      <div class="badge-sub">49 Rue Lénine, 94200 Ivry-sur-Seine</div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    Avant de vous proposer quoi que ce soit, j'ai analysé votre présence en ligne telle que vos clients la voient aujourd'hui.
+    Voici les 3 points qui freinent votre réputation et votre visibilité, et ce qu'on peut faire concrètement pour y remédier.
+  </div>
+
+  <!-- PROBLÈMES -->
+  <div class="problems">
+    <div class="section-title">Ce que j'ai observé</div>
+
+    <div class="problem">
+      <div class="problem-num">1</div>
+      <div class="problem-body">
+        <span class="tag red">Réputation</span>
+        <div class="problem-title">Des avis négatifs sans réponse sur Google</div>
+        <div class="problem-desc">
+          Plusieurs clients signalent un poulet froid, des commandes incomplètes ou des problèmes d'hygiène — et ces avis restent visibles sans réponse de votre part. Pour quelqu'un qui vous cherche sur Google, c'est la première chose qu'il voit. Un avis sans réponse donne l'impression que vous ne vous en préoccupez pas.
+        </div>
+      </div>
+    </div>
+
+    <div class="problem">
+      <div class="problem-num">2</div>
+      <div class="problem-body">
+        <span class="tag orange">Visibilité</span>
+        <div class="problem-title">Aucun site web — vous n'existez pas vraiment en ligne</div>
+        <div class="problem-desc">
+          Quand quelqu'un cherche "poulet halal Ivry" ou "poulet rôti Ivry-sur-Seine", il ne tombe pas sur vous directement. Votre fiche Google Maps, vos annuaires tiers, Deliveroo — tout ça dépend d'autres plateformes que vous ne contrôlez pas. Un site propre vous appartient et met votre menu, vos horaires et votre qualité en avant, à votre façon.
+        </div>
+      </div>
+    </div>
+
+    <div class="problem">
+      <div class="problem-num">3</div>
+      <div class="problem-body">
+        <span class="tag">Réseaux sociaux</span>
+        <div class="problem-title">Votre Instagram pointe vers une autre ville</div>
+        <div class="problem-desc">
+          Le compte @crousti_poulet est associé à Évry, pas à Ivry-sur-Seine. Vos clients locaux ne vous trouvent pas. Et la page Facebook avec 405 likes est inactive depuis plusieurs mois. Ce sont des vitrines qui existent mais qui ne travaillent pas pour vous.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUTIONS -->
+  <div class="solutions">
+    <div class="section-title">Ce que je propose</div>
+
+    <div class="solution">
+      <div class="solution-icon">🌐</div>
+      <div class="solution-body">
+        <div class="solution-title">Un site web professionnel, rapide à mettre en ligne</div>
+        <div class="solution-desc">Menu, horaires, photos, adresse, bouton "Commander" — tout ce qu'un client cherche en 10 secondes. Optimisé pour apparaître en premier sur Google quand on cherche "poulet Ivry". Vous en êtes propriétaire, je vous le livre clé en main.</div>
+        <span class="solution-price">Livraison en 5 jours</span>
+      </div>
+    </div>
+
+    <div class="solution">
+      <div class="solution-icon">⭐</div>
+      <div class="solution-body">
+        <div class="solution-title">Gestion de votre réputation Google</div>
+        <div class="solution-desc">Réponse professionnelle aux avis négatifs, mise à jour de votre fiche (photos, attributs, horaires exacts), activation des posts Google pour promouvoir vos formules. Une fiche Google bien gérée, c'est plus de clients qui franchissent la porte.</div>
+        <span class="solution-price">Inclus dans la prestation</span>
+      </div>
+    </div>
+
+    <div class="solution">
+      <div class="solution-icon">📱</div>
+      <div class="solution-body">
+        <div class="solution-title">Remise en ordre de l'Instagram + contenu de lancement</div>
+        <div class="solution-desc">Correction de la localisation (Ivry, pas Évry), création de 6 visuels professionnels pour relancer la page, et un plan de contenu simple à tenir : 3 posts par semaine, produit du jour, avis clients, coulisses. Ce qui attire et fidélise une clientèle locale.</div>
+        <span class="solution-price">Livré avec le site</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-left">
+      <div class="cta-title">Prochaine étape : on en parle 15 minutes</div>
+      <div class="cta-sub">
+        Pas de contrat à signer aujourd'hui. Je vous montre exactement ce que je vois et ce que ça donnerait pour votre commerce. C'est gratuit et sans engagement.
+      </div>
+    </div>
+    <div class="cta-right">
+      <div class="contact-line"><strong>Damien</strong> — D Embassy</div>
+      <div class="contact-line">Conseil & Web — Ivry-sur-Seine</div>
+      <div class="contact-line">damiendambassador@gmail.com</div>
+      <div class="cta-badge">D Embassy</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    D Embassy — Micro-entreprise — SIRET 10073363300018 — Ivry-sur-Seine (94200)
+  </div>
+
+</div>
+</body>
+</html>

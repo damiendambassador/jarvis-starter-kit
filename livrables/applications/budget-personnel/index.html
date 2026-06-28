@@ -84,6 +84,17 @@
   .scroll{overflow:auto}
   footer{color:var(--muted);font-size:12px;text-align:center;margin-top:30px}
   .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .tx-sel-bar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);color:#fff;padding:12px 20px;display:none;align-items:center;gap:14px;box-shadow:0 -2px 14px rgba(14,22,38,.25);z-index:200;font-size:14px}
+  .tx-sel-bar.active{display:flex}
+  .tx-sel-bar .sel-count{color:#aeb9c9;font-size:12px;font-weight:600}
+  .tx-sel-bar .sel-sum{color:var(--gold);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+  .tx-sel-bar .sel-label{color:#aeb9c9;font-size:12px;margin-right:2px}
+  .tx-sel-bar button{background:rgba(255,255,255,.12);border:0;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;margin-left:auto}
+  .tx-sel-bar button:hover{background:rgba(255,255,255,.22)}
+  tr.tx-selected > td{background:#eef4ff}
+  .tx-amount-click{cursor:pointer;border-radius:5px;transition:background .12s}
+  .tx-amount-click:hover{background:#dce8ff !important}
+  tr.tx-selected .tx-amount-click{background:#c5d9ff !important;color:var(--navy) !important}
 </style>
 </head>
 <body>
@@ -115,6 +126,7 @@
 </main>
 
 <input type="file" id="fileInput" accept="application/json" class="hidden" />
+<div id="txSelBar" class="tx-sel-bar"></div>
 
 <script>
 "use strict";
@@ -418,6 +430,7 @@ function setTab(tab){
 /* ============================ RENDER ============================ */
 function render(){
   renderBanner();
+  if(currentTab!=="transactions"){ const bar=document.getElementById("txSelBar"); if(bar) bar.classList.remove("active"); }
   if(currentTab==="dashboard") renderDashboard();
   else if(currentTab==="evolution") renderEvolution();
   else if(currentTab==="transactions") renderTransactions();
@@ -629,27 +642,39 @@ function renderTransactions(){
   const monthOpts=`<option value="all" ${sel==="all"?"selected":""}>Tous les mois</option>`+ms.map(x=>`<option value="${x}" ${sel===x?"selected":""}>${monthLabel(x)}</option>`).join("");
 
   // catégorie select (groupé) pour le formulaire d'ajout
-  const depCats=state.categories.filter(c=>c.kind==="depense");
+  const depPersoCats=state.categories.filter(c=>c.kind==="depense"&&c.univers==="perso");
+  const depNeutreCats=state.categories.filter(c=>c.kind==="depense"&&c.univers!=="perso");
   const revCats=state.categories.filter(c=>c.kind==="revenu");
-  const catOptions=`<optgroup label="Dépenses">`+depCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`+
-                   `<optgroup label="Revenus">`+revCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`;
+  const catOptions=
+    `<optgroup label="Dépenses">`+depPersoCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`+
+    `<optgroup label="Flux neutres">`+depNeutreCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`+
+    `<optgroup label="Revenus">`+revCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`;
 
   // base filtrée (mois + recherche), triée par date croissante (comme un relevé)
   let base=state.transactions.slice().sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
   if(sel!=="all") base=base.filter(t=>ym(t.date)===sel);
+  const baseComplete=base.slice(); // pour la bande de synthèse : mois filtré, sans filtre texte
   if(txFilter.q){ const q=txFilter.q.toLowerCase(); base=base.filter(t=>(t.desc||"").toLowerCase().includes(q)); }
   const deps=base.filter(t=>t.kind==="depense");
   const revs=base.filter(t=>t.kind==="revenu");
-  const totDep=deps.reduce((s,t)=>s+(Number(t.amount)||0),0);
-  const totRev=revs.reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const catOf=t=>catBySlug(t.cat).univers;
+  const depsAll=baseComplete.filter(t=>t.kind==="depense");
+  const revsAll=baseComplete.filter(t=>t.kind==="revenu");
+  const totDep=depsAll.reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const totRev=revsAll.reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const depVie =depsAll.filter(t=>catOf(t)==="perso").reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const depPro =depsAll.filter(t=>catOf(t)==="pro").reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const depNtre=depsAll.filter(t=>["edrington","avance","patrimoine","interne"].includes(catOf(t))).reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const revReel=revsAll.filter(t=>catOf(t)==="reel").reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const balance=revReel-depVie-depPro;
 
   const colRows=(arr,col)=> arr.map(t=>{
     const c=catBySlug(t.cat);
-    return `<tr>
+    return `<tr data-amount="${Number(t.amount)||0}">
       <td class="muted small" style="white-space:nowrap">${esc(t.date.slice(8)+"/"+t.date.slice(5,7))}</td>
       <td class="small">${esc(t.desc)}</td>
       <td class="small" style="white-space:nowrap"><span class="dot" style="background:${c.color}"></span> ${esc(c.label)}</td>
-      <td class="num small" style="color:${col};font-weight:600;white-space:nowrap">${eur(t.amount)}</td>
+      <td class="num small tx-amount-click" style="color:${col};font-weight:600;white-space:nowrap" title="Cliquer pour additionner">${eur(t.amount)}</td>
       <td class="num" style="white-space:nowrap"><button class="btn alt sm" data-edit="${t.id}" title="Éditer">✎</button> <button class="btn danger sm" data-del="${t.id}" title="Supprimer">×</button></td>
     </tr>`;
   }).join("") || `<tr><td colspan="5" class="muted small">Aucune ligne ce mois-ci.</td></tr>`;
@@ -688,6 +713,31 @@ function renderTransactions(){
     <div class="field" style="flex:1"><label>Recherche</label><input type="text" id="ftQ" value="${esc(txFilter.q)}" placeholder="Filtrer par description…"></div>
     <div class="field"><label>&nbsp;</label><div class="muted small">${deps.length} dépense(s) · ${revs.length} revenu(s)</div></div>
   </div>
+  <div class="card" style="margin-bottom:16px;padding:14px 18px">
+    <div class="flex" style="gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div class="muted small">Dépenses de vie (50/30/20)</div>
+        <div style="font-size:18px;font-weight:800;color:var(--bad)">${eur(depVie)}</div>
+      </div>
+      <div>
+        <div class="muted small">Dépenses pro</div>
+        <div style="font-size:18px;font-weight:800;color:var(--pro)">${eur(depPro)}</div>
+      </div>
+      <div>
+        <div class="muted small">Flux neutres <span title="Avances à des proches, frais Edrington remboursés, patrimoine, virements internes — ne comptent pas dans ta balance" style="cursor:help">ⓘ</span></div>
+        <div style="font-size:18px;font-weight:800;color:var(--muted)">${eur(depNtre)}</div>
+      </div>
+      <div style="margin-left:auto">
+        <div class="muted small">Revenus réels</div>
+        <div style="font-size:18px;font-weight:800;color:var(--ok)">${eur(revReel)}</div>
+      </div>
+      <div>
+        <div class="muted small">Balance réelle</div>
+        <div style="font-size:18px;font-weight:800;color:${balance>=0?"var(--ok)":"var(--bad)"}">${eur(balance)}</div>
+      </div>
+    </div>
+    <div class="muted small" style="margin-top:8px;border-top:1px solid var(--line);padding-top:8px">Les <b>${eur(depNtre)}</b> de flux neutres n'entrent pas dans la balance : avances à des proches (à récupérer), frais Edrington remboursés le mois suivant, investissements patrimoniaux.</div>
+  </div>
   <div class="grid2">
     ${table("Dépenses", deps, "#b03636", totDep)}
     ${table("Revenus", revs, "#1f9d6b", totRev)}
@@ -700,6 +750,26 @@ function renderTransactions(){
   document.getElementById("parsePaste").addEventListener("click", parsePaste);
   host.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{ if(confirm("Supprimer cette transaction ?")){ state.transactions=state.transactions.filter(t=>t.id!==b.dataset.del); save(); renderTransactions(); } }));
   host.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editTx(b.dataset.edit)));
+
+  // Sélection par clic sur le montant + barre de somme
+  function updateTxSelBar(){
+    const rows=[...document.querySelectorAll("#transactions tr.tx-selected")];
+    const bar=document.getElementById("txSelBar");
+    if(!rows.length){ bar.classList.remove("active"); return; }
+    const sum=rows.reduce((s,r)=>s+(parseFloat(r.dataset.amount)||0),0);
+    bar.classList.add("active");
+    bar.innerHTML=`<span class="sel-count">${rows.length} ligne${rows.length>1?"s":""} sélectionnée${rows.length>1?"s":""}</span><span class="sel-label">Somme :</span><span class="sel-sum">${eur(sum)}</span><button id="txSelClear">✕ Désélectionner</button>`;
+    document.getElementById("txSelClear").addEventListener("click",()=>{
+      document.querySelectorAll("#transactions tr.tx-selected").forEach(r=>r.classList.remove("tx-selected"));
+      bar.classList.remove("active");
+    });
+  }
+  host.querySelectorAll(".tx-amount-click").forEach(td=>{
+    td.addEventListener("click",e=>{
+      e.target.closest("tr").classList.toggle("tx-selected");
+      updateTxSelBar();
+    });
+  });
 }
 
 function addTxFromForm(){

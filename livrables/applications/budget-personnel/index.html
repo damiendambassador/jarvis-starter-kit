@@ -416,7 +416,7 @@ function stackedBars(months, opts={}){
 /* ===================== ÉTAT DE NAVIGATION ===================== */
 let currentTab="dashboard";
 let currentMonth=null;
-let txFilter={month:"all", univers:"all", q:""};
+let txFilter={month:"all", univers:"all", q:"", cat:""};
 
 function setTab(tab){
   currentTab=tab;
@@ -641,19 +641,29 @@ function renderTransactions(){
   const sel=txFilter.month;
   const monthOpts=`<option value="all" ${sel==="all"?"selected":""}>Tous les mois</option>`+ms.map(x=>`<option value="${x}" ${sel===x?"selected":""}>${monthLabel(x)}</option>`).join("");
 
-  // catégorie select (groupé) pour le formulaire d'ajout
-  const depPersoCats=state.categories.filter(c=>c.kind==="depense"&&c.univers==="perso");
-  const depNeutreCats=state.categories.filter(c=>c.kind==="depense"&&c.univers!=="perso");
-  const revCats=state.categories.filter(c=>c.kind==="revenu");
+  // catégorie select (groupé) pour le formulaire d'ajout — 5 groupes logiques
+  const depVieCats  =state.categories.filter(c=>c.kind==="depense"&&c.univers==="perso");
+  const depProCats  =state.categories.filter(c=>c.kind==="depense"&&c.univers==="pro");
+  const depNtreCats =state.categories.filter(c=>c.kind==="depense"&&["avance","edrington","interne"].includes(c.univers));
+  const depPatCats  =state.categories.filter(c=>c.kind==="depense"&&c.univers==="patrimoine");
+  const revCats     =state.categories.filter(c=>c.kind==="revenu");
+  const mkOpts=(arr,sel)=>arr.map(c=>`<option value="${c.slug}"${c.slug===sel?" selected":""}>${esc(c.label)}</option>`).join("");
   const catOptions=
-    `<optgroup label="Dépenses">`+depPersoCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`+
-    `<optgroup label="Flux neutres">`+depNeutreCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`+
-    `<optgroup label="Revenus">`+revCats.map(c=>`<option value="${c.slug}">${esc(c.label)}</option>`).join("")+`</optgroup>`;
+    `<optgroup label="Dépenses de vie">`+mkOpts(depVieCats)+`</optgroup>`+
+    `<optgroup label="Dépenses pro">`+mkOpts(depProCats)+`</optgroup>`+
+    `<optgroup label="Flux neutres (argent qui revient)">`+mkOpts(depNtreCats)+`</optgroup>`+
+    `<optgroup label="Investissement / patrimoine">`+mkOpts(depPatCats)+`</optgroup>`+
+    `<optgroup label="Revenus">`+mkOpts(revCats)+`</optgroup>`;
 
   // base filtrée (mois + recherche), triée par date croissante (comme un relevé)
   let base=state.transactions.slice().sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
   if(sel!=="all") base=base.filter(t=>ym(t.date)===sel);
   const baseComplete=base.slice(); // pour la bande de synthèse : mois filtré, sans filtre texte
+  if(txFilter.univers && txFilter.univers!=="all"){
+    const uList=txFilter.univers==="neutres"?["edrington","avance","interne"]:[txFilter.univers];
+    base=base.filter(t=>uList.includes(catBySlug(t.cat).univers));
+  }
+  if(txFilter.cat) base=base.filter(t=>t.cat===txFilter.cat);
   if(txFilter.q){ const q=txFilter.q.toLowerCase(); base=base.filter(t=>(t.desc||"").toLowerCase().includes(q)); }
   const deps=base.filter(t=>t.kind==="depense");
   const revs=base.filter(t=>t.kind==="revenu");
@@ -664,16 +674,17 @@ function renderTransactions(){
   const totRev=revsAll.reduce((s,t)=>s+(Number(t.amount)||0),0);
   const depVie =depsAll.filter(t=>catOf(t)==="perso").reduce((s,t)=>s+(Number(t.amount)||0),0);
   const depPro =depsAll.filter(t=>catOf(t)==="pro").reduce((s,t)=>s+(Number(t.amount)||0),0);
-  const depNtre=depsAll.filter(t=>["edrington","avance","patrimoine","interne"].includes(catOf(t))).reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const depNtre=depsAll.filter(t=>["edrington","avance","interne"].includes(catOf(t))).reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const depPat =depsAll.filter(t=>catOf(t)==="patrimoine").reduce((s,t)=>s+(Number(t.amount)||0),0);
   const revReel=revsAll.filter(t=>catOf(t)==="reel").reduce((s,t)=>s+(Number(t.amount)||0),0);
   const balance=revReel-depVie-depPro;
 
   const colRows=(arr,col)=> arr.map(t=>{
     const c=catBySlug(t.cat);
-    return `<tr data-amount="${Number(t.amount)||0}">
+    return `<tr data-amount="${Number(t.amount)||0}" data-txid="${t.id}">
       <td class="muted small" style="white-space:nowrap">${esc(t.date.slice(8)+"/"+t.date.slice(5,7))}</td>
       <td class="small">${esc(t.desc)}</td>
-      <td class="small" style="white-space:nowrap"><span class="dot" style="background:${c.color}"></span> ${esc(c.label)}</td>
+      <td class="small" style="white-space:nowrap;cursor:pointer" data-catfilter="${t.cat}" title="Filtrer par cette catégorie"><span class="dot" style="background:${c.color}"></span> <span style="${txFilter.cat===t.cat?"text-decoration:underline;font-weight:700":""}"> ${esc(c.label)}</span></td>
       <td class="num small tx-amount-click" style="color:${col};font-weight:600;white-space:nowrap" title="Cliquer pour additionner">${eur(t.amount)}</td>
       <td class="num" style="white-space:nowrap"><button class="btn alt sm" data-edit="${t.id}" title="Éditer">✎</button> <button class="btn danger sm" data-del="${t.id}" title="Supprimer">×</button></td>
     </tr>`;
@@ -714,29 +725,27 @@ function renderTransactions(){
     <div class="field"><label>&nbsp;</label><div class="muted small">${deps.length} dépense(s) · ${revs.length} revenu(s)</div></div>
   </div>
   <div class="card" style="margin-bottom:16px;padding:14px 18px">
-    <div class="flex" style="gap:24px;flex-wrap:wrap;align-items:flex-start">
-      <div>
-        <div class="muted small">Dépenses de vie (50/30/20)</div>
-        <div style="font-size:18px;font-weight:800;color:var(--bad)">${eur(depVie)}</div>
-      </div>
-      <div>
-        <div class="muted small">Dépenses pro</div>
-        <div style="font-size:18px;font-weight:800;color:var(--pro)">${eur(depPro)}</div>
-      </div>
-      <div>
-        <div class="muted small">Flux neutres <span title="Avances à des proches, frais Edrington remboursés, patrimoine, virements internes — ne comptent pas dans ta balance" style="cursor:help">ⓘ</span></div>
-        <div style="font-size:18px;font-weight:800;color:var(--muted)">${eur(depNtre)}</div>
-      </div>
-      <div style="margin-left:auto">
-        <div class="muted small">Revenus réels</div>
-        <div style="font-size:18px;font-weight:800;color:var(--ok)">${eur(revReel)}</div>
-      </div>
-      <div>
+    <div class="flex" style="gap:8px;flex-wrap:wrap;align-items:flex-start">
+      ${[
+        {u:"perso",      label:"Dépenses de vie",      val:depVie,  color:"var(--bad)",    tip:"Besoins + envies + épargne (règle 50/30/20)"},
+        {u:"pro",        label:"Dépenses pro",          val:depPro,  color:"var(--pro)",    tip:"Coûts réels de ta micro-entreprise — argent définitivement parti"},
+        {u:"neutres",    label:"Flux neutres",          val:depNtre, color:"var(--muted)",  tip:"Avances à des proches, frais Edrington, virements internes — argent qui revient"},
+        {u:"patrimoine", label:"Investissement",        val:depPat,  color:"var(--gold)",   tip:"Actifs acquis (parking…) — argent converti, pas dépensé"},
+        {u:"reel",       label:"Revenus réels",         val:revReel, color:"var(--ok)",     right:true},
+      ].map(({u,label,val,color,tip,right})=>{
+        const active=txFilter.univers===u;
+        return `<div data-univfilter="${u}" style="cursor:pointer;border-radius:10px;padding:8px 12px;border:2px solid ${active?color:"transparent"};background:${active?"#f5f7fa":"transparent"};transition:background .15s;${right?"margin-left:auto":""}">
+          <div class="muted small">${label} <span title="${tip}" style="cursor:help;color:var(--muted)">ⓘ</span></div>
+          <div style="font-size:18px;font-weight:800;color:${color}">${eur(val)}</div>
+        </div>`;
+      }).join("")}
+      <div style="padding:8px 12px">
         <div class="muted small">Balance réelle</div>
         <div style="font-size:18px;font-weight:800;color:${balance>=0?"var(--ok)":"var(--bad)"}">${eur(balance)}</div>
+        <div class="muted small" style="font-size:11px">revenus − vie − pro</div>
       </div>
     </div>
-    <div class="muted small" style="margin-top:8px;border-top:1px solid var(--line);padding-top:8px">Les <b>${eur(depNtre)}</b> de flux neutres n'entrent pas dans la balance : avances à des proches (à récupérer), frais Edrington remboursés le mois suivant, investissements patrimoniaux.</div>
+    <div class="muted small" style="margin-top:8px;border-top:1px solid var(--line);padding-top:8px">${txFilter.univers&&txFilter.univers!=="all"?"<b>Filtre actif</b> — recliquer pour tout afficher.":"Cliquer sur un groupe pour filtrer les transactions ci-dessous."}</div>
   </div>
   <div class="grid2">
     ${table("Dépenses", deps, "#b03636", totDep)}
@@ -745,7 +754,19 @@ function renderTransactions(){
 
   // events
   document.getElementById("addTx").addEventListener("click", addTxFromForm);
-  document.getElementById("ftMonth").addEventListener("change",e=>{txFilter.month=e.target.value;renderTransactions();});
+  document.getElementById("ftMonth").addEventListener("change",e=>{txFilter.month=e.target.value;txFilter.univers="all";txFilter.cat="";renderTransactions();});
+  host.querySelectorAll("[data-catfilter]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      txFilter.cat=txFilter.cat===el.dataset.catfilter?"":el.dataset.catfilter;
+      renderTransactions();
+    });
+  });
+  host.querySelectorAll("[data-univfilter]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      txFilter.univers=txFilter.univers===el.dataset.univfilter?"all":el.dataset.univfilter;
+      renderTransactions();
+    });
+  });
   document.getElementById("ftQ").addEventListener("input",e=>{txFilter.q=e.target.value; const v=e.target.value; clearTimeout(window.__qT); window.__qT=setTimeout(()=>{ renderTransactions(); const nq=document.getElementById("ftQ"); if(nq){nq.focus(); nq.value=v; nq.setSelectionRange(v.length,v.length);} },180);});
   document.getElementById("parsePaste").addEventListener("click", parsePaste);
   host.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{ if(confirm("Supprimer cette transaction ?")){ state.transactions=state.transactions.filter(t=>t.id!==b.dataset.del); save(); renderTransactions(); } }));
@@ -787,14 +808,40 @@ function addTxFromForm(){
 
 function editTx(id){
   const t=state.transactions.find(x=>x.id===id); if(!t) return;
-  const newDesc=prompt("Description :", t.desc); if(newDesc===null) return;
-  const newAmt=prompt("Montant (€) :", t.amount); if(newAmt===null) return;
-  const cats=state.categories.filter(c=>c.kind===t.kind).map((c,i)=>`${i+1}. ${c.label}`).join("\n");
-  const choice=prompt("Catégorie — tape le numéro :\n"+cats, "");
-  const amt=parseFloat(String(newAmt).replace(",","."));
-  t.desc=newDesc.trim(); if(amt>0) t.amount=amt;
-  if(choice){ const idx=parseInt(choice,10)-1; const arr=state.categories.filter(c=>c.kind===t.kind); if(arr[idx]){ t.cat=arr[idx].slug; } }
-  save(); renderTransactions();
+  const row=document.querySelector(`tr[data-txid="${id}"]`); if(!row) return;
+  const _depVie =state.categories.filter(c=>c.kind==="depense"&&c.univers==="perso");
+  const _depPro =state.categories.filter(c=>c.kind==="depense"&&c.univers==="pro");
+  const _depNtr =state.categories.filter(c=>c.kind==="depense"&&["avance","edrington","interne"].includes(c.univers));
+  const _depPat =state.categories.filter(c=>c.kind==="depense"&&c.univers==="patrimoine");
+  const _revCats=state.categories.filter(c=>c.kind==="revenu");
+  const _o=(arr)=>arr.map(c=>`<option value="${c.slug}"${c.slug===t.cat?" selected":""}>${esc(c.label)}</option>`).join("");
+  const catOpts=
+    `<optgroup label="Dépenses de vie">`+_o(_depVie)+`</optgroup>`+
+    `<optgroup label="Dépenses pro">`+_o(_depPro)+`</optgroup>`+
+    `<optgroup label="Flux neutres (argent qui revient)">`+_o(_depNtr)+`</optgroup>`+
+    `<optgroup label="Investissement / patrimoine">`+_o(_depPat)+`</optgroup>`+
+    `<optgroup label="Revenus">`+_o(_revCats)+`</optgroup>`;
+  row.innerHTML=`
+    <td><input type="date" id="ed_date" value="${t.date}" style="width:130px;padding:5px 6px"></td>
+    <td><input type="text" id="ed_desc" value="${esc(t.desc)}" style="width:100%;min-width:120px;padding:5px 6px"></td>
+    <td><select id="ed_cat" style="width:100%;padding:5px 6px">${catOpts}</select></td>
+    <td class="num"><input type="number" id="ed_amt" step="0.01" value="${t.amount}" style="width:80px;text-align:right;padding:5px 6px"></td>
+    <td class="num" style="white-space:nowrap">
+      <button class="btn sm" id="ed_save" style="background:var(--ok);color:#fff;padding:5px 10px" title="Enregistrer">✓</button>
+      <button class="btn alt sm" id="ed_cancel" style="padding:5px 10px" title="Annuler">✕</button>
+    </td>`;
+  document.getElementById("ed_desc").focus();
+  document.getElementById("ed_save").addEventListener("click",()=>{
+    const newDate=document.getElementById("ed_date").value;
+    const newDesc=document.getElementById("ed_desc").value.trim();
+    const newCat=document.getElementById("ed_cat").value;
+    const newAmt=parseFloat(String(document.getElementById("ed_amt").value).replace(",","."));
+    if(!newDesc||!(newAmt>0)){ alert("Description et montant requis."); return; }
+    const c=catBySlug(newCat);
+    t.date=newDate; t.desc=newDesc; t.cat=newCat; t.kind=c.kind; t.amount=newAmt;
+    save(); renderTransactions();
+  });
+  document.getElementById("ed_cancel").addEventListener("click",()=>renderTransactions());
 }
 
 /* auto-catégorisation d'une description */

@@ -68,3 +68,8 @@ temp/
 .tmp/
 
 .vercel
+
+# ─── Données financières personnelles (budget) : ne jamais publier ─────────────
+livrables/applications/budget-personnel/budget-data-*.json
+livrables/applications/budget-personnel/*sauvegarde*.json
+budget-sauvegarde-*.json

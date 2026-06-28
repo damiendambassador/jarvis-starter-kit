@@ -118,4 +118,8 @@ export const dict = {
   referral_desc_after: 'their first ride.',
   btn_copy: 'Copy',
   btn_copied: 'Copied!',
+  btn_share: 'Share',
+  confirm_rebook: 'Book this trip again',
+  direct_badge: 'Direct booking',
+  direct_desc: 'No commission, no surge pricing, no anonymous number.',
 }

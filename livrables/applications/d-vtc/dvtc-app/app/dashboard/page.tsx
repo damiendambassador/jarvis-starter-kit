@@ -7,7 +7,9 @@ import { useDashboard } from './_context'
 import { formatPrice } from '@/lib/pricing'
 import { format, startOfWeek, startOfMonth, addWeeks, endOfWeek } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { Calendar, MapPin, Loader2, ClipboardList, ArrowUpDown, Trash2 } from 'lucide-react'
+import { Calendar, MapPin, Loader2, ClipboardList, ArrowUpDown, Trash2, CheckCircle2, X } from 'lucide-react'
+import { useCountUp } from '@/lib/useCountUp'
+import { MonthQuest, MilestoneWatcher } from './_rewards'
 
 type Period    = 'week' | 'month' | 'all' | 'next_week'
 type StatusTab = 'all' | 'pending' | 'accepted' | 'refused' | 'completed'
@@ -34,6 +36,22 @@ const STATUS_LABEL: Record<string, string> = {
   pending: 'En attente', accepted: 'Acceptée', refused: 'Refusée', completed: 'Terminée',
 }
 
+type StatCard = {
+  label: string
+  num: number
+  format: (n: number) => string
+  style: string
+  tooltip?: string
+  badge?: string | null
+}
+
+const intFormat = (n: number) => String(Math.round(n))
+
+function AnimatedStat({ value, format, className }: { value: number; format: (n: number) => string; className: string }) {
+  const animated = useCountUp(value)
+  return <div className={className}>{format(animated)}</div>
+}
+
 function getPeriodBounds(period: Period): { start: Date | null; end: Date | null } {
   const now = new Date()
   if (period === 'week')      return { start: startOfWeek(now, { weekStartsOn: 1 }), end: null }
@@ -53,8 +71,16 @@ export default function DashboardPage() {
   const [statusTab, setStatusTab] = useState<StatusTab>('all')
   const [sortByTicket, setSortByTicket] = useState(false)
   const [isAdmin, setIsAdmin]   = useState(false)
+  const [celebration, setCelebration] = useState<{ amount: number | null; client: string } | null>(null)
 
   useEffect(() => { setIsAdmin(!!localStorage.getItem('admin_token')) }, [])
+
+  /* Célébration : auto-disparition après 3,8 s */
+  useEffect(() => {
+    if (!celebration) return
+    const id = setTimeout(() => setCelebration(null), 3800)
+    return () => clearTimeout(id)
+  }, [celebration])
 
   async function loadData() {
     let data: Reservation[] | null = null
@@ -76,6 +102,10 @@ export default function DashboardPage() {
   useEffect(() => { loadData() }, [driver.id])
 
   async function updateStatus(id: string, status: 'accepted' | 'refused') {
+    if (status === 'accepted') {
+      const r = all.find(x => x.id === id)
+      if (r) setCelebration({ amount: r.price_estimate ?? null, client: r.client_name })
+    }
     await supabase.from('reservations').update({ status }).eq('id', id)
     setAll(prev => prev.map(r => r.id === id ? { ...r, status } : r))
     authedFetch('/api/booking/status', {
@@ -133,6 +163,30 @@ export default function DashboardPage() {
 
   return (
     <div>
+      {/* Célébration à l'acceptation d'une course (peak moment) */}
+      {celebration && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] animate-celebrate">
+          <div className="bg-navy text-white rounded-2xl shadow-2xl border border-gold/40 px-6 py-4 flex items-center gap-4 min-w-[300px]">
+            <div className="w-11 h-11 rounded-full bg-gold/15 flex items-center justify-center flex-shrink-0 animate-check-pop">
+              <CheckCircle2 size={24} className="text-gold" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[11px] uppercase tracking-[.1em] text-gold font-semibold">Course acceptée</p>
+              {celebration.amount != null ? (
+                <p className="text-[15px] font-bold mt-0.5">
+                  {formatPrice(celebration.amount)} <span className="text-white/60 font-medium">sécurisés · {celebration.client}</span>
+                </p>
+              ) : (
+                <p className="text-[15px] font-bold mt-0.5">{celebration.client}</p>
+              )}
+            </div>
+            <button onClick={() => setCelebration(null)} className="text-white/40 hover:text-white flex-shrink-0">
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-end justify-between gap-4 flex-wrap mb-[26px]">
         <div>
@@ -154,27 +208,33 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Quête de rentabilité de l'abonnement + récap mensuel */}
+      <MonthQuest reservations={all} />
+
+      {/* Paliers de réussite (célébration) */}
+      <MilestoneWatcher reservations={all} driverId={driver.id} />
+
       {/* Stats */}
       <div className="flex gap-3.5 overflow-x-auto pb-1.5 mb-[30px] items-stretch">
-        {[
-          { label: 'CA',           value: formatPrice(totalRevenue), style: 'text-[22px] font-bold text-gold' },
-          { label: 'Éco. vs Uber', value: formatPrice(uberSaved),   style: 'text-[22px] font-bold text-green-600', tooltip: 'Commission Uber/Bolt : 28%' },
-          { label: 'Ticket moyen', value: formatPrice(avgTicket),   style: 'text-[22px] font-bold text-navy' },
-          { label: 'Terminées',    value: completed.length,         style: 'text-[22px] font-bold text-navy' },
-          { label: 'En attente',   value: pending.length,           style: 'text-[22px] font-bold text-navy', badge: pending.length > 0 ? 'URGENT' : null },
-          { label: 'Total',        value: statsReservations.length, style: 'text-[22px] font-bold text-navy' },
-        ].map(s => (
+        {([
+          { label: 'CA',           num: totalRevenue,           format: formatPrice, style: 'text-[22px] font-bold text-gold' },
+          { label: 'Éco. vs Uber', num: uberSaved,              format: formatPrice, style: 'text-[22px] font-bold text-green-600', tooltip: 'Commission Uber/Bolt : 28%' },
+          { label: 'Ticket moyen', num: avgTicket,              format: formatPrice, style: 'text-[22px] font-bold text-navy' },
+          { label: 'Terminées',    num: completed.length,       format: intFormat,   style: 'text-[22px] font-bold text-navy' },
+          { label: 'En attente',   num: pending.length,         format: intFormat,   style: 'text-[22px] font-bold text-navy', badge: pending.length > 0 ? 'URGENT' : null },
+          { label: 'Total',        num: statsReservations.length, format: intFormat, style: 'text-[22px] font-bold text-navy' },
+        ] as StatCard[]).map(s => (
           <div key={s.label} className="flex-none basis-[150px] card px-5 py-4 flex flex-col justify-between gap-2">
             <div className="flex items-center justify-between gap-1">
               <div className="text-[12px] text-[#8A94A6] font-medium">{s.label}</div>
-              {'badge' in s && s.badge && (
+              {s.badge && (
                 <span className="text-[10px] font-bold text-[#9A7B2E] bg-[#FBF7EC] border border-[#EAD9A8] px-1.5 py-0.5 rounded whitespace-nowrap">{s.badge}</span>
               )}
-              {'tooltip' in s && s.tooltip && (
+              {s.tooltip && (
                 <span title={s.tooltip} className="text-[10px] text-[#A7B0BF] cursor-help flex-shrink-0">ⓘ</span>
               )}
             </div>
-            <div className={s.style}>{s.value}</div>
+            <AnimatedStat value={s.num} format={s.format} className={s.style} />
           </div>
         ))}
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { supabase, type Driver, type Pricing, type Unavailability } from '@/lib/supabase'
 import { calculateStandardPrice, formatPrice, isNightHour } from '@/lib/pricing'
 import {
@@ -44,6 +44,7 @@ function buildCalCells(viewDate: Date, selectedDate: Date | null) {
 export default function BookingPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const slug = params.slug as string
 
   const { lang, setLang, t, dateFnsLocale } = useLanguage()
@@ -72,6 +73,23 @@ export default function BookingPage() {
   const [viewDate, setViewDate] = useState(() => {
     const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1)
   })
+
+  /* Rebooking 1 clic : pré-remplit le trajet depuis le dernier mémorisé (?rebook=1) */
+  useEffect(() => {
+    if (searchParams.get('rebook') !== '1') return
+    try {
+      const raw = localStorage.getItem('dvtc_last_trip')
+      if (!raw) return
+      const trip = JSON.parse(raw)
+      setForm(prev => ({
+        ...prev,
+        rideType: trip.rideType === 'dispo' ? 'dispo' : 'standard',
+        pickupAddress: trip.pickupAddress ?? '',
+        dropoffAddress: trip.dropoffAddress ?? '',
+        passengers: trip.passengers ?? prev.passengers,
+      }))
+    } catch { /* trajet illisible : on ignore */ }
+  }, [searchParams])
 
   const selectedDate = form.date ? new Date(form.date + 'T12:00:00') : null
   const calCells = useMemo(() => buildCalCells(viewDate, selectedDate), [viewDate, form.date])

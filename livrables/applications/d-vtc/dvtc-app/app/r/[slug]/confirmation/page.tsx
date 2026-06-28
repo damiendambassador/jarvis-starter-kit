@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams, useParams } from 'next/navigation'
 import { supabase, type Reservation } from '@/lib/supabase'
 import { formatPrice } from '@/lib/pricing'
-import { CheckCircle, Copy, Check, Loader2 } from 'lucide-react'
+import { CheckCircle, Copy, Check, Loader2, Share2, ShieldCheck, RotateCcw } from 'lucide-react'
 import { format } from 'date-fns'
 import ViewSwitcher from '@/components/ViewSwitcher'
 import { useLanguage } from '@/lib/i18n'
@@ -28,11 +28,31 @@ export default function ConfirmationPage() {
       .then(({ data }) => { setReservation(data as Reservation | null); setLoading(false) })
   }, [id])
 
+  /* Mémorise le dernier trajet pour le rebooking en 1 clic (réduction de friction) */
+  useEffect(() => {
+    if (!reservation) return
+    try {
+      localStorage.setItem('dvtc_last_trip', JSON.stringify({
+        rideType: reservation.ride_type,
+        pickupAddress: reservation.pickup_address,
+        dropoffAddress: reservation.dropoff_address ?? '',
+        passengers: reservation.passengers,
+      }))
+    } catch { /* localStorage indisponible : on ignore */ }
+  }, [reservation])
+
   function copyRefLink() {
-    const link = `${window.location.origin}/r/${slug}?ref=${id?.slice(0, 8).toUpperCase()}`
-    navigator.clipboard.writeText(link)
+    navigator.clipboard.writeText(refLink)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  function shareRefLink() {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({ title: 'D·VTC', text: t.referral_heading, url: refLink }).catch(() => {})
+    } else {
+      copyRefLink()
+    }
   }
 
   if (loading) return (
@@ -71,16 +91,25 @@ export default function ConfirmationPage() {
           {/* Confirmation card */}
           <div className="card p-[30px]">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-[50px] h-[50px] rounded-[11px] bg-gold flex items-center justify-center flex-shrink-0">
+              <div className="w-[50px] h-[50px] rounded-[11px] bg-gold flex items-center justify-center flex-shrink-0 animate-check-pop">
                 <CheckCircle className="text-white" size={26} />
               </div>
               <h1 className="font-serif text-[32px] font-bold text-navy m-0 tracking-[-0.01em]">
                 {t.confirm_title}
               </h1>
             </div>
-            <p className="text-[15px] text-[#5A6477] mb-6 leading-[1.55]">
+            <p className="text-[15px] text-[#5A6477] mb-4 leading-[1.55]">
               {t.confirm_desc}
             </p>
+
+            {/* Statut "client direct privilégié" (récompense identitaire) */}
+            <div className="flex items-center gap-2.5 bg-[#F6F8FC] border border-blue-gray rounded-[10px] px-3.5 py-3 mb-6">
+              <ShieldCheck size={18} className="text-gold-dark flex-shrink-0" />
+              <div>
+                <span className="text-[13px] font-bold text-navy">{t.direct_badge}</span>
+                <span className="text-[13px] text-[#5A6477]"> · {t.direct_desc}</span>
+              </div>
+            </div>
 
             {reservation && (
               <div className="grid grid-cols-2 gap-x-6 gap-y-[22px]">
@@ -112,11 +141,19 @@ export default function ConfirmationPage() {
               <div className="text-[13px] text-[#8A94A6]">
                 {t.confirm_ref} <span className="text-navy font-semibold font-mono">{ref}</span>
               </div>
-              <button
-                onClick={() => window.location.href = `/r/${slug}`}
-                className="bg-navy text-white border-none rounded-xl px-[22px] py-[13px] text-[13px] font-semibold tracking-[.03em] cursor-pointer hover:bg-navy-light transition-colors">
-                {t.confirm_new_booking}
-              </button>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <button
+                  onClick={() => window.location.href = `/r/${slug}?rebook=1`}
+                  className="flex items-center gap-2 bg-white text-navy border border-blue-gray rounded-xl px-[18px] py-[13px] text-[13px] font-semibold cursor-pointer hover:border-navy transition-colors">
+                  <RotateCcw size={14} />
+                  {t.confirm_rebook}
+                </button>
+                <button
+                  onClick={() => window.location.href = `/r/${slug}`}
+                  className="bg-navy text-white border-none rounded-xl px-[22px] py-[13px] text-[13px] font-semibold tracking-[.03em] cursor-pointer hover:bg-navy-light transition-colors">
+                  {t.confirm_new_booking}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -139,9 +176,15 @@ export default function ConfirmationPage() {
               </div>
               <button
                 onClick={copyRefLink}
-                className="flex items-center gap-2 bg-navy text-white border-none rounded-[9px] px-[18px] py-3 text-[13px] font-semibold cursor-pointer hover:bg-navy-light transition-colors">
+                className="flex items-center gap-2 bg-white text-navy border border-blue-gray rounded-[9px] px-[16px] py-3 text-[13px] font-semibold cursor-pointer hover:border-navy transition-colors">
                 {copied ? <Check size={15} /> : <Copy size={15} />}
                 {copied ? t.btn_copied : t.btn_copy}
+              </button>
+              <button
+                onClick={shareRefLink}
+                className="flex items-center gap-2 bg-navy text-white border-none rounded-[9px] px-[18px] py-3 text-[13px] font-semibold cursor-pointer hover:bg-navy-light transition-colors">
+                <Share2 size={15} />
+                {t.btn_share}
               </button>
             </div>
           </div>

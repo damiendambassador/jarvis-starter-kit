@@ -118,4 +118,8 @@ export const dict = {
   referral_desc_after: 'en su primer trayecto.',
   btn_copy: 'Copiar',
   btn_copied: '¡Copiado!',
+  btn_share: 'Compartir',
+  confirm_rebook: 'Repetir este trayecto',
+  direct_badge: 'Reserva directa',
+  direct_desc: 'Sin comisión, sin precios dinámicos, sin número anónimo.',
 }

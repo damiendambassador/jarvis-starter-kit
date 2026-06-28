@@ -118,4 +118,8 @@ export const dict = {
   referral_desc_after: 'sur sa première course.',
   btn_copy: 'Copier',
   btn_copied: 'Copié !',
+  btn_share: 'Partager',
+  confirm_rebook: 'Refaire ce trajet',
+  direct_badge: 'Réservation en direct',
+  direct_desc: "Pas de commission, pas de prix qui s'envole, pas de numéro anonyme.",
 }

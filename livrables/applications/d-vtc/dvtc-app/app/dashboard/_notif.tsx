@@ -13,9 +13,41 @@ type Toast = {
   reservation: Reservation
 }
 
+/**
+ * Bip discret via Web Audio (renforcement intermittent : un signal sensoriel
+ * marque l'arrivée imprévisible d'une course). Échoue silencieusement si le
+ * navigateur bloque l'audio (pas d'interaction utilisateur) ou si désactivé.
+ */
+function playChime() {
+  try {
+    if (typeof window === 'undefined') return
+    if (localStorage.getItem('dvtc_notif_sound') === 'off') return
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+    if (!AudioCtx) return
+    const ctx = new AudioCtx()
+    const now = ctx.currentTime
+    const notes = [880, 1318.5] // La5 puis Mi6, montée gratifiante
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      const t = now + i * 0.12
+      gain.gain.setValueAtTime(0, t)
+      gain.gain.linearRampToValueAtTime(0.12, t + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22)
+      osc.connect(gain).connect(ctx.destination)
+      osc.start(t)
+      osc.stop(t + 0.24)
+    })
+    setTimeout(() => ctx.close().catch(() => {}), 800)
+  } catch { /* audio bloqué : on ignore */ }
+}
+
 export default function RealtimeNotif({ driverId }: Props) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const [mounted, setMounted] = useState(false)
+  const [unseen, setUnseen] = useState(0)
 
   useEffect(() => {
     setMounted(true)
@@ -34,6 +66,8 @@ export default function RealtimeNotif({ driverId }: Props) {
           const r = payload.new as Reservation
           const toast: Toast = { id: r.id, reservation: r }
           setToasts(prev => [toast, ...prev].slice(0, 3))
+          playChime()
+          if (document.visibilityState !== 'visible') setUnseen(n => n + 1)
           setTimeout(() => {
             setToasts(prev => prev.filter(t => t.id !== toast.id))
           }, 10000)
@@ -43,6 +77,15 @@ export default function RealtimeNotif({ driverId }: Props) {
 
     return () => { supabase.removeChannel(channel) }
   }, [driverId])
+
+  /* Badge dans le titre de l'onglet : cue de réengagement quand l'app n'a pas le focus */
+  useEffect(() => {
+    const base = document.title.replace(/^\(\d+\)\s*/, '')
+    document.title = unseen > 0 ? `(${unseen}) ${base}` : base
+    const onVisible = () => { if (document.visibilityState === 'visible') setUnseen(0) }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [unseen])
 
   if (!mounted || toasts.length === 0) return null
 

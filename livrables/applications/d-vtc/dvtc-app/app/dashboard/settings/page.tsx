@@ -169,7 +169,7 @@ export default function SettingsPage() {
         {pricing && (
           <Section title="Ma tarification">
             <div className="flex gap-5 flex-wrap">
-              <div className="flex-1 min-w-0 sm:min-w-[320px] grid grid-cols-2 gap-[13px]">
+              <div className="flex-1 min-w-0 sm:min-w-[320px] grid grid-cols-1 sm:grid-cols-2 gap-[13px]">
                 <Field label="Prix de base (€)">
                   <input className="input-field" type="number" step="0.01" inputMode="decimal"
                     value={tarif.base} onChange={e => setTarif(t => ({ ...t, base: e.target.value }))} />

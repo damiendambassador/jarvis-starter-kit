@@ -29,6 +29,16 @@
   animation: dvtcFade 0.35s ease both;
 }
 
+/* Fondu sans transform : ne crée pas de containing block, donc ne piège pas
+   les éléments en position: fixed (barre de nav mobile, modales). */
+@keyframes dvtcFadeSoft {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-soft {
+  animation: dvtcFadeSoft 0.35s ease both;
+}
+
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(20px); }
   to   { opacity: 1; transform: none; }

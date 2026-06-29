@@ -178,16 +178,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </a>
         </div>
       )}
-      <div className="flex min-h-screen animate-fade-in">
+      <div className="flex min-h-[100dvh]">
         <Sidebar driver={driver} />
         <div className="flex-1 min-w-0 flex flex-col">
           <MobileTopBar driver={driver} />
-          <main className="flex-1 min-w-0 px-4 md:px-[34px] py-5 md:py-[30px] pb-[88px] md:pb-[60px]">
+          <main className="flex-1 min-w-0 px-4 md:px-[34px] py-5 md:py-[30px] pb-[calc(72px_+_env(safe-area-inset-bottom))] md:pb-[60px] animate-fade-soft">
             {children}
           </main>
         </div>
-        <MobileBottomNav />
       </div>
+      <MobileBottomNav />
       {!adminPreview && <RealtimeNotif driverId={driver.id} />}
       {!cgvAccepted && !adminPreview && (
         <CGVModal driver={driver} onAccepted={() => setCgvAccepted(true)} />

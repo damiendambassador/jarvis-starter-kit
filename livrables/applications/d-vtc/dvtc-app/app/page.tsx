@@ -11,31 +11,31 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white font-sans">
 
       {/* Nav */}
-      <nav className="bg-[#0A1628] px-8 py-4 flex items-center justify-between">
+      <nav className="bg-[#0A1628] px-5 sm:px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-[36px] h-[36px] rounded-[9px] border border-[#C9A84C]/50 flex items-center justify-center">
             <span className="text-[#C9A84C] font-bold text-[17px] leading-none">D</span>
           </div>
           <span className="text-white font-bold text-[16px] tracking-[.02em]">D-VTC</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link href="/connexion" className="text-white/60 hover:text-white text-[13px] font-medium transition-colors">
             Connexion
           </Link>
           <a href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
-            className="bg-[#C9A84C] text-[#0A1628] px-4 py-2 rounded-[8px] text-[13px] font-bold hover:opacity-90 transition-opacity">
-            Démarrer — 74€/mois
+            className="bg-[#C9A84C] text-[#0A1628] px-3 sm:px-4 py-2 rounded-[8px] text-[12px] sm:text-[13px] font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
+            Démarrer<span className="hidden sm:inline"> — 74€/mois</span>
           </a>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="bg-[#0A1628] text-white px-8 pt-20 pb-24 text-center">
+      <section className="bg-[#0A1628] text-white px-5 sm:px-8 pt-14 sm:pt-20 pb-16 sm:pb-24 text-center">
         <div className="max-w-[620px] mx-auto">
           <span className="inline-block text-[11px] font-bold tracking-[.2em] uppercase text-[#C9A84C] mb-6 border border-[#C9A84C]/30 rounded-full px-4 py-1.5">
             Chauffeurs VTC indépendants
           </span>
-          <h1 className="font-serif text-[48px] font-bold leading-[1.1] mb-5 tracking-[-0.02em]">
+          <h1 className="font-serif text-[34px] sm:text-[48px] font-bold leading-[1.1] mb-5 tracking-[-0.02em]">
             Vos clients.<br />
             <span className="text-[#C9A84C]">Votre liberté.</span>
           </h1>
@@ -57,9 +57,9 @@ export default function LandingPage() {
       </section>
 
       {/* Comparatif */}
-      <section className="px-8 py-20 bg-white">
+      <section className="px-5 sm:px-8 py-16 sm:py-20 bg-white">
         <div className="max-w-[860px] mx-auto">
-          <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-3">
+          <h2 className="font-serif text-[26px] sm:text-[34px] font-bold text-[#0A1628] text-center mb-3">
             Ce que les plateformes vous coûtent
           </h2>
           <p className="text-[15px] text-[#6B7280] text-center mb-12 max-w-[400px] mx-auto">
@@ -120,9 +120,9 @@ export default function LandingPage() {
       </section>
 
       {/* Steps */}
-      <section className="bg-[#F4F6FA] px-8 py-16">
+      <section className="bg-[#F4F6FA] px-5 sm:px-8 py-16">
         <div className="max-w-[800px] mx-auto">
-          <h2 className="font-serif text-[34px] font-bold text-[#0A1628] text-center mb-12">Comment ça fonctionne</h2>
+          <h2 className="font-serif text-[26px] sm:text-[34px] font-bold text-[#0A1628] text-center mb-10 sm:mb-12">Comment ça fonctionne</h2>
           <div className="flex flex-col md:flex-row gap-6">
             {STEPS.map((s, i) => (
               <div key={s.num} className="flex-1 relative">
@@ -141,7 +141,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0A1628] px-8 py-20 text-center">
+      <section className="bg-[#0A1628] px-5 sm:px-8 py-16 sm:py-20 text-center">
         <div className="max-w-[540px] mx-auto">
           <a href="mailto:damiendambassador@gmail.com?subject=Je veux ma page D-VTC"
             className="inline-block bg-[#C9A84C] text-[#0A1628] px-10 py-4 rounded-[10px] text-[15px] font-bold hover:opacity-90 transition-opacity">

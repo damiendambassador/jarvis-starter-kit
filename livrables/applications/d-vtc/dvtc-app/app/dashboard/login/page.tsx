@@ -42,7 +42,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-navy flex flex-col items-center justify-center px-6 animate-fade-in">
-      <div className="w-full max-w-[420px] bg-white rounded-[18px] px-8 py-9 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+      <div className="w-full max-w-[420px] bg-white rounded-[18px] px-6 sm:px-8 py-9 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
 
         {/* Logo */}
         <div className="w-[46px] h-[46px] rounded-[11px] bg-navy flex items-center justify-center mb-[22px]">

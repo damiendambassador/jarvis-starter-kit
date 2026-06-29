@@ -350,7 +350,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function SaveButton({ onClick, saving }: { onClick: () => void; saving: boolean }) {
   return (
     <button onClick={onClick} disabled={saving}
-      className="mt-4 w-full bg-navy text-white border-none rounded-[9px] py-[11px] text-[13px] font-semibold hover:bg-navy-light transition-colors disabled:opacity-50 cursor-pointer">
+      className="mt-5 w-full sm:w-auto sm:min-w-[220px] bg-navy text-white border-none rounded-[9px] px-6 py-[11px] text-[13px] font-semibold hover:bg-navy-light transition-colors disabled:opacity-50 cursor-pointer">
       {saving ? <Loader2 className="animate-spin mx-auto" size={16} /> : 'Enregistrer les modifications'}
     </button>
   )

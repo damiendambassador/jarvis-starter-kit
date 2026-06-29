@@ -182,7 +182,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Sidebar driver={driver} />
         <div className="flex-1 min-w-0 flex flex-col">
           <MobileTopBar driver={driver} />
-          <main className="flex-1 min-w-0 px-4 md:px-[34px] py-5 md:py-[30px] pb-[calc(72px_+_env(safe-area-inset-bottom))] md:pb-[60px] animate-fade-soft">
+          <main className="flex-1 min-w-0 w-full max-w-[1080px] mx-auto px-4 md:px-[34px] py-5 md:py-[30px] pb-[calc(72px_+_env(safe-area-inset-bottom))] md:pb-[60px] animate-fade-soft">
             {children}
           </main>
         </div>

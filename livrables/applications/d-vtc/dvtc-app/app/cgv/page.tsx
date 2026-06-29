@@ -7,11 +7,11 @@ export const metadata: Metadata = {
 
 export default function CGVPage() {
   return (
-    <div className="min-h-screen bg-[#F4F6FA] py-12 px-4">
-      <div className="max-w-[760px] mx-auto bg-white rounded-2xl border border-[#E8EDF5] px-8 py-10">
+    <div className="min-h-screen bg-[#F4F6FA] py-8 sm:py-12 px-4">
+      <div className="max-w-[760px] mx-auto bg-white rounded-2xl border border-[#E8EDF5] px-5 sm:px-8 py-8 sm:py-10">
         <div className="mb-8 border-b border-[#F0F3F8] pb-6">
           <p className="text-[11px] font-semibold text-[#C9A84C] uppercase tracking-widest mb-2">D-VTC</p>
-          <h1 className="text-[28px] font-bold text-[#0A1628]">Conditions Générales de Vente</h1>
+          <h1 className="text-[24px] sm:text-[28px] font-bold text-[#0A1628]">Conditions Générales de Vente</h1>
           <p className="text-[13px] text-[#8A94A6] mt-2">Version 1.0 — en vigueur à compter du 1er juin 2026</p>
         </div>
 

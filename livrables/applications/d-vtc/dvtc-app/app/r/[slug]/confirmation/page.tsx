@@ -75,7 +75,7 @@ export default function ConfirmationPage() {
     <div className="min-h-screen bg-cream flex flex-col animate-fade-in">
 
       {/* Header */}
-      <header className="bg-navy text-white px-7 py-4 flex items-center justify-between gap-4">
+      <header className="bg-navy text-white px-5 sm:px-7 py-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-[38px] h-[38px] rounded-[9px] bg-navy border border-gold/50 flex items-center justify-center flex-shrink-0">
             <span className="text-gold font-bold text-lg leading-none">D</span>
@@ -112,7 +112,7 @@ export default function ConfirmationPage() {
             </div>
 
             {reservation && (
-              <div className="grid grid-cols-2 gap-x-6 gap-y-[22px]">
+              <div className="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-5 sm:gap-y-[22px]">
                 {[
                   { label: t.confirm_type,      value: typeLabel },
                   { label: t.confirm_date,      value: dateLabel },

@@ -215,7 +215,7 @@ export default function DashboardPage() {
       <MilestoneWatcher reservations={all} driverId={driver.id} />
 
       {/* Stats */}
-      <div className="flex gap-3.5 overflow-x-auto pb-1.5 mb-[30px] items-stretch">
+      <div className="grid grid-cols-2 sm:flex gap-3 sm:gap-3.5 sm:overflow-x-auto pb-1.5 mb-[30px] items-stretch">
         {([
           { label: 'CA',           num: totalRevenue,           format: formatPrice, style: 'text-[22px] font-bold text-gold' },
           { label: 'Éco. vs Uber', num: uberSaved,              format: formatPrice, style: 'text-[22px] font-bold text-green-600', tooltip: 'Commission Uber/Bolt : 28%' },
@@ -224,7 +224,7 @@ export default function DashboardPage() {
           { label: 'En attente',   num: pending.length,         format: intFormat,   style: 'text-[22px] font-bold text-navy', badge: pending.length > 0 ? 'URGENT' : null },
           { label: 'Total',        num: statsReservations.length, format: intFormat, style: 'text-[22px] font-bold text-navy' },
         ] as StatCard[]).map(s => (
-          <div key={s.label} className="flex-none basis-[150px] card px-5 py-4 flex flex-col justify-between gap-2">
+          <div key={s.label} className="sm:flex-none sm:basis-[150px] card px-5 py-4 flex flex-col justify-between gap-2">
             <div className="flex items-center justify-between gap-1">
               <div className="text-[12px] text-[#8A94A6] font-medium">{s.label}</div>
               {s.badge && (

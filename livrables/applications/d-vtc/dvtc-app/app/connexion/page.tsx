@@ -80,7 +80,7 @@ export default function ConnexionPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl px-8 py-9 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+        <div className="bg-white rounded-2xl px-6 sm:px-8 py-9 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
           <h1 className="font-serif text-[26px] font-bold text-[#0A1628] mb-1">Connexion</h1>
           <p className="text-[13px] text-[#8A94A6] mb-7">
             Chauffeur ou administrateur — un seul accès.

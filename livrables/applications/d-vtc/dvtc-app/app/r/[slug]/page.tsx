@@ -323,7 +323,7 @@ export default function BookingPage() {
     <div className="min-h-screen bg-cream antialiased animate-fade-in">
 
       {/* Header */}
-      <header className="bg-navy text-white px-7 py-4 flex items-center justify-between gap-4">
+      <header className="bg-navy text-white px-5 sm:px-7 py-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-[38px] h-[38px] rounded-[9px] bg-navy border border-gold/50 flex items-center justify-center flex-shrink-0">
             <span className="text-gold font-bold text-lg leading-none">D</span>
@@ -345,8 +345,8 @@ export default function BookingPage() {
       </header>
 
       {/* Hero */}
-      <section className="bg-navy text-white px-7 pt-[46px] pb-[60px] text-center">
-        <h1 className="font-serif text-[44px] font-bold leading-[1.12] tracking-[-0.01em] m-0">
+      <section className="bg-navy text-white px-5 sm:px-7 pt-10 sm:pt-[46px] pb-12 sm:pb-[60px] text-center">
+        <h1 className="font-serif text-[32px] sm:text-[44px] font-bold leading-[1.12] tracking-[-0.01em] m-0">
           {t.hero_title}<br />
           <span className="text-gold">{t.hero_subtitle}</span>
         </h1>
@@ -437,7 +437,7 @@ export default function BookingPage() {
           {/* Coordonnées */}
           <div className="card px-[22px] py-[22px]">
             <div className="text-[11px] font-semibold tracking-[.08em] uppercase text-[#8A94A6] mb-4">{t.section_contact}</div>
-            <div className="grid grid-cols-2 gap-[14px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
               {([
                 { name: 'firstName', label: t.field_firstname, placeholder: t.placeholder_firstname },
                 { name: 'lastName',  label: t.field_lastname,  placeholder: t.placeholder_lastname },

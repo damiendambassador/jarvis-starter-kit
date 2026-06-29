@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-xl">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl">
           <h1 className="font-serif text-[24px] font-bold text-[#0A1628] mb-6">Connexion admin</h1>
 
           <div className="flex flex-col gap-4 mb-6">

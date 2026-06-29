@@ -557,7 +557,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#F4F6FA]">
       {/* Header */}
-      <header className="bg-[#0A1628] text-white px-8 py-4 flex items-center justify-between">
+      <header className="bg-[#0A1628] text-white px-5 sm:px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <ViewSwitcher current="admin" driverSlug={drivers[0]?.slug} variant="header" />
           <div>
@@ -575,7 +575,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <main className="px-8 py-8 max-w-[1100px] mx-auto">
+      <main className="px-5 sm:px-8 py-6 sm:py-8 max-w-[1100px] mx-auto">
         <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
           <div>
             <h1 className="font-serif text-[28px] font-bold text-[#0A1628] m-0">Vue globale</h1>
@@ -752,15 +752,15 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Stats */}
-                <div className="px-6 py-4 flex items-center gap-5 flex-wrap">
+                <div className="px-6 py-4 grid grid-cols-3 gap-y-4 sm:flex sm:items-center sm:gap-5 sm:flex-wrap">
                   <StatPill value={driver.stats.total}     label="Demandes" />
                   <StatPill value={driver.stats.pending}   label="En attente"  alert={driver.stats.pending > 0} />
                   <StatPill value={driver.stats.accepted}  label="Acceptées" />
                   <StatPill value={driver.stats.completed} label="Terminées"   color="text-green-600" />
-                  <div className="w-px h-8 bg-[#E8EDF5] mx-1" />
+                  <div className="hidden sm:block w-px h-8 bg-[#E8EDF5] mx-1" />
                   <StatPill value={`${conv}%`}             label="Conversion"  color="text-blue-600" />
                   <StatPill value={fmtPrice(avgTicket)}    label="Ticket moyen" />
-                  <div className="w-px h-8 bg-[#E8EDF5] mx-1" />
+                  <div className="hidden sm:block w-px h-8 bg-[#E8EDF5] mx-1" />
                   <StatPill value={fmtPrice(driver.stats.revenue)} label="CA terminé"    color="text-[#C9A84C]" />
                   <StatPill value={fmtPrice(uberSaved)}             label="Éco. vs Uber" color="text-green-600" />
                 </div>
@@ -809,7 +809,7 @@ export default function AdminDashboard() {
             {/* Tableau abonnements */}
             <h2 className="text-[16px] font-bold text-[#0A1628] mb-4">Abonnements chauffeurs</h2>
             <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
-              <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
+              <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
                 {['Chauffeur', 'Statut', 'Dernière facture', 'Début abo.', 'Actions'].map(h => (
                   <span key={h} className="text-[11px] font-semibold text-[#8A94A6] uppercase tracking-wide">{h}</span>
                 ))}
@@ -817,23 +817,32 @@ export default function AdminDashboard() {
 
               {drivers.map((driver, i) => (
                 <div key={driver.id} className={[i < drivers.length - 1 ? 'border-b border-[#F0F3F8]' : ''].join(' ')}>
-                <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center px-6 py-4">
+                <div className="flex flex-col gap-3 px-5 py-4 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto] md:gap-4 md:items-center md:px-6">
                   <div>
                     <div className="text-[13px] font-semibold text-[#0A1628]">{driver.name}</div>
                     <div className="text-[11px] text-[#A7B0BF]">{driver.email}</div>
                   </div>
-                  <SubStatusBadge status={driver.subscription_status} />
-                  <div className="text-[12px] text-[#5A6477]">
-                    {driver.last_invoice
-                      ? <>{driver.last_invoice.invoice_number}<br />{fmtPrice(driver.last_invoice.amount_cents / 100)}</>
-                      : <span className="text-[#A7B0BF]">—</span>}
+                  <div className="flex items-center justify-between gap-3 md:block">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-[#A7B0BF] md:hidden">Statut</span>
+                    <SubStatusBadge status={driver.subscription_status} />
                   </div>
-                  <div className="text-[12px] text-[#5A6477]">
-                    {driver.subscription_start_at
-                      ? format(new Date(driver.subscription_start_at), 'd MMM yyyy', { locale: fr })
-                      : <span className="text-[#A7B0BF]">—</span>}
+                  <div className="flex items-center justify-between gap-3 md:block text-[12px] text-[#5A6477]">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-[#A7B0BF] md:hidden">Dernière facture</span>
+                    <span className="text-right md:text-left">
+                      {driver.last_invoice
+                        ? <>{driver.last_invoice.invoice_number} · {fmtPrice(driver.last_invoice.amount_cents / 100)}</>
+                        : <span className="text-[#A7B0BF]">—</span>}
+                    </span>
                   </div>
-                  <div className="flex flex-col items-start gap-1">
+                  <div className="flex items-center justify-between gap-3 md:block text-[12px] text-[#5A6477]">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-[#A7B0BF] md:hidden">Début abo.</span>
+                    <span>
+                      {driver.subscription_start_at
+                        ? format(new Date(driver.subscription_start_at), 'd MMM yyyy', { locale: fr })
+                        : <span className="text-[#A7B0BF]">—</span>}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 md:flex-col md:items-start md:gap-1">
                     {(!driver.subscription_status || driver.subscription_status === 'pending') && (
                       <button
                         onClick={() => handleStripe('activate', driver.id)}

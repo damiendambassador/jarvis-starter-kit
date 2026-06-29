@@ -721,6 +721,16 @@ function renderTransactions(){
 
   <div class="toolbar" style="margin-top:16px">
     <div class="field"><label>Mois</label><select id="ftMonth">${monthOpts}</select></div>
+    <div class="field"><label>Catégorie</label>
+      <select id="ftCat">
+        <option value="">Toutes les catégories</option>
+        <optgroup label="Dépenses de vie">${mkOpts(depVieCats,txFilter.cat)}</optgroup>
+        <optgroup label="Dépenses pro">${mkOpts(depProCats,txFilter.cat)}</optgroup>
+        <optgroup label="Flux neutres">${mkOpts(depNtreCats,txFilter.cat)}</optgroup>
+        <optgroup label="Investissement">${mkOpts(depPatCats,txFilter.cat)}</optgroup>
+        <optgroup label="Revenus">${mkOpts(revCats,txFilter.cat)}</optgroup>
+      </select>
+    </div>
     <div class="field" style="flex:1"><label>Recherche</label><input type="text" id="ftQ" value="${esc(txFilter.q)}" placeholder="Filtrer par description…"></div>
     <div class="field"><label>&nbsp;</label><div class="muted small">${deps.length} dépense(s) · ${revs.length} revenu(s)</div></div>
   </div>
@@ -755,6 +765,7 @@ function renderTransactions(){
   // events
   document.getElementById("addTx").addEventListener("click", addTxFromForm);
   document.getElementById("ftMonth").addEventListener("change",e=>{txFilter.month=e.target.value;txFilter.univers="all";txFilter.cat="";renderTransactions();});
+  document.getElementById("ftCat").addEventListener("change",e=>{txFilter.cat=e.target.value;renderTransactions();});
   host.querySelectorAll("[data-catfilter]").forEach(el=>{
     el.addEventListener("click",()=>{
       txFilter.cat=txFilter.cat===el.dataset.catfilter?"":el.dataset.catfilter;

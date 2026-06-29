@@ -7,6 +7,17 @@
 
 ---
 
+## 2026-06-28 — Outil budget personnel
+
+- Créé `livrables/applications/budget-personnel/index.html` : suivi 50/30/20 local (localStorage, données gitignorées)
+- Bande de synthèse 5 groupes cliquables : dépenses de vie / dépenses pro / flux neutres / investissement / revenus + balance réelle
+- Clarification conceptuelle : flux neutres = argent qui revient (avances, Edrington, virements) ; dépenses pro = argent parti définitivement
+- Filtres combinables : mois, univers (clic bande), catégorie (clic label), description (texte)
+- Sélection de montants par clic avec barre de somme dynamique
+- Édition inline des transactions (formulaire dans la ligne, 5 groupes de catégories)
+
+---
+
 ## 2026-06-27
 
 ### Stratégie D-VTC : cible chauffeurs établis (Modèle A) + guide chauffeur

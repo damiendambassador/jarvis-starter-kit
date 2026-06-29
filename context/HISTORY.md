@@ -7,6 +7,22 @@
 
 ---
 
+## 2026-06-29 — D-VTC : compatibilité mobile + passe design globale
+
+### Dashboard chauffeur rendu responsive (3 itérations)
+- Constat : l'espace connecté (celui de Patrick) était inutilisable sur téléphone. La sidebar de 236px restait affichée en permanence et écrasait le contenu à ~140px (calendrier cassé, cartes coupées, formulaires illisibles).
+- Solution « app native » : sous 768px (`md`), la sidebar est masquée et remplacée par une barre du haut (logo + nom + déconnexion) et une barre d'onglets fixe en bas (Accueil, Clients, Agenda, Factures, Réglages). Desktop inchangé.
+- Correctif iOS (barre d'onglets affichée en haut + scroll dans le vide) : la barre `fixed` était piégée par un conteneur animé (`transform`) → sortie du conteneur ; ajout d'une animation de fondu sans transform ; `min-h-screen` → `min-h-[100dvh]` ; padding bas calé sur la safe-area (`env(safe-area-inset-bottom)`).
+- Calendrier : cellules compactées sur mobile + boutons +/X rendus accessibles au tactile (ils n'apparaissaient qu'au survol souris). Factures : tableau 5 colonnes → cartes empilées sur mobile.
+
+### Passe design globale (4 surfaces, identité navy/or conservée)
+- Périmètre : landing, page de réservation publique, dashboard chauffeur, panel admin + pages connexion/login/CGV.
+- Principes appliqués partout : grilles jamais figées sur mobile (`grid-cols-1 sm:grid-cols-2`), paddings fluides (`px-5` → `px-8`), titres responsive, tableaux → cartes sur mobile, contenu dashboard centré (`max-w-[1080px]`), boutons dimensionnés sur desktop.
+- 3 commits déployés sur `main` (Vercel) : `e1d3f6a`, `1919935`, `a52c419`. Typecheck OK à chaque étape.
+- Note technique : le build local échoue sur une route Stripe faute de `STRIPE_SECRET_KEY` dans `.env.local` (sans rapport avec ces changements, le build Vercel passe car la clé y est définie).
+
+---
+
 ## 2026-06-28 — Outil budget personnel
 
 - Créé `livrables/applications/budget-personnel/index.html` : suivi 50/30/20 local (localStorage, données gitignorées)

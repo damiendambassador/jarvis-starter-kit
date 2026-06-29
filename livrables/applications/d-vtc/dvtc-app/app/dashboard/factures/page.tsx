@@ -47,6 +47,22 @@ function fmtDate(d: string | null) {
   return format(new Date(d), 'd MMM yyyy', { locale: fr })
 }
 
+function DownloadBtn({ inv, downloading, onClick, className = '' }: {
+  inv: Invoice; downloading: string | null; onClick: () => void; className?: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={!inv.pdf_storage_path || downloading === inv.id}
+      title={inv.pdf_storage_path ? 'Télécharger le PDF' : 'PDF non disponible'}
+      className={`inline-flex flex-shrink-0 items-center justify-center p-2 rounded-[7px] border border-[#E8EDF5] hover:bg-[#F4F6FA] disabled:opacity-30 disabled:cursor-not-allowed transition-colors ${className}`}>
+      {downloading === inv.id
+        ? <Loader2 size={15} className="animate-spin text-[#8A94A6]" />
+        : <Download size={15} className="text-[#5A6477]" />}
+    </button>
+  )
+}
+
 export default function FacturesPage() {
   const { driver, adminPreview } = useDashboard()
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -126,8 +142,8 @@ export default function FacturesPage() {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
-          {/* En-tête tableau */}
-          <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
+          {/* En-tête tableau (desktop) */}
+          <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
             {['N° Facture', 'Période', 'Montant', 'Statut', ''].map(h => (
               <span key={h} className="text-[11px] font-semibold text-[#8A94A6] uppercase tracking-wide">{h}</span>
             ))}
@@ -137,29 +153,38 @@ export default function FacturesPage() {
             <div
               key={inv.id}
               className={[
-                'grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center px-6 py-4',
+                'flex flex-col gap-2.5 px-5 py-4 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto] md:gap-4 md:items-center md:py-4 md:px-6',
                 i < invoices.length - 1 ? 'border-b border-[#F0F3F8]' : '',
               ].join(' ')}>
-              <div>
-                <div className="text-[13px] font-semibold text-[#0A1628]">{inv.invoice_number}</div>
-                <div className="text-[11px] text-[#A7B0BF]">{fmtDate(inv.created_at)}</div>
+              {/* N° facture + bouton (le bouton ne s'affiche ici que sur mobile) */}
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[13px] font-semibold text-[#0A1628]">{inv.invoice_number}</div>
+                  <div className="text-[11px] text-[#A7B0BF]">{fmtDate(inv.created_at)}</div>
+                </div>
+                <DownloadBtn inv={inv} downloading={downloading} onClick={() => downloadPdf(inv)} className="md:hidden" />
               </div>
-              <div className="text-[13px] text-[#5A6477]">
-                {inv.period_start && inv.period_end
-                  ? `${fmtDate(inv.period_start)} → ${fmtDate(inv.period_end)}`
-                  : '—'}
+              {/* Période */}
+              <div className="flex items-center justify-between gap-3 md:block">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-[#A7B0BF] md:hidden">Période</span>
+                <span className="text-[13px] text-[#5A6477] text-right md:text-left">
+                  {inv.period_start && inv.period_end
+                    ? `${fmtDate(inv.period_start)} → ${fmtDate(inv.period_end)}`
+                    : '—'}
+                </span>
               </div>
-              <div className="text-[14px] font-bold text-[#0A1628]">{fmtAmount(inv.amount_cents)}</div>
-              <StatusBadge status={inv.status} />
-              <button
-                onClick={() => downloadPdf(inv)}
-                disabled={!inv.pdf_storage_path || downloading === inv.id}
-                title={inv.pdf_storage_path ? 'Télécharger le PDF' : 'PDF non disponible'}
-                className="p-2 rounded-[7px] border border-[#E8EDF5] hover:bg-[#F4F6FA] disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-                {downloading === inv.id
-                  ? <Loader2 size={15} className="animate-spin text-[#8A94A6]" />
-                  : <Download size={15} className="text-[#5A6477]" />}
-              </button>
+              {/* Montant */}
+              <div className="flex items-center justify-between gap-3 md:block">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-[#A7B0BF] md:hidden">Montant</span>
+                <span className="text-[14px] font-bold text-[#0A1628]">{fmtAmount(inv.amount_cents)}</span>
+              </div>
+              {/* Statut */}
+              <div className="flex items-center justify-between gap-3 md:block">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-[#A7B0BF] md:hidden">Statut</span>
+                <StatusBadge status={inv.status} />
+              </div>
+              {/* Bouton (desktop, dernière colonne) */}
+              <DownloadBtn inv={inv} downloading={downloading} onClick={() => downloadPdf(inv)} className="hidden md:flex" />
             </div>
           ))}
         </div>

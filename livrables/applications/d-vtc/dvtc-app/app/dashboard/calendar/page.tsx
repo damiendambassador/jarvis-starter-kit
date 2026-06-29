@@ -159,7 +159,7 @@ export default function CalendarPage() {
     <div>
       <h1 className="font-serif text-[28px] font-bold text-navy m-0 mb-5 tracking-[-0.01em]">Calendrier</h1>
 
-      <div className="card px-[22px] py-[22px]">
+      <div className="card px-3 sm:px-[22px] py-4 sm:py-[22px]">
         {/* Nav */}
         <div className="flex items-center justify-center gap-[18px] mb-[18px]">
           <button onClick={() => setViewDate(d => subMonths(d, 1))}
@@ -176,9 +176,9 @@ export default function CalendarPage() {
         </div>
 
         {/* Weekday headers */}
-        <div className="grid grid-cols-7 gap-1.5 mb-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-1.5 mb-2">
           {WEEKDAYS.map(wd => (
-            <div key={wd} className="text-center text-[11px] font-semibold text-[#A7B0BF] uppercase tracking-[.05em] py-1">{wd}</div>
+            <div key={wd} className="text-center text-[10px] sm:text-[11px] font-semibold text-[#A7B0BF] uppercase tracking-[.05em] py-1">{wd}</div>
           ))}
         </div>
 
@@ -186,11 +186,11 @@ export default function CalendarPage() {
         {loading ? (
           <div className="flex items-center justify-center py-16"><Loader2 className="animate-spin text-navy" size={24} /></div>
         ) : (
-          <div className="grid grid-cols-7 gap-1.5">
+          <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
             {cells.map((cell, i) => (
               <div key={i}
                 className={[
-                  'min-h-[90px] rounded-xl p-1.5 border transition-colors relative group',
+                  'min-h-[60px] sm:min-h-[90px] rounded-lg sm:rounded-xl p-1 sm:p-1.5 border transition-colors relative group',
                   !cell.day ? 'invisible' : '',
                   cell.isToday ? 'bg-[#EDF3FC] border-[#D5E2F7]' : 'bg-white border-blue-gray hover:border-[#C4CDDB]',
                 ].join(' ')}>
@@ -210,7 +210,7 @@ export default function CalendarPage() {
                           setUnavailForm({ startTime: '09:00', endTime: '17:00', label: 'Indisponible' })
                         }}
                         title="Bloquer un créneau"
-                        className="opacity-0 group-hover:opacity-100 w-[18px] h-[18px] rounded flex items-center justify-center text-[#A7B0BF] hover:text-navy hover:bg-[#F0F3F8] transition-all flex-shrink-0">
+                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 w-[18px] h-[18px] rounded flex items-center justify-center text-[#A7B0BF] hover:text-navy hover:bg-[#F0F3F8] transition-all flex-shrink-0">
                         <Plus size={11} />
                       </button>
                     </div>
@@ -224,7 +224,7 @@ export default function CalendarPage() {
                             {b.start_time.slice(0,5)}–{b.end_time.slice(0,5)}
                           </span>
                           <button onClick={() => deleteUnavail(b.id)}
-                            className="opacity-0 group-hover/b:opacity-100 text-red-400 hover:text-red-600 transition-all flex-shrink-0">
+                            className="opacity-100 md:opacity-0 md:group-hover/b:opacity-100 text-red-400 hover:text-red-600 transition-all flex-shrink-0">
                             <X size={9} />
                           </button>
                         </div>

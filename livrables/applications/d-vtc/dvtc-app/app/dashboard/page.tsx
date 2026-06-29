@@ -195,11 +195,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Filtres période */}
-        <div className="flex items-center gap-1.5 bg-white border border-[#E8EDF5] rounded-[10px] p-1">
+        <div className="flex items-center gap-1.5 bg-white border border-[#E8EDF5] rounded-[10px] p-1 max-w-full overflow-x-auto">
           {(['week', 'month', 'all', 'next_week'] as Period[]).map(p => (
             <button key={p} onClick={() => setPeriod(p)}
               className={[
-                'px-3.5 py-1.5 rounded-[7px] text-[12px] font-semibold transition-colors',
+                'px-3.5 py-1.5 rounded-[7px] text-[12px] font-semibold transition-colors whitespace-nowrap flex-shrink-0',
                 period === p ? 'bg-navy text-white' : 'text-[#8A94A6] hover:text-navy',
               ].join(' ')}>
               {PERIOD_LABELS[p]}
@@ -334,7 +334,7 @@ function ResCard({ r, onAccept, onRefuse, onDelete }: {
           </div>
           <div className="flex items-center gap-2.5 text-[13px] text-[#3A4456]">
             <MapPin className="text-[#A7B0BF] flex-shrink-0" size={15} />
-            <span className="truncate max-w-[400px]">{route}</span>
+            <span className="truncate max-w-[200px] sm:max-w-[400px]">{route}</span>
           </div>
           {r.notes && (
             <div className="text-[13px] text-[#8A94A6] italic pl-[23px]">{r.notes}</div>

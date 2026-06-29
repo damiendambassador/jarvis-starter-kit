@@ -61,7 +61,8 @@ export function MonthQuest({ reservations }: { reservations: Reservation[] }) {
         </div>
 
         {/* Récap mensuel : CA, gain vs Uber, tendance */}
-        <div className="flex items-center gap-5 text-right">
+        <div className="flex items-center gap-x-5 gap-y-2 flex-wrap text-right">
+
           <div>
             <p className="text-[11px] text-[#8A94A6] font-medium">CA du mois</p>
             <p className="text-[18px] font-bold text-navy">{formatPrice(animatedCa)}</p>

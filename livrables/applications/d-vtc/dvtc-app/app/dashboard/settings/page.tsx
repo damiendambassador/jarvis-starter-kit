@@ -122,7 +122,7 @@ export default function SettingsPage() {
 
         {/* Profil */}
         <Section title="Mon profil">
-          <div className="grid grid-cols-2 gap-[14px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
             <Field label="Nom complet">
               <input className="input-field" value={profile.name}
                 onChange={e => setProfile(p => ({ ...p, name: e.target.value }))} />
@@ -142,11 +142,13 @@ export default function SettingsPage() {
 
         {/* Véhicule */}
         <Section title="Mon véhicule">
-          <div className="grid grid-cols-3 gap-[14px]">
-            <Field label="Modèle">
-              <input className="input-field" placeholder="Toyota Camry" value={vehicle.model}
-                onChange={e => setVehicle(v => ({ ...v, model: e.target.value }))} />
-            </Field>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-[14px]">
+            <div className="col-span-2 sm:col-span-1">
+              <Field label="Modèle">
+                <input className="input-field" placeholder="Toyota Camry" value={vehicle.model}
+                  onChange={e => setVehicle(v => ({ ...v, model: e.target.value }))} />
+              </Field>
+            </div>
             <Field label="Plaque">
               <input className="input-field" placeholder="AB-123-CD" value={vehicle.plate}
                 onChange={e => setVehicle(v => ({ ...v, plate: e.target.value }))} />
@@ -167,7 +169,7 @@ export default function SettingsPage() {
         {pricing && (
           <Section title="Ma tarification">
             <div className="flex gap-5 flex-wrap">
-              <div className="flex-1 min-w-[320px] grid grid-cols-2 gap-[13px]">
+              <div className="flex-1 min-w-0 sm:min-w-[320px] grid grid-cols-2 gap-[13px]">
                 <Field label="Prix de base (€)">
                   <input className="input-field" type="number" step="0.01" inputMode="decimal"
                     value={tarif.base} onChange={e => setTarif(t => ({ ...t, base: e.target.value }))} />

@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { supabase, type Driver } from '@/lib/supabase'
 import { authedFetch } from '@/lib/authed-fetch'
 import { DashboardContext } from './_context'
-import Sidebar from './_sidebar'
+import Sidebar, { MobileTopBar, MobileBottomNav } from './_sidebar'
 import RealtimeNotif from './_notif'
 import { Loader2, FileText, CreditCard, ShieldCheck } from 'lucide-react'
 
@@ -180,9 +180,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
       <div className="flex min-h-screen animate-fade-in">
         <Sidebar driver={driver} />
-        <main className="flex-1 min-w-0 px-[34px] py-[30px] pb-[60px]">
-          {children}
-        </main>
+        <div className="flex-1 min-w-0 flex flex-col">
+          <MobileTopBar driver={driver} />
+          <main className="flex-1 min-w-0 px-4 md:px-[34px] py-5 md:py-[30px] pb-[88px] md:pb-[60px]">
+            {children}
+          </main>
+        </div>
+        <MobileBottomNav />
       </div>
       {!adminPreview && <RealtimeNotif driverId={driver.id} />}
       {!cgvAccepted && !adminPreview && (

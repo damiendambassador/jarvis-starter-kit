@@ -72,4 +72,5 @@ temp/
 # ─── Données financières personnelles (budget) : ne jamais publier ─────────────
 livrables/applications/budget-personnel/budget-data-*.json
 livrables/applications/budget-personnel/*sauvegarde*.json
+livrables/applications/budget-personnel/*.xlsx
 budget-sauvegarde-*.json

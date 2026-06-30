@@ -9,7 +9,7 @@
     --navy:#0e1626; --navy2:#1b2c49; --gold:#d9a441; --gold-dk:#b8852b; --orange:#e8772e; --ink:#0f1a2b; --muted:#5c6877;
     --line:#e3e8ef; --bg:#f3f5f8; --card:#ffffff;
     --besoin:#2f6fb0; --envie:#e8772e; --epargne:#2fa37a;
-    --pro:#7c5cbf; --edr:#c0467a; --avance:#d9a441; --interne:#9aa4b1;
+    --pro:#7c5cbf; --edr:#c0467a; --avance:#d9a441;
     --ok:#1f9d6b; --warn:#d98b1f; --bad:#cf4646;
     --radius:14px; --shadow:0 1px 3px rgba(14,22,38,.10),0 8px 24px rgba(14,22,38,.07);
   }
@@ -33,9 +33,10 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
   .card h3{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:12px;font-weight:700}
   .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:900px){.grid4{grid-template-columns:1fr 1fr}.grid3,.grid2{grid-template-columns:1fr}}
+  @media(max-width:900px){.grid4,.grid5{grid-template-columns:1fr 1fr}.grid3,.grid2{grid-template-columns:1fr}}
   .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
   .kpi .lab{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
   .kpi .val{font-size:26px;font-weight:800;margin-top:6px}
@@ -132,9 +133,9 @@
 "use strict";
 
 /* ============================ RÉFÉRENTIEL ============================ */
-// univers dépenses : perso | pro | edrington | avance | interne
+// univers dépenses : perso | pro | edrington | avance | patrimoine
 // bucket (perso uniquement) : besoin | envie | epargne
-// univers revenus : reel | remboursement | interne
+// univers revenus : reel | remboursement
 const DEFAULT_CATEGORIES = [
   // --- DÉPENSES PERSO : BESOINS (50%) ---
   {slug:"logement",     label:"Logement & charges",          kind:"depense", univers:"perso", bucket:"besoin", color:"#1e3a8a", fixe:true},
@@ -146,15 +147,16 @@ const DEFAULT_CATEGORIES = [
   {slug:"restaurants",  label:"Restaurants & sorties",       kind:"depense", univers:"perso", bucket:"envie",  color:"#ea580c", fixe:false},
   {slug:"shopping",     label:"Shopping & plaisir",          kind:"depense", univers:"perso", bucket:"envie",  color:"#db2777", fixe:false},
   {slug:"loisirs",      label:"Voyages, loisirs & cadeaux",  kind:"depense", univers:"perso", bucket:"envie",  color:"#7c3aed", fixe:false},
-  {slug:"divers",       label:"Divers",                      kind:"depense", univers:"perso", bucket:"envie",  color:"#a8a29e", fixe:false},
-  // --- DÉPENSES PERSO : ÉPARGNE & INVEST (20%) ---
-  {slug:"epargne",      label:"Épargne & investissement",    kind:"depense", univers:"perso", bucket:"epargne",color:"#0d9488", fixe:false},
+  {slug:"dons",         label:"Dons & solidarité",           kind:"depense", univers:"perso", bucket:"envie",  color:"#9d174d", fixe:false},
+  // --- DÉPENSES PERSO : ÉPARGNE (20%) ---
+  {slug:"epargne",      label:"Épargne",                     kind:"depense", univers:"perso", bucket:"epargne",color:"#0d9488", fixe:false},
   // --- HORS 50/30/20 (neutre) ---
   {slug:"avance",       label:"Avance pour un proche",       kind:"depense", univers:"avance",    bucket:null, color:"#a16207", fixe:false},
   {slug:"edrington",    label:"Frais Edrington (remboursés)",kind:"depense", univers:"edrington", bucket:null, color:"#9f1239", fixe:false},
   {slug:"pro",          label:"Pro micro-entreprise",        kind:"depense", univers:"pro",       bucket:null, color:"#4f46e5", fixe:false},
-  {slug:"patrimoine",   label:"Investissement / patrimoine", kind:"depense", univers:"patrimoine",bucket:null, color:"#78350f", fixe:false},
-  {slug:"interne",      label:"Virement interne (exclu)",    kind:"depense", univers:"interne",   bucket:null, color:"#94a3b8", fixe:false},
+  // --- INVESTISSEMENT / PATRIMOINE (hors 50/30/20) ---
+  {slug:"patrimoine",   label:"Immobilier / parking",        kind:"depense", univers:"patrimoine",bucket:null, color:"#78350f", fixe:false},
+  {slug:"bourse",       label:"Bourse & actions",            kind:"depense", univers:"patrimoine",bucket:null, color:"#b45309", fixe:false},
   // --- REVENUS ---
   {slug:"salaire",      label:"Salaire Edrington",           kind:"revenu", univers:"reel",          bucket:null, color:"#1e3a8a", fixe:false},
   {slug:"missions",     label:"Missions ponctuelles (Accor)",kind:"revenu", univers:"reel",          bucket:null, color:"#0891b2", fixe:false},
@@ -163,7 +165,6 @@ const DEFAULT_CATEGORIES = [
   {slug:"remb_proche",  label:"Remboursement avance proche", kind:"revenu", univers:"remboursement", bucket:null, color:"#a16207", fixe:false},
   {slug:"remb_divers",  label:"Remboursement / retour divers",kind:"revenu", univers:"remboursement", bucket:null, color:"#0e7490", fixe:false},
   {slug:"remb_edrington",label:"Remboursement frais Edrington",kind:"revenu",univers:"remboursement", bucket:null, color:"#9f1239", fixe:false},
-  {slug:"interne_rev",  label:"Virement interne entrant (exclu)",kind:"revenu",univers:"interne",     bucket:null, color:"#94a3b8", fixe:false},
 ];
 
 // Règles d'auto-catégorisation (mots-clés -> slug). Ordre = priorité.
@@ -176,6 +177,11 @@ const DEFAULT_RULES = [
   {kw:"notaire", cat:"patrimoine"},
   {kw:"immobilier", cat:"patrimoine"},
   {kw:"villeneuve le roi", cat:"patrimoine"},
+  {kw:"trade republic", cat:"bourse"},
+  {kw:"degiro", cat:"bourse"},
+  {kw:"etf", cat:"bourse"},
+  {kw:"pea", cat:"bourse"},
+  {kw:"bourse", cat:"bourse"},
   {kw:"pret etudiant", cat:"factures"},
   {kw:"assurance", cat:"factures"},
   {kw:"bpce", cat:"factures"},
@@ -214,7 +220,7 @@ const DEFAULT_RULES = [
   {kw:"mercadona", cat:"alimentation"},
   {kw:"grocery", cat:"alimentation"},
   {kw:"consum", cat:"alimentation"},
-  {kw:"mucoviscidose", cat:"loisirs"},
+  {kw:"mucoviscidose", cat:"dons"},
   {kw:"fnac", cat:"shopping"},
   {kw:"amazon", cat:"shopping"},
   {kw:"zara", cat:"shopping"},
@@ -289,7 +295,7 @@ function computeMonth(month){
   const r = {
     month, txs,
     revReel:0, revRemb:0, rembProche:0, rembEdr:0, micro:0,
-    besoins:0, envies:0, eparg:0, depPro:0, depEdr:0, avances:0, interne:0, patrimoine:0,
+    besoins:0, envies:0, eparg:0, depPro:0, depEdr:0, avances:0, patrimoine:0,
     byCat:{}, // slug -> montant (dépenses perso)
   };
   for(const t of txs){
@@ -308,7 +314,6 @@ function computeMonth(month){
       else if(c.univers==="edrington") r.depEdr+=a;
       else if(c.univers==="avance") r.avances+=a;
       else if(c.univers==="patrimoine") r.patrimoine+=a;
-      else if(c.univers==="interne") r.interne+=a;
     }
   }
   r.coutVie = r.besoins + r.envies;                 // dépenses perso hors épargne
@@ -321,7 +326,7 @@ function computeMonth(month){
   r.pEnvies  = r.revReel>0 ? r.envies/r.revReel*100 : 0;
   r.pReste   = r.revReel>0 ? r.reste/r.revReel*100 : 0;
   r.pEparg   = r.pReste;
-  // flux trésorerie (épargne comptée comme engagée, interne exclu)
+  // flux trésorerie (épargne comptée comme engagée)
   r.flux = (r.revReel + r.revRemb) - (r.depPerso + r.depPro + r.depEdr + r.avances);
   // charges fixes du mois
   r.fixe = 0;
@@ -514,18 +519,19 @@ function renderDashboard(){
     <div class="muted small" title="Le mois démarre avec le solde de fin du mois précédent. Tu fixes seulement le tout premier mois dans Réglages.">💰 Solde en début de mois : <b>${eur(soldeStart(currentMonth))}</b> &nbsp;→&nbsp; en fin de mois : <b style="color:var(--ink)">${eur(soldeAt(currentMonth))}</b></div>
   </div>
 
-  <div class="grid4" style="margin-bottom:16px">
+  <div class="grid5" style="margin-bottom:16px">
     ${kpi("Tes revenus", eur(m.revReel), "Ce que tu gagnes vraiment ce mois-ci", "")}
     ${kpi("Pour vivre", eur(m.coutVie), "Besoins + envies", "")}
     ${kpi("Reste à épargner", eur(m.reste), "Ce qui reste après besoins + envies", m.reste>=0?"pos":"neg")}
     ${kpi("Taux", pct(m.pReste), "Part de tes revenus qui te reste (objectif 20 %)", m.pReste>=20?"pos":(m.pReste>=10?"warnc":"neg"))}
+    ${(()=>{const obj=m.revReel*state.targets.epargne/100; return kpi("Épargne placée", eur(m.eparg), `Réellement mis de côté · objectif ${eur(obj)}`, m.eparg>=obj?"pos":(m.eparg>0?"warnc":"neg"));})()}
   </div>
 
   <div class="grid2">
     <div class="card">
       <h3>Règle 50 / 30 / 20 — ${monthLabel(currentMonth)}</h3>
       ${ruleHTML}
-      <div class="muted small">Les trois parts se calculent sur tes vrais revenus du mois (${eur(m.revReel)}) et font 100 %. « Reste / épargne » = ce qui te reste après besoins et envies, <b>dont réellement placé (Livret, Assurance Vie, tontine) : ${eur(m.eparg)}</b>. On ignore l'argent qui ne fait que passer (avances, frais Edrington, virements internes).</div>
+      <div class="muted small">Les trois parts se calculent sur tes vrais revenus du mois (${eur(m.revReel)}) et font 100 %. « Reste / épargne » = ce qui te reste après besoins et envies, <b>dont réellement placé (Livret, Assurance Vie, tontine) : ${eur(m.eparg)}</b>. On ignore l'argent qui ne fait que passer (avances, frais Edrington).</div>
     </div>
     <div class="card">
       <h3>Où part ton argent ce mois-ci</h3>
@@ -632,7 +638,7 @@ function renderEvolution(){
   </div>`;
 }
 
-function univLabel(u){ return {perso:"Perso",pro:"Pro micro-entreprise",edrington:"Frais Edrington",avance:"Avance proche",patrimoine:"Investissement / patrimoine",interne:"Virement interne",reel:"Revenu réel",remboursement:"Remboursement reçu"}[u]||u; }
+function univLabel(u){ return {perso:"Perso",pro:"Pro micro-entreprise",edrington:"Frais Edrington",avance:"Avance proche",patrimoine:"Investissement / patrimoine",reel:"Revenu réel",remboursement:"Remboursement reçu"}[u]||u; }
 
 function renderTransactions(){
   const host=document.getElementById("transactions");
@@ -644,7 +650,7 @@ function renderTransactions(){
   // catégorie select (groupé) pour le formulaire d'ajout — 5 groupes logiques
   const depVieCats  =state.categories.filter(c=>c.kind==="depense"&&c.univers==="perso");
   const depProCats  =state.categories.filter(c=>c.kind==="depense"&&c.univers==="pro");
-  const depNtreCats =state.categories.filter(c=>c.kind==="depense"&&["avance","edrington","interne"].includes(c.univers));
+  const depNtreCats =state.categories.filter(c=>c.kind==="depense"&&["avance","edrington"].includes(c.univers));
   const depPatCats  =state.categories.filter(c=>c.kind==="depense"&&c.univers==="patrimoine");
   const revCats     =state.categories.filter(c=>c.kind==="revenu");
   const mkOpts=(arr,sel)=>arr.map(c=>`<option value="${c.slug}"${c.slug===sel?" selected":""}>${esc(c.label)}</option>`).join("");
@@ -660,7 +666,7 @@ function renderTransactions(){
   if(sel!=="all") base=base.filter(t=>ym(t.date)===sel);
   const baseComplete=base.slice(); // pour la bande de synthèse : mois filtré, sans filtre texte
   if(txFilter.univers && txFilter.univers!=="all"){
-    const uList=txFilter.univers==="neutres"?["edrington","avance","interne"]:[txFilter.univers];
+    const uList=txFilter.univers==="neutres"?["edrington","avance"]:[txFilter.univers];
     base=base.filter(t=>uList.includes(catBySlug(t.cat).univers));
   }
   if(txFilter.cat) base=base.filter(t=>t.cat===txFilter.cat);
@@ -674,7 +680,7 @@ function renderTransactions(){
   const totRev=revsAll.reduce((s,t)=>s+(Number(t.amount)||0),0);
   const depVie =depsAll.filter(t=>catOf(t)==="perso").reduce((s,t)=>s+(Number(t.amount)||0),0);
   const depPro =depsAll.filter(t=>catOf(t)==="pro").reduce((s,t)=>s+(Number(t.amount)||0),0);
-  const depNtre=depsAll.filter(t=>["edrington","avance","interne"].includes(catOf(t))).reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const depNtre=depsAll.filter(t=>["edrington","avance"].includes(catOf(t))).reduce((s,t)=>s+(Number(t.amount)||0),0);
   const depPat =depsAll.filter(t=>catOf(t)==="patrimoine").reduce((s,t)=>s+(Number(t.amount)||0),0);
   const revReel=revsAll.filter(t=>catOf(t)==="reel").reduce((s,t)=>s+(Number(t.amount)||0),0);
   const balance=revReel-depVie-depPro;
@@ -739,8 +745,8 @@ function renderTransactions(){
       ${[
         {u:"perso",      label:"Dépenses de vie",      val:depVie,  color:"var(--bad)",    tip:"Besoins + envies + épargne (règle 50/30/20)"},
         {u:"pro",        label:"Dépenses pro",          val:depPro,  color:"var(--pro)",    tip:"Coûts réels de ta micro-entreprise — argent définitivement parti"},
-        {u:"neutres",    label:"Flux neutres",          val:depNtre, color:"var(--muted)",  tip:"Avances à des proches, frais Edrington, virements internes — argent qui revient"},
-        {u:"patrimoine", label:"Investissement",        val:depPat,  color:"var(--gold)",   tip:"Actifs acquis (parking…) — argent converti, pas dépensé"},
+        {u:"neutres",    label:"Flux neutres",          val:depNtre, color:"var(--muted)",  tip:"Avances à des proches, frais Edrington — argent qui revient"},
+        {u:"patrimoine", label:"Investissement",        val:depPat,  color:"var(--gold)",   tip:"Actifs acquis (parking, bourse…) — argent converti, pas dépensé"},
         {u:"reel",       label:"Revenus réels",         val:revReel, color:"var(--ok)",     right:true},
       ].map(({u,label,val,color,tip,right})=>{
         const active=txFilter.univers===u;
@@ -822,7 +828,7 @@ function editTx(id){
   const row=document.querySelector(`tr[data-txid="${id}"]`); if(!row) return;
   const _depVie =state.categories.filter(c=>c.kind==="depense"&&c.univers==="perso");
   const _depPro =state.categories.filter(c=>c.kind==="depense"&&c.univers==="pro");
-  const _depNtr =state.categories.filter(c=>c.kind==="depense"&&["avance","edrington","interne"].includes(c.univers));
+  const _depNtr =state.categories.filter(c=>c.kind==="depense"&&["avance","edrington"].includes(c.univers));
   const _depPat =state.categories.filter(c=>c.kind==="depense"&&c.univers==="patrimoine");
   const _revCats=state.categories.filter(c=>c.kind==="revenu");
   const _o=(arr)=>arr.map(c=>`<option value="${c.slug}"${c.slug===t.cat?" selected":""}>${esc(c.label)}</option>`).join("");
@@ -868,8 +874,8 @@ function autoCat(desc, kind){
   for(const n of AVANCE_NAMES){ if(new RegExp("^"+n+"\\s*-").test(d)) return kind==="revenu"?"remb_proche":"avance"; }
   // 2) règles mots-clés
   for(const r of state.rules){ if(d.includes(r.kw)){ const c=catBySlug(r.cat); if(c.kind===kind) return r.cat; } }
-  // 3) fallback
-  return kind==="revenu"?"aides":"divers";
+  // 3) fallback (à corriger à la main avant validation)
+  return kind==="revenu"?"aides":"shopping";
 }
 
 let pasteRows=[];
@@ -1016,8 +1022,8 @@ function renderReglages(){
   const host=document.getElementById("reglages");
   const catRows=state.categories.map((c,i)=>{
     const isDep=c.kind==="depense";
-    const univOpts=["perso","pro","edrington","avance","patrimoine","interne"].map(u=>`<option value="${u}" ${c.univers===u?"selected":""}>${univLabel(u)}</option>`).join("");
-    const univOptsRev=["reel","remboursement","interne"].map(u=>`<option value="${u}" ${c.univers===u?"selected":""}>${univLabel(u)}</option>`).join("");
+    const univOpts=["perso","pro","edrington","avance","patrimoine"].map(u=>`<option value="${u}" ${c.univers===u?"selected":""}>${univLabel(u)}</option>`).join("");
+    const univOptsRev=["reel","remboursement"].map(u=>`<option value="${u}" ${c.univers===u?"selected":""}>${univLabel(u)}</option>`).join("");
     const buckOpts=["besoin","envie","epargne"].map(b=>`<option value="${b}" ${c.bucket===b?"selected":""}>${b}</option>`).join("");
     return `<tr>
       <td><span class="dot" style="background:${c.color}"></span> ${esc(c.label)} <span class="tag2">${c.kind}</span></td>

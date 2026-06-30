@@ -131,7 +131,7 @@ export default function SettingsPage() {
               <input className="input-field" value={profile.phone}
                 onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} />
             </Field>
-            <div className="col-span-2">
+            <div className="col-span-full">
               <Field label="Email (lecture seule)">
                 <input className="input-field bg-[#F8F9FA] text-[#8A94A6]" value={driver.email} readOnly />
               </Field>

@@ -168,8 +168,8 @@ export default function SettingsPage() {
         {/* Tarification */}
         {pricing && (
           <Section title="Ma tarification">
-            <div className="flex gap-5 flex-wrap">
-              <div className="flex-1 min-w-0 sm:min-w-[320px] grid grid-cols-1 sm:grid-cols-2 gap-[13px]">
+            <div className="flex flex-col lg:flex-row gap-5">
+              <div className="lg:flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-[13px]">
                 <Field label="Prix de base (€)">
                   <input className="input-field" type="number" step="0.01" inputMode="decimal"
                     value={tarif.base} onChange={e => setTarif(t => ({ ...t, base: e.target.value }))} />
@@ -233,7 +233,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Preview */}
-              <div className="flex-1 min-w-[200px] bg-navy rounded-xl px-[18px] py-[18px] self-start text-white">
+              <div className="lg:flex-1 lg:min-w-[200px] lg:self-start bg-navy rounded-xl px-[18px] py-[18px] text-white">
                 <div className="text-[11px] uppercase tracking-[.06em] text-white/50 mb-3">Aperçu — course 20 km</div>
                 <div className="flex justify-between text-[13px] text-white/75 mb-2">
                   <span>Base</span><span>{formatPrice(prevBase)}</span>

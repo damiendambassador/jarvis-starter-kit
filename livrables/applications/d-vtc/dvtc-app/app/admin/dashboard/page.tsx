@@ -809,7 +809,7 @@ export default function AdminDashboard() {
             {/* Tableau abonnements */}
             <h2 className="text-[16px] font-bold text-[#0A1628] mb-4">Abonnements chauffeurs</h2>
             <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
-              <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
+              <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_150px] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
                 {['Chauffeur', 'Statut', 'Dernière facture', 'Début abo.', 'Actions'].map(h => (
                   <span key={h} className="text-[11px] font-semibold text-[#8A94A6] uppercase tracking-wide">{h}</span>
                 ))}
@@ -817,7 +817,7 @@ export default function AdminDashboard() {
 
               {drivers.map((driver, i) => (
                 <div key={driver.id} className={[i < drivers.length - 1 ? 'border-b border-[#F0F3F8]' : ''].join(' ')}>
-                <div className="flex flex-col gap-3 px-5 py-4 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto] md:gap-4 md:items-center md:px-6">
+                <div className="flex flex-col gap-3 px-5 py-4 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_150px] md:gap-4 md:items-center md:px-6">
                   <div>
                     <div className="text-[13px] font-semibold text-[#0A1628]">{driver.name}</div>
                     <div className="text-[11px] text-[#A7B0BF]">{driver.email}</div>

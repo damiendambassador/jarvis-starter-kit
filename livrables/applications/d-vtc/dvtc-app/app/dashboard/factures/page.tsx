@@ -143,7 +143,7 @@ export default function FacturesPage() {
       ) : (
         <div className="bg-white rounded-2xl border border-[#E8EDF5] overflow-hidden">
           {/* En-tête tableau (desktop) */}
-          <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
+          <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_44px] gap-4 px-6 py-3 bg-[#F4F6FA] border-b border-[#E8EDF5]">
             {['N° Facture', 'Période', 'Montant', 'Statut', ''].map(h => (
               <span key={h} className="text-[11px] font-semibold text-[#8A94A6] uppercase tracking-wide">{h}</span>
             ))}
@@ -153,7 +153,7 @@ export default function FacturesPage() {
             <div
               key={inv.id}
               className={[
-                'flex flex-col gap-2.5 px-5 py-4 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto] md:gap-4 md:items-center md:py-4 md:px-6',
+                'flex flex-col gap-2.5 px-5 py-4 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_44px] md:gap-4 md:items-center md:py-4 md:px-6',
                 i < invoices.length - 1 ? 'border-b border-[#F0F3F8]' : '',
               ].join(' ')}>
               {/* N° facture + bouton (le bouton ne s'affiche ici que sur mobile) */}

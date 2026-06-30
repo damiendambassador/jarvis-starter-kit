@@ -155,6 +155,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     })
   }, [])
 
+  // Garde-fou : si la session n'arrive jamais (verrou d'auth coincé entre
+  // onglets, restauration depuis le cache…), on recharge la page une seule
+  // fois pour repartir d'un contexte propre. Le flag en sessionStorage empêche
+  // toute boucle de rechargement.
+  useEffect(() => {
+    if (pathname === '/dashboard/login') return
+    if (!loading) { sessionStorage.removeItem('dvtc_reload_guard'); return }
+    const t = setTimeout(() => {
+      if (sessionStorage.getItem('dvtc_reload_guard')) return
+      sessionStorage.setItem('dvtc_reload_guard', '1')
+      window.location.reload()
+    }, 4000)
+    return () => clearTimeout(t)
+  }, [loading, pathname])
+
   if (pathname === '/dashboard/login') return <>{children}</>
 
   if (loading) return (

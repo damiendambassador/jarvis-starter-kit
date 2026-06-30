@@ -21,6 +21,19 @@ export default function LoginPage() {
     })
   }, [])
 
+  // Garde-fou : si la vérification de session reste bloquée (verrou d'auth),
+  // on recharge la page une seule fois (flag anti-boucle en sessionStorage,
+  // partagé avec le layout du dashboard).
+  useEffect(() => {
+    if (!checking) { sessionStorage.removeItem('dvtc_reload_guard'); return }
+    const t = setTimeout(() => {
+      if (sessionStorage.getItem('dvtc_reload_guard')) return
+      sessionStorage.setItem('dvtc_reload_guard', '1')
+      window.location.reload()
+    }, 4000)
+    return () => clearTimeout(t)
+  }, [checking])
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)

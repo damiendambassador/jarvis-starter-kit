@@ -7,6 +7,23 @@
 
 ---
 
+## 2026-06-30 — D-VTC : fin des chevauchements de libellés sur mobile
+
+- Bug récurrent identifié sur la page Réglages chauffeur : des libellés de champs se chevauchaient deux à deux sur téléphone, avec des mini-cases vides à gauche (sections "Ma tarification" puis "Mon profil").
+- Cause racine : un enfant en `col-span-2` placé dans une grille `grid-cols-1` (mobile) force la création d'une 2e colonne implicite, qui réorganise tous les champs en 2 colonnes écrasées.
+- Correctif : `col-span-2` → `col-span-full` (s'étend sur les colonnes réelles sans en inventer). Appliqué à la boîte "Horaires de nuit" (commit 2e3578c) et au champ Email du profil (commit cebe328). Desktop inchangé.
+- Toute l'app D-VTC balayée : aucune autre occurrence du piège. Typecheck OK, déployé sur main → Vercel.
+
+---
+
+## 2026-06-30 — D-VTC : corrections d'affichage
+
+- **Tarification illisible sur mobile (Réglages chauffeur)** : le bloc « champs + aperçu » (flex-wrap) ne passait pas à la ligne, l'aperçu (min-w 200px) écrasait les champs à ~90px. Corrigé en empilement vertical sous 1024px (flex-col → lg:flex-row), desktop inchangé.
+- **Tableaux désalignés sur desktop (abonnements admin + factures chauffeur)** : en-tête et lignes étant deux grilles séparées, leur dernière colonne en `auto` décalait les colonnes 1fr. Figée à largeur identique (150px / 44px). Défaut factures repéré pendant la vérification demandée.
+- Reste de l'app vérifié sain. Typecheck OK, déployé sur main (commit d6c06cd) → Vercel.
+
+---
+
 ## 2026-06-29 — D-VTC : compatibilité mobile + passe design globale
 
 ### Dashboard chauffeur rendu responsive (3 itérations)

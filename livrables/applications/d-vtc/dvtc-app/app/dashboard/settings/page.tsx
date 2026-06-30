@@ -189,7 +189,7 @@ export default function SettingsPage() {
                 </Field>
 
                 {/* Horaires de nuit */}
-                <div className="col-span-2 border border-[#D6DEEA] rounded-[10px] px-[14px] py-[12px]">
+                <div className="col-span-full border border-[#D6DEEA] rounded-[10px] px-[14px] py-[12px]">
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-0">
                     <div
                       onClick={() => setTarif(t => ({ ...t, nightEnabled: !t.nightEnabled }))}

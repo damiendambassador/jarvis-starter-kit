@@ -246,7 +246,7 @@ let state = null;
 
 function defaultState(){
   return {
-    version:2,
+    version:3,
     soldeInitial:1322.51,
     targets:{besoins:50, envies:30, epargne:20},
     categories:JSON.parse(JSON.stringify(DEFAULT_CATEGORIES)),
@@ -268,6 +268,18 @@ function migrate(){
   if(!state.rules) state.rules = d.rules;
   if(typeof state.soldeInitial!=="number") state.soldeInitial = d.soldeInitial;
   if(!Array.isArray(state.transactions)) state.transactions = [];
+  // v3 : refonte des catégories (épargne/investissement séparés, dons, retrait de Divers + virements internes)
+  if(!(state.version>=3)){
+    const remap = {divers:"shopping", interne:"shopping", interne_rev:"remb_divers"};
+    state.transactions.forEach(t=>{
+      if(remap[t.cat]) t.cat = remap[t.cat];
+      if(t.kind==="depense" && /muco/i.test(t.desc||"")) t.cat = "dons"; // ré-catégorise le don mucoviscidose déjà saisi
+    });
+    state.categories = d.categories; // recharge le référentiel à jour (les transactions sont conservées)
+    state.rules = d.rules;
+    state.version = 3;
+    save();
+  }
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 

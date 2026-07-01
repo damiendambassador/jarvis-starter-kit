@@ -176,7 +176,14 @@ export const BRANDS: { name: string; references: string[] }[] = [
   },
   {
     name: 'Brugal',
-    references: ['Brugal 1888', 'Brugal Maestro Reserva', 'Brugal Visionaria 2', 'Andrés Brugal 2nd Edition'],
+    references: [
+      'Brugal 1888',
+      'Brugal Maestro Reserva',
+      'Brugal Visionaria 01 Cacao',
+      'Brugal Visionaria 02 Coffee',
+      'Brugal Visionaria 03 Coco',
+      'Andrés Brugal 2nd Edition',
+    ],
   },
   { name: 'Gin N°3', references: ['Gin N°3 London Dry Organic'] },
   {

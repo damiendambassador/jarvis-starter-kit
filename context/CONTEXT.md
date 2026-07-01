@@ -1,101 +1,65 @@
 # CONTEXT.md
 
 > Mon contexte personnel et professionnel pour mon Jarvis.
-> Ce fichier sera rempli automatiquement lors de l'installation initiale puis mis à jour au fil du temps par Claude.
+> Rempli à l'installation, mis à jour au fil du temps par Claude.
 
 ---
 
 ## Qui je suis
 
 - **Prénom :** Damien
-- **Ville / Pays :** Ivry-sur-Seine, région parisienne, France
-- **Situation actuelle :** Profil mixte, salarié à temps plein chez Edrington, vendeur en missions ponctuelles à l'Accor Arena, et auto-entrepreneur sous ma marque D Embassy
-- **Profil dominant :** Mix (le salariat chez Edrington prend le plus de temps, 38 à 45h par semaine, mais l'auto-entreprise est ma priorité d'évolution)
+- **Ville :** Ivry-sur-Seine, région parisienne, France
+- **Profil :** Mixte. Salarié à temps plein chez Edrington (38-45h/sem, prend le plus de temps mais secondaire en priorité), vendeur ponctuel à l'Accor Arena (revenu complémentaire), et auto-entrepreneur sous ma marque D Embassy (priorité d'évolution).
 
 ---
 
 ## Ce que je fais
 
-### Activité principale
+**Salarié (Edrington) :** Business Development Executive - Off Trade (spiritueux : rhum, whisky, gin). Prospection cavistes off-trade (Nicolas, Repaire de Bacchus, V and B, Nysa, Cavavin, Intercaves, La Vignery, Le Comptoir Irlandais, Comptoir des Vignes). Scope élargi à Paris, IDF et Nord. Nouveau contrat avec objectifs chiffrés (volumes, comptes) depuis mi-juin 2026.
 
-Business Development Executive chez Edrington (groupe qui commercialise des spiritueux : rhum, whisky, gin). Poste qui prend le plus de temps dans ma semaine (38 à 45h), mais qui reste secondaire en termes d'objectifs d'évolution personnelle. En parallèle, je développe mon auto-entreprise D Embassy et plusieurs projets de développement web.
+**Vendeur Accor Arena :** missions ponctuelles, revenu complémentaire.
 
-### Détails selon le profil
-
-**Salarié (activité principale en temps) :**
-- Poste : Business Development Executive - Off Trade
-- Entreprise / Secteur : Edrington (spiritueux : rhum, whisky, gin)
-- Missions principales : Prospection chez les cavistes off-trade (Nicolas, Repaire de Bacchus, V and B, Nysa, Cavavin, Intercaves, La Vignery, Le Comptoir Irlandais, Comptoir des Vignes). Scope géographique en cours d'élargissement à Paris, Île-de-France et Nord de la France. Nouveau contrat démarrant avec de nouveaux objectifs chiffrés (volumes, comptes) à partir de mi-juin 2026.
-
-**Vendeur (mission ponctuelle) :**
-- Vendeur à l'Accor Arena lors de missions ponctuelles (mission déjà exercée il y a deux ans). Objectif principal de cette mission : générer du revenu complémentaire.
-
-**Auto-entrepreneur (priorité d'évolution) :**
-- Micro-entreprise : D Embassy
-- SIRET : 10073363300018, code APE : 7022Z, nature libérale non réglementée
-- Début d'activité : 01/03/2026
-- Siège : 11 rue Gabriel Fauré, 77000 Melun
-- Deux activités déclarées :
-  1. Conseil pour les affaires et conseils de gestion, stratégie commerciale, business development et analyse de marché
-  2. Coaching individuel en développement personnel, bien-être et hygiène de vie (gestion du stress, organisation personnelle, remise en forme)
-- En complément, développement de sites et applications répondant à de vrais besoins (ex : site de réservation pour chauffeurs VTC)
-- Présence : compte Instagram @d_embassy_ (coaching sport et habitudes)
+**Auto-entrepreneur — D Embassy :**
+- SIRET 10073363300018, APE 7022Z, libéral non réglementé, régime général. Cotisations micro-BNC 2026 : 25,6 %.
+- Début 01/03/2026. Siège : 11 rue Gabriel Fauré, 77000 Melun.
+- Deux activités : (1) conseil affaires / stratégie commerciale / business development ; (2) coaching développement personnel, bien-être, hygiène de vie.
+- En complément : développement de sites et applications (ex : réservation VTC). Instagram @d_embassy_.
 
 ---
 
 ## Mes objectifs
 
-### Objectifs court terme (3 à 6 mois)
+**Court terme (3-6 mois) :**
+- **Générer des revenus (priorité absolue)** pour me libérer des missions énergivores et réinvestir dans mes activités à fort potentiel, en respectant le cadre micro-entreprise.
+- **Couvrir mes charges fixes (1 547,99 €/mois) via les abonnements D-VTC** : ~29 chauffeurs actifs (74 € brut, ~55,06 € net après cotisations 25,6 %). Site en prod, place à la commercialisation. Compteur de progression dans le panel admin.
+- Développer le coaching D Embassy (offre, suivi clients, revenus).
+- Réussir ma prise de poste Edrington et atteindre mes premiers objectifs chiffrés.
 
-- **Générer des revenus (priorité absolue)**, pour libérer du temps des missions énergivores (Accor Arena) et le réinvestir dans mes activités à fort potentiel, tout en respectant strictement les règles de la micro-entreprise et en faisant transiter ces revenus légalement le plus vite possible
-- **Couvrir l'intégralité de mes charges fixes (1 547,99 €/mois) via les abonnements D-VTC** : objectif chiffré central du projet au plus fort potentiel de financement. En net après cotisations micro-BNC (25,6 % confirmé pour 2026, profession libérale non réglementée au régime général), cela représente environ **29 chauffeurs actifs** (74 €/mois brut, soit ~55,06 € net par chauffeur). Le site est déjà en production sur d-vtc.fr, place à la commercialisation pour atteindre ce palier. Un compteur de progression est intégré au panel admin
-- Développer mon activité de coaching (offre, suivi clients, génération de revenus)
-- Réussir ma prise de poste chez Edrington et atteindre mes premiers objectifs chiffrés
-
-### Objectifs long terme (1 à 3 ans)
-
-- Atteindre la liberté au sens large : financière, géographique et mentale
-- Construire plusieurs sources de revenus solides et évolutives
-- Garder le pouvoir de choisir : pouvoir compléter le salariat avec de vrais revenus, ou le quitter pour développer mes activités, sans concessions ni sacrifices excessifs
+**Long terme (1-3 ans) :** liberté financière, géographique et mentale ; plusieurs sources de revenus solides et évolutives ; garder le pouvoir de choisir (compléter ou quitter le salariat sans sacrifices excessifs).
 
 ---
 
 ## Mes projets en cours
 
-Liste des projets ou chantiers actifs sur lesquels je veux que Claude m'aide :
-
-- **Application D-VTC** (`livrables/applications/d-vtc/`) : Application complète en production sur `d-vtc.fr`. Stack Next.js 14, Supabase, Stripe, Resend, Vercel. Fonctionnalités livrées : page de réservation client (calculateur de prix temps réel), dashboard chauffeur (stats multi-période, calendrier avec indisponibilités, tableau de bord fusionné avec toutes les réservations filtrables par statut/période/ticket, paramètres, page "Mes factures"), majoration nuit configurable par chauffeur (horaires + toggle), plaque d'immatriculation affichée sur la page de réservation publique, resync des factures Stripe manquantes depuis le panel admin, notifications temps réel (Supabase Realtime), panel admin (connexion via `/admin`, CRUD chauffeurs complet, KPIs financiers, onglet Facturation, mode preview dashboard chauffeur, changement de mot de passe admin), landing page publique avec calculateur de rentabilité. Système de facturation Stripe complet : 74€/mois, PDF auto-généré, stocké Supabase Storage. CGV (11 articles) avec modal bloquante. Connexion unifiée `/connexion`. Domaine `d-vtc.fr` actif. Emails via Resend. Seuil de rentabilité : 27 chauffeurs. Sécurité : système de session tokens (plus de mot de passe en localStorage), headers HTTP sécurisés, timing-safe hash comparison. Cible commerciale clarifiée : les chauffeurs VTC déjà établis disposant d'une clientèle directe (Modèle A, vente de l'outil), et non les débutants. Patrick (premier client visé) non activable à court terme (attente de sa carte VTC, pas de clientèle directe, actif sur Citygo). Statut : 100% opérationnel, commercialisation à lancer auprès de cette cible.
-- **Investissement immobilier parking (M & S Développement Immobilier)** : Place de stationnement privative n°43, résidence neuve "Les Rives du Roi", 22-24 avenue du Front de Seine, 94290 Villeneuve-le-Roi. Acquise en février 2026. Format XXL (3,30 × 5 m), RDC accès direct sans rampe, résidence fermée sécurisée (badge, vidéosurveillance, arceau). Coût récurrent ~160€/an (taxe foncière + charges de copropriété). Mise en location à 79€/mois charges comprises (prix aligné sur le marché local après repricing depuis 90-115€). Diffusée sur 5 canaux : LeBonCoin, SeLoger, MonsieurParking, PrendsMaPlace, Facebook Marketplace. Objectif : louer rapidement pour générer un revenu locatif net.
-- **Coaching D Embassy** : sport, création de bonnes habitudes, accompagnement, contenu Instagram (@d_embassy_), suivi clients (en phase de test sur Airtable, à développer pour générer du revenu). Templates Instagram créés dans `livrables/templates-instagram/d-embassy/` (HTML + PPTX Canva-ready). Stratégie en cours : utiliser @d_embassy_ comme levier d'acquisition chauffeurs D-VTC via contenu sur l'indépendance et la performance.
-- **Conseil / business development et sites web** : business plans et présentations Canva pour mes clients (ex : A&J Naturals, Solara, Kirjava, Comptoir Malakit, Les Jardins d'Ivry, VTC Patrick) + création de sites web (ex : Copity Beach Club, Alicante, site terminé, démo protégée par mot de passe sur Vercel : copity-beach-club.vercel.app, contact identifié pour présentation au client final, pitch commercial en cours)
-- **Carte de prospection Edrington (off-trade)** (`livrables/applications/carte-prospection/`) : web app perso Next.js 14 + Supabase + Google Maps + Vercel pour cartographier les chaînes de caves de France (Nicolas, Repaire de Bacchus, Nysa, V and B, La Vignery, Cavavin, Intercaves, Le Comptoir Irlandais, Comptoir des Vignes). Pins colorés par état (statut visite / pénétration / nouvelles DN), code 2 lettres par enseigne, saisie des marques placées + références exactes (catalogue Edrington 2026), statut par marque (Présent / En cours / Gagné / Refusé), mise en avant des gains (DN), filtres (focus marque présente/absente, « mes gains »), import KML + import par collage de listes avec géocodage automatique, calcul de distances, accès privé par login. Remplace et dépasse l'ancien suivi Google My Maps. **Déployée en production sur `edringtonmapofftrade.vercel.app`** (projet Vercel "Edrington - Map Off Trade", root directory `livrables/applications/carte-prospection/prospection-app` du repo jarvis-starter-kit). Sécurité Google Maps en place : clé client restreinte par domaine (Maps JavaScript API) + clé serveur restreinte par API (Geocoding + Distance Matrix). Statut : en production, ~1146 magasins importés, reste à enrichir les marques placées au fil des visites.
-- **Poste Edrington** : prospection cavistes, nouveau scope et objectifs chiffrés
-- **Outil budget personnel** (`livrables/applications/budget-personnel/`) : application HTML locale 50/30/20, données en localStorage uniquement (gitignorées). Fonctionnalités : import/export JSON, catégorisation auto par mots-clés, bande de synthèse 5 groupes cliquables (dépenses de vie / dépenses pro / flux neutres / investissement / revenus + balance réelle), filtres combinables, sélection de montants avec somme dynamique, édition inline, conseils budgétaires, graphiques évolution.
-- **Missions Accor Arena** : vente ponctuelle (revenu complémentaire)
-- **Formation IA** : comprendre et maîtriser l'IA au maximum
-- **Développement personnel** : Miracle Morning (réveil tôt, encore un challenge), sport, lecture, écriture, ouverture sur le monde
+- **D-VTC** (`livrables/applications/d-vtc/`) : app de réservation VTC **en production sur d-vtc.fr**, 100 % opérationnelle. Stack Next.js 14, Supabase, Stripe, Resend, Vercel. Abonnement 74 €/mois (facturation Stripe complète, PDF auto). Comprend : page réservation client (calculateur prix temps réel), dashboard chauffeur (stats, calendrier, factures, réglages, majoration nuit), panel admin (`/admin` : CRUD chauffeurs, KPIs, facturation, parrainage, mode preview), landing avec calculateur de rentabilité, notifications temps réel, CGV. Sécurité durcie (session tokens, RLS, headers). Seuil rentabilité : 27-29 chauffeurs. **Cible : chauffeurs VTC établis avec clientèle directe (Modèle A, vente de l'outil)**. Patrick (1er client visé, slug `patrick-defoe`) non activable à court terme (attente carte VTC, pas de clientèle directe). Statut : commercialisation à lancer.
+- **Parking Villeneuve-le-Roi** : place n°43, résidence "Les Rives du Roi", 94290, acquise 02/2026 (M & S Développement Immobilier). Format XXL, RDC, résidence sécurisée. Coût ~160 €/an. En location à **79 €/mois CC** sur 5 canaux (LeBonCoin, SeLoger, MonsieurParking, PrendsMaPlace, FB Marketplace). Objectif : louer vite.
+- **Coaching D Embassy** : sport, habitudes, contenu Instagram @d_embassy_, suivi clients (test Airtable). Templates Instagram dans `livrables/templates-instagram/d-embassy/`. Stratégie : @d_embassy_ comme levier d'acquisition chauffeurs D-VTC.
+- **Conseil / sites web** : business plans et présentations Canva (A&J Naturals, Solara, Kirjava, Comptoir Malakit, Les Jardins d'Ivry, VTC Patrick) + sites (ex : Copity Beach Club, démo Vercel protégée `copity-beach-club.vercel.app`, pitch en cours).
+- **Carte de prospection Edrington** (`livrables/applications/carte-prospection/`) : web app perso Next.js 14 + Supabase + Google Maps, **en prod sur edringtonmapofftrade.vercel.app** (~1146 magasins). Cartographie les chaînes de caves, pins par état, saisie marques placées + références (catalogue Edrington 2026), filtres, import KML + collage avec géocodage, accès privé. Clés Google Maps sécurisées (client par referrer, serveur par API). Reste à enrichir les marques au fil des visites.
+- **Outil budget personnel** (`livrables/applications/budget-personnel/`) : app HTML locale 50/30/20, données localStorage (gitignorées). Import/export JSON, catégorisation auto, synthèse 5 groupes, filtres, KPI « Épargne placée ». Référentiel de catégories versionné avec migration auto (v3 : épargne vs investissement séparés, catégorie Dons). Non déployé.
+- **Poste Edrington** : prospection cavistes, nouveau scope et objectifs chiffrés.
+- **Formation IA + développement personnel** : maîtriser l'IA ; Miracle Morning, sport, lecture, écriture.
 
 ---
 
-## Mes outils et préférences
+## Outils et préférences
 
-### Outils que j'utilise au quotidien
-
-- IA (Claude en tête) : création de templates, coaching, descriptions de vidéos, aide aux tâches quotidiennes
-- Airtable : prospection (travail) et suivi coaching (encore en phase de test, à développer)
-- Canva : business plans et présentations clients
-- Instagram : @d_embassy_ (coaching)
-
-### Style de communication préféré
-
-Direct et efficace, droit au but, mais avec de la pédagogie, surtout sur les sujets que je veux ensuite me réapproprier et réutiliser.
-
-### Domaine où j'ai besoin du plus d'aide
-
-La génération de revenus, et la structuration de mes activités d'auto-entrepreneur (coaching, conseil, site D-VTC) pour y parvenir, dans le respect du cadre légal de la micro-entreprise.
+- **Outils :** IA (Claude en tête), Airtable (prospection + test coaching), Canva (présentations), Instagram (@d_embassy_).
+- **Style de communication :** direct, efficace, droit au but, avec de la pédagogie sur les sujets à me réapproprier. Toujours en français. Pas de tirets longs.
+- **Où j'ai le plus besoin d'aide :** génération de revenus et structuration de mes activités d'auto-entrepreneur (coaching, conseil, D-VTC), dans le respect du cadre légal micro-entreprise.
 
 ---
 
 ## Notes importantes
 
-> Cette section se remplira au fil du temps avec les éléments de contexte qui émergent naturellement dans mes sessions avec Claude.
+> Se remplit au fil du temps avec les éléments de contexte qui émergent en session.
